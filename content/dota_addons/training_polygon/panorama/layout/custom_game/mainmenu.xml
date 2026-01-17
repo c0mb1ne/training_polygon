@@ -1,0 +1,856 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/mainmenu.css" />
+		<include src="file://{resources}/styles/custom_game/dotastyles.css" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/custom_game/mainmenu.js" />
+	</scripts>
+	<Panel hittest="false" class="Main"> 
+	 	<!-- <DOTAFriendMenu id="HomeFriendList" tabindex="auto">
+	 	</DOTAFriendMenu> -->
+
+		<Button id="quitButton" class="QuitButton volvoButton" onactivate="QuitGame()">
+			<Label text="QUIT"/>
+			<Image id="quitImage" src="s2r://panorama/images/control_icons/x_close_png.vtex"/>
+		</Button>
+		<!-- <Panel id="boosty">
+			<Panel id="bLogoContainer">
+				<Panel id="boostyLogo"/>
+			</Panel>
+			<Panel id="bLabelContainer">
+				<Label html="true" class="boostyLabel" text="&lt;a href=&quot;https://boosty.to/combine&quot;&gt;Поддержите автора подпиской на Boosty&lt;a&gt;"/>	
+			</Panel>
+		</Panel> -->
+		<!-- <Panel id="patreon">
+			<Panel id="pLogoContainer">
+				<Panel id="patreonLogo"/>
+			</Panel>
+			<Panel id="pLabelContainer">
+				<Label html="true" class="patreonLabel" text="&lt;a href=&quot;https://www.patreon.com/c0mb1ne&quot;&gt;Support me on patreon&lt;a&gt;"/>	
+			</Panel>
+		</Panel> -->
+		
+		<Panel id="discord">
+			<Panel id="dLogoContainer">
+				<Panel id="discordLogo"/>
+			</Panel>
+			<Panel id="dLabelContainer">
+				<Label html="true" class="discordLabel" text="&lt;a href=&quot;https://discord.gg/9qCAqFH&quot;&gt;Join discord discord.gg/9qCAqFH&lt;a&gt;"/>
+			</Panel>
+		</Panel>
+		<!-- <Panel id="twitter">
+			<Panel id="tLogoContainer">
+				<Panel id="twitterLogo"/>
+			</Panel>
+			<Panel id="tLabelContainer">
+				<Label html="true" class="twitterLabel" text="&lt;a href=&quot;https://twitter.com/c0mb1ne&quot;&gt;Follow me on twitter @c0mb1ne&lt;a&gt;"/>
+			</Panel>
+		</Panel> -->
+		<Panel class="mainWindow" id="mainWindow">
+			<Panel class="welcomeFrame" id="welcomeWindow">
+				<Label class="welcomeText" id="welcome" text="#welcomeTitle"/>
+				
+				
+				<Label style="visibility:collapse;" text="#welcome2019" html="true" id="welcomeText1"/>
+				<Panel class="MyCustomClass">
+					<Label style="visibility:collapse;" text="#welcomeTwo" html="true" id="welcomeText2"/>
+					
+					<Label id="welcomeLink" class="webLink" html="true" text="&lt;a href=&quot;http://steamcommunity.com/sharedfiles/filedetails/?id=813598504&quot;&gt;Training polygon (beta) workshop page&lt;a&gt;"/>
+				</Panel>
+				<Panel id="donationsTable">
+					<Panel class="donatorList" id="importantMessage">
+						<Label id="enImpMsg" text="I kinda tired of fixing this custom game, but i know how much it helps you guys. It is such a pain in the ass fixing stuff that was working fine for years, especially when codebase is a mess. I would like to rebuild it require so much time, and i have no motivation at all, especially knowing that no matter how i design it, it can be broken by valve. Merry christmas and thanks for your support."/> 
+						<Label id="ruImpMsg" text="Как же я заебался постоянно это чинить, но зачем-то продолжаю это делать. Спасибо вам за поддержку и добрые слова. Нового контента пока не планируется, т.к. я не знаю как его делать, если в процессе разработки ломается старый, по не зависящим от меня причинам. С наступающим новым годом и успехов вам."/>
+					</Panel>
+					<Panel class="donatorList" id="guideAds">
+						<Label id="enGuideLabel" text="check out guide which explains how to launch this custom game locally (with 0 ping) and play while queing"/>
+						<Label id="ruGuideLabel" text="если у кого-то есть желание поиграть в кастомку во время поиска или с пингом 0, я написал гайд как это сделать"/>
+						<Label id="enGuideLink" class="webLink" html="true" text="&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2798153901&quot;&gt;ENGLISH GUIDE&lt;a&gt;"/>
+						<Label id="ruGuideLink" class="webLink" html="true" text="&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2798175717&quot;&gt;РУССКИЙ ГАЙД&lt;a&gt;"/>
+					</Panel>
+					<Panel class="donatorList" id="supportersList">
+						<Label id="loadingExplain" text="#loadingExplain"/>
+						<Panel id="DinoGame" class="DinoGame">
+							
+							<!-- <Panel id="DinoPlayer" class="dino" /> -->
+							<Panel id="DinoGround" class="ground" />
+							<Panel id="DinoObstaclesContainer" class="obstacles-container" />
+							<DOTAScenePanel id="DinoPlayer" class="dino" style="width:100px;height:100px;" map="piggy" light="light" camera="camera1" particleonly="false"/>
+							<Panel id="DinoScore" class="score">
+								<Label id="DinoScoreText" text="Score: 0" />
+							</Panel>
+							<Panel id="DinoRestartButton" class="restart-button">
+								<Label text="RESTART" />
+							</Panel>
+						</Panel>
+						<!-- <DOTAScenePanel style="width:100px;height:100px;" map="piggy" light="light" camera="camera1" particleonly="false"/>
+						<DOTAScenePanel style="width:50px;height:100px;" map="piggy" light="light" camera="camera2" particleonly="false"/> -->
+					</Panel>
+					
+					<Panel id="firstDonation" class="donatorList">
+						
+						<Panel id="myTwitchContainer">
+							<Label text="#twitchMsg"/>
+							<!-- <Panel id="twitchInfoContainer">
+								<Label id="tTitle" html="true" text="&lt;a href=&quot;https://twitch.tv/c0mb1ne&quot;&gt;twitch.tv/c0mb1ne&lt;a&gt;"/>
+								<Label id="tLiveStatus" text="#tLiveStatus"/>
+								<Label id="tGame" text="#tGame"/>
+							</Panel> -->
+						</Panel> 
+						<Panel style="visibility:collapse;" id="followMyTwitter">
+							<Label text="Also follow my twitter:"/>
+							
+							<Label id="header" class="twLink" html="true" text="&lt;a href=&quot;http://twitter.com/c0mb1ne&quot;&gt;@c0mb1ne&lt;a&gt;"/> 
+						</Panel>
+						<Panel style="visibility:collapse;" id="playersCounter">
+							<Label text="#playersCounter"/>
+							<Label id="uniquePlayers"/>
+						</Panel>
+						<Panel id="boosty2">
+							<Panel id="bLogoContainer">
+								<Panel id="boostyLogo"/>
+							</Panel>
+							<Panel id="bLabelContainer">
+								<Label html="true" class="boostyLabel" text="&lt;a href=&quot;https://boosty.to/combine&quot;&gt;Поддержите автора подпиской на Boosty&lt;a&gt;"/>	
+							</Panel>
+						</Panel>
+						<Panel id="patreon2">
+							<Panel id="pLogoContainer">
+								<Panel id="patreonLogo"/>
+							</Panel>
+							<Panel id="pLabelContainer">
+								<Label html="true" class="patreonLabel" text="&lt;a href=&quot;https://www.patreon.com/c0mb1ne&quot;&gt;Support me on patreon&lt;a&gt;"/>	
+							</Panel>
+						</Panel>
+						
+						<Panel id="discord2">
+							<Panel id="dLogoContainer">
+								<Panel id="discordLogo"/>
+							</Panel>
+							<Panel id="dLabelContainer">
+								<Label html="true" class="discordLabel" text="&lt;a href=&quot;https://discord.gg/9qCAqFH&quot;&gt;Join discord discord.gg/9qCAqFH&lt;a&gt;"/>
+							</Panel>
+						</Panel>
+						<Panel style="visibility:collapse;" id="translatorsContainer">
+							<Label text="#translationProvided"/>
+							
+						</Panel>
+
+					</Panel>
+					
+				</Panel>  
+				<Button class="volvoButton" id="welcomeButton" onactivate="closeBobRoss()">
+
+					<Label id="welcomeButtonText" text="ok"/>
+				</Button>
+				
+			</Panel>
+			<Panel id="mainFrame" class="mainFrame">
+				<Panel class="topBar">
+								
+					<Label id="header" class="webLink topLink" html="true" text="&lt;a href=&quot;http://steamcommunity.com/sharedfiles/filedetails/?id=813598504&quot;&gt;Training polygon (beta)&lt;a&gt;"/>
+				</Panel>
+				<Panel class="contentWindow">
+					<Panel class="leftCol">
+						<Label class="leftColHeader" text="#menuMods"/>
+						<RadioButton class="trainingEntry" checked="checked" group="mods" id="manta" text="#mods_manta"/>
+						<RadioButton class="trainingEntry" group="mods" id="euls" text="#mods_eul"/>
+						<RadioButton class="trainingEntry" group="mods" id="glimpse" text="#mods_glimpse"/>
+						<RadioButton class="trainingEntry" group="mods" id="armlet" text="#mods_armlet"/>
+						<RadioButton style="visibility:collapse;" class="trainingEntry" group="mods" id="aim" text="#mods_aim"/>
+						<RadioButton class="trainingEntry" group="mods" id="invoker" text="#mods_invoker"/>
+						<RadioButton class="trainingEntry" group="mods" id="skillshot" text="#mods_skillshot"/>
+						<RadioButton class="trainingEntry" group="mods" id="other_stuff" text="#mods_other"/>
+						<RadioButton class="trainingEntry" group="mods" id="last_hit_training" text="#mods_last_hit"/>
+						<RadioButton class="trainingEntry" group="mods" id="challange" text="#mods_chalange"/>
+						
+						<!-- <Label class="leftColHeader" text="Coming soon:"/>
+						<Panel class="trainingEntryDisabled" id="shop">
+							<Label class="trainName" text="Shopping training"/>
+						</Panel>
+						<Panel class="trainingEntryDisabled" id="invokerProcast">
+							<Label class="trainName" text="Invoker procast training"/>  
+						</Panel>
+						<Panel class="trainingEntryDisabled" id="reaction">
+							<Label class="trainName" text="Reaction training"/>
+						</Panel>   
+						<Panel class="trainingEntryDisabled" id="armlet">
+							<Label class="trainName" text="Armlet training"/>
+						</Panel> -->
+					</Panel>
+					<Panel id="centerInfo" class="centerCol">
+						<Label class="leftColHeader" text="#menuInfo"/>
+						<Panel id="otherInfo" class="infoCol">
+							<Label class="infoText" text="#other_info"/>
+						</Panel>
+						<Panel id="lastHitInfo" class="infoCol">
+							<Label class="infoText" text="#lasthit_info"/>
+						</Panel>
+						<Panel id="mantaInfo" class="infoCol">
+							<Label class="infoText" text="#mantaInfo"/>
+							<Label class="webLink" html="true" text="&lt;a href=&quot;http://dota2.gamepedia.com/Manta_Style&quot;&gt;Manta Style on wiki&lt;a&gt;"/>
+						</Panel>
+						<Panel id="challangeInfo" class='infoCol'>
+							<Panel class="chalDesc" id="aimChallengeInfo">
+								<!-- <Label text="challenge description"/> -->
+							</Panel>
+							<Panel id="challengeLeaderboard">
+								<Panel class="Row">
+									<ToggleButton checked="true" id="leaderboardFriends" class="volvoCheckbox" text="#leaderboard_friends" style="visibility:collapse;"/>
+									<Label id="wipe_timer" text="Wipe every monday at 00:00 (UTC +03)"/>
+								</Panel>
+								<Panel id="leaderboard">
+									<Panel id="leaderboardContainer">
+									</Panel>
+<!-- 									<Label text="Your result:"/>
+									<Panel id="yourScore">
+
+									</Panel> -->
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel id="eulsInfo" class="infoCol">
+							<Label class="infoText" text="#eulInfo1"/>
+							<Label class="infoText" text="#eulInfo2"/>
+							<Panel class="infoRow">
+								<Panel class="infoColumn">
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="riki_blink_strike" />
+										<Label  text=": 0.3 sec."/>
+									</Panel>
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="queenofpain_blink" />
+										<Label  text=": 0.33 sec."/>
+									</Panel>
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="faceless_void_time_walk" />
+										<Label  text=": 0.3 sec."/>
+									</Panel>
+								</Panel>
+								<Panel class="infoColumn">
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="antimage_blink" />
+										<Label  text=": 0.4 sec."/>
+									</Panel>
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="phantom_assassin_phantom_strike" />
+										<Label  text=": 0.3 sec."/>
+									</Panel>
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="storm_spirit_ball_lightning" />
+										<Label  text=": 0.3 sec."/>
+									</Panel>
+								</Panel>
+								<Panel class="infoColumn">
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="morphling_waveform" />
+										<Label  text=": 0.25 sec."/>
+									</Panel>
+									<Panel class="infoSkill">
+										<DOTAAbilityImage class="infoThumb" abilityname="vengefulspirit_nether_swap" />
+										<Label  text=": 0.3 sec."/>
+									</Panel>
+								</Panel>
+							</Panel>
+							<Label class="infoText" text="#eulInfo3"/>
+							<Panel class="Row">
+					    		<DOTAAbilityImage class="testImg" id="primImg"/>
+					    		<Label text="castpoint:"/>
+					    		<Label id="primCP"/>
+					    		<Label text="delay:"/>
+					    		<Label text="" id="primLabel"/>
+					    		<Label text=" type:"/>
+					    		<Label text="" id="primLabelType"/>
+					    	</Panel>
+					    	<Panel class="Row">
+					    		<DOTAAbilityImage class="testImg" id="secImg"/>
+					    		<Label text="castpoint:"/>
+					    		<Label id="secCP"/>
+					    		<Label text="delay:"/>
+					    		<Label text="" id="secLabel"/>
+					    		<Label text=" type:"/>
+					    		<Label text="" id="secLabelType"/>
+					    	</Panel>
+						</Panel>
+						<Panel class="infoCol" id="skillshotInfo">
+							
+						</Panel>
+						<Panel id="glimpseInfo" class="infoCol">
+							<Label class="infoText" text="#glimpseInfo1"/>
+							<Label class="infoText" text="#glimpseInfo2"/>
+							<Label class="infoText" text="#glimpseInfo3"/>
+							<Label class="infoText" text="#glimpseInfo4"/>
+							<Label class="infoText" text="#glimpseInfo5"/>
+							<Label class="infoText" text="#glimpseInfo6"/>
+							<Panel class="infoColumn">
+								<Panel class="infoSkill">
+									<DOTAAbilityImage class="infoThumb" abilityname="phantom_lancer_doppelwalk" />
+									<Label  text="#glimpseInfo7"/>
+								</Panel>
+								<Panel class="infoSkill">
+									<DOTAAbilityImage class="infoThumb" abilityname="chaos_knight_phantasm" />
+									<Label  text="#glimpseInfo8"/>
+								</Panel>
+								<Panel class="infoSkill">
+									<DOTAAbilityImage class="infoThumb" abilityname="naga_siren_mirror_image" />
+									<Label  text="#glimpseInfo9"/>
+								</Panel>
+								<Panel class="infoSkill">
+									<DOTAAbilityImage class="infoThumb" abilityname="ember_spirit_sleight_of_fist" />
+									<Label  text="#glimpseInfo10"/>
+								</Panel>
+								<Panel class="infoSkill">
+									<DOTAAbilityImage class="infoThumb" abilityname="item_manta" />
+									<Label  text="#glimpseInfo11"/>
+								</Panel>		
+							</Panel>
+							<Label class="infoText" text="#glimpseInfo12"/>
+							<Label class="infoText" text="#glimpseInfo13"/>
+						</Panel>
+						<Panel id="armletInfo" class="infoCol">
+							<Label class="infoText" text="Armlet info here"/>
+						</Panel>
+						<Panel id="aimInfo" class="infoCol">
+							<Label class="infoText" text="AIM info here"/>
+						</Panel>
+						<Panel id="invInfo" class="infoCol">
+							<Label class="infoText" text="#inv_info"/>
+						</Panel>
+					</Panel>
+					<Panel id="rightSettings" class="rightCol">
+						<Label class="leftColHeader" text="#menuSet"/>
+						<!-- <Panel id="pingSetup">
+							<Button class="volvoButton selectButtons" id="setPing" onactivate="checkPing()">
+								<Label text="Set ping"/>
+							</Button>
+						</Panel> -->
+						<Panel id="otherSettings">
+							<ToggleButton checked="true" id="timebarToggle2" class="volvoCheckbox" text="#menuTimebar" />
+							<Label text="#other_timebar"/>
+							<Panel class="combosRow">
+								<RadioButton class="comboRadio" group="other" id="other_1" checked="true"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="alchemist_unstable_concoction"/>
+								<Label text="+" class="comboText"/>
+								<DOTAAbilityImage class="comboItem" abilityname="item_manta"/>
+							</Panel>
+							<Panel class="combosRow">
+								<RadioButton class="comboRadio" group="other" id="other_2" checked="true"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="kunkka_x_marks_the_spot"/>
+								<Label text="+" class="comboText"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="kunkka_torrent"/>
+							</Panel>
+							<Panel class="combosRow">
+								<RadioButton class="comboRadio" group="other" id="other_3" checked="true"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="kunkka_x_marks_the_spot"/>
+								<Label text="+" class="comboText"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="kunkka_ghostship"/>
+								<Label text="+" class="comboText"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="kunkka_torrent"/>
+							</Panel>
+							<Panel class="combosRow">
+								<RadioButton class="comboRadio" group="other" id="other_4" checked="true"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="puck_dream_coil"/>
+								<Label text="+" class="comboText"/>
+								<DOTAAbilityImage class="comboItem" abilityname="item_manta"/>
+
+							</Panel>
+							<Panel class="combosRow" style="visibility:collapse;">
+								<RadioButton class="comboRadio" group="other" id="other_4" checked="true"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="naga_siren_song_of_the_siren"/>
+								<Label text="+" class="comboText"/>
+								<DOTAAbilityImage class="comboSkill" abilityname="item_meteor_hammer"/>
+							</Panel>
+							<Button class="volvoButton" id="startTraining" onactivate="startOtherTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+						<Panel id="mantaSettings">
+							<Label text="#timingType"/>
+							<Panel id="dodgeType">
+								<Panel class="timingEntry">
+									<DOTAItemImage id="eulThumb" itemname="item_manta" />
+									<RadioButton class="volvoRadioButton" checked="checked" group="dodgeMod" id="dtype_0"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="fistThumb" abilityname="ember_spirit_sleight_of_fist" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_1"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="puck_phase_shift" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_2"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="storm_spirit_ball_lightning" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_3"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="bane_nightmare" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_4"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="naga_siren_mirror_image" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_5"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="monkey_king_mischief" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_6"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="nyx_assassin_spiked_carapace" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_7"/>
+								</Panel>
+								<Panel  class="timingEntry">
+									<DOTAAbilityImage class="etAbilThumb" id="drisnyaThumb" abilityname="void_spirit_dissimilate" />
+									<RadioButton class="volvoRadioButton" group="dodgeMod" id="dtype_8"/>
+								</Panel>
+							</Panel>
+							<Label text="#manta_options"/>
+							<Panel id="modeChanger">
+								<!-- <Label text="Training mode:"/>
+								<Panel id="modButtons">
+									<RadioButton class="volvoRadioButton" checked="checked" group="mantaMode" id="challangeMode" text="Challange mode"/>
+									<RadioButton class="volvoRadioButton" group="mantaMode" id="customMode" text="Custom mode"/>
+								</Panel> -->
+								<ToggleButton checked="true" id="timebarToggle" class="volvoCheckbox" text="#menuTimebar" />
+								<ToggleButton checked="true" id="mantaShuffle" class="volvoCheckbox" text="#shuffleMode" />
+								<ToggleButton checked="false" id="mantaBlink" class="volvoCheckbox" text="#hardcoreMode" />
+							</Panel>
+							<Panel id="customSettings">
+								<Panel id="selectionButtons">
+									<Label text="#menuSkills"/>
+									<Button class="volvoButton selectButtons" id="selectAll" onactivate="selectAllSkills()">
+										<Label text="#skillsAll"/>
+									</Button>
+									<Button class="volvoButton selectButtons" id="unmarkAll" onactivate="unmarkAllSkills()">
+										<Label text="#skillsNone"/>
+									</Button>
+								</Panel>
+								<Panel id="skillList">
+								</Panel>
+							</Panel>
+							<Button class="volvoButton" id="startTraining" onactivate="startGame();">
+								<Label text="#menuStart"/>
+							</Button>
+							<Panel id="errorMsg" class="errorMsg">
+								<Label text="#menuErr"/>
+							</Panel>
+						</Panel>
+						<Panel id="eulSettings">
+							<Label text="#timingType"/>
+							<Panel id="timingType">
+
+							</Panel>
+							<Panel class="Row"> 
+								<ToggleButton checked="true" id="timingRubick" class="volvoCheckbox" text="#menuTimebar" />
+								<ToggleButton style="visibility:collapse;" checked="true" id="timingNobot" class="volvoCheckbox" text="#timingNobot" />
+							</Panel>
+							<Label text="#menuSkill"/>
+							<Panel id="eulSkillList">
+							</Panel>
+
+							<Button class="volvoButton" id="startTraining" onactivate="TimingStart();">
+								<Label text="#menuStart"/>
+							</Button>
+							<Panel id="eulErrorMsg" class="errorMsg">
+								<Label text="#menuErr"/>
+							</Panel>
+						</Panel>
+						<Panel id="glimpseSettings">
+							<ToggleButton checked="true" id="timebarToggleGlimpse" class="volvoCheckbox" text="#menuTimebar" />
+							<Label text="#teleportMode"/>
+							<Panel id="TPmodButtons">
+									<RadioButton class="volvoRadioButton" checked="checked" group="tpMode" id="tpMode1" text="#tpModeOne"/>
+									<RadioButton class="volvoRadioButton" group="tpMode" id="tpMode2" text="#tpModeTwo"/>
+									<RadioButton class="volvoRadioButton" group="tpMode" id="tpMode3" text="#tpModeThree"/>
+							</Panel>
+							<!-- <DropDown id="glimpseTP">
+							  <Label text="#tpModeOne" id="tpMode1"/>
+							  <Label text="#tpModeTwo" id="tpMode2"/>
+							  <Label text="#tpModeThree" id="tpMode3"/>
+							</DropDown> -->
+							<Label text="#menuSkill"/>
+							<Panel id="glimpseSkillList">
+							</Panel>
+							<Panel id="glimpseLvl">
+								<Label text="#glimpse_level"/>
+								<ToggleButton id="glimpse_level_1" checked="true" class="volvoCheckbox" />
+								<ToggleButton id="glimpse_level_2" checked="false" class="volvoCheckbox" />
+								<ToggleButton id="glimpse_level_3" checked="false" class="volvoCheckbox" />
+								<ToggleButton id="glimpse_level_4" checked="false" class="volvoCheckbox" />
+							</Panel>
+							<Button class="volvoButton" id="startTraining" onactivate="StartGlimpseTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+							<Panel id="glimpseErrorMsg" class="errorMsg">
+								<Label text="#menuErr"/>
+							</Panel>
+						</Panel>
+						<Panel id="armletSettings">
+							<Label text="#armletSettings1"/>
+							<Panel id="armletHeroPool">
+							</Panel>
+							<Button class="volvoButton" id="startTraining" onactivate="startArmletTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+						<Panel id="aimSettings">
+							<Label text="dimoon"/>
+							<Button class="volvoButton" id="startTraining" onactivate="startAimTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+						<Panel id="lastHitSettings">
+							<Panel class="Row">
+								<Panel class="Col">
+									<!-- <Label text="Choose lane:"/>
+									<Panel id="lhLane">
+											<RadioButton class="volvoRadioButton" checked="checked" group="lhLane" id="lane_0" text="Top"/>
+											<RadioButton class="volvoRadioButton" group="lhLane" id="lane_1" text="Mid"/>
+											<RadioButton class="volvoRadioButton" group="lhLane" id="lane_2" text="Bot"/>
+									</Panel> -->
+									<ToggleButton checked="true" id="botToggle" class="volvoCheckbox" text="Enable Sniper Bot" />
+									<Label text="Sniper bot is not finished and can be broken"/>
+								</Panel>
+								<Panel class="Col sideCol">
+									<Label text="#lasthit_side"/>
+									<Panel id="lhLane">
+											<RadioButton class="volvoRadioButton" checked="checked" group="lhSide" id="side_0" text="#lasthit_radiant"/>
+											<RadioButton class="volvoRadioButton" group="lhSide" id="side_1" text="#lasthit_dire"/>
+									</Panel>
+								</Panel>
+							</Panel>
+							<Label text="#lasthit_hero"/>
+							<Panel id="lhHeroPicker"/>
+							<Label text="#lasthit_items"/>
+							<Panel id="itemPicker">
+								<Panel class="Col">
+									<Label id="remGold" text="#lasthit_gold"/>
+									<Panel class="Row">
+										<Label id="nowGold" text="420"/>
+										<Panel id="goldIcon"/>
+									</Panel>
+									<Panel id="lh_inventory">
+										<Panel class="InventoryBG"/>
+										<Panel id="inventory_list">
+											<Panel class="inventory_row" id="inv_row_1">
+												<Panel id="inventory_slot_0" class="invSlot">
+													<Panel class="invFiller"/>
+												</Panel>
+												<Panel id="inventory_slot_1" class="invSlot">
+													<Panel class="invFiller"/>
+												</Panel>
+												<Panel id="inventory_slot_2" class="invSlot">
+													<Panel class="invFiller"/>
+												</Panel>
+											</Panel>
+											<Panel class="inventory_row" id="inv_row_2">
+												<Panel id="inventory_slot_3" class="invSlot">
+													<Panel class="invFiller"/>
+												</Panel>
+												<Panel id="inventory_slot_4" class="invSlot">
+													<Panel class="invFiller"/>
+												</Panel>
+												<Panel id="inventory_slot_5" class="invSlot">
+													<Panel class="invFiller"/>
+												</Panel>
+											</Panel>
+										</Panel>
+										<Panel id="backpack_list">
+										</Panel>
+										<Panel class="backpackShadow"/>
+									</Panel>
+								</Panel>
+								<Panel class="Col" id="items_to_buy">
+								</Panel>
+							</Panel>
+							
+							
+
+
+
+
+							<Button class="volvoButton" id="startTraining" onactivate="startLasthitTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+						<Panel id="invSettings">
+							<Panel id="invokeModeContainer">
+								<RadioButton class="volvoRadioButton" checked="checked" group="combos" id="combo_0" text="#invoker_invoke"/>
+								<Panel id="invokeAdditions">
+									<ToggleButton checked="false" id="singleTarget" class="volvoCheckbox" text="#invoker_single_target" />
+									<ToggleButton checked="false" id="oneSphere" class="volvoCheckbox" text="#invoker_one_sphere" />
+								</Panel>
+							</Panel>
+							<Label text="#invoker_combos"/>
+							<Panel class="combosContainer">
+								<Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_1" checked="true"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_emp"/>
+								</Panel>
+								<Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_2" checked="false"/>
+									<DOTAAbilityImage class="comboItem" abilityname="item_cyclone"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_sun_strike"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel>
+								<Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_3" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel>
+								<!-- <Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_4" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_emp"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_ice_wall"/>
+								</Panel> -->
+								<Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_4" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_emp"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel>
+								<!-- <Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_6" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_ice_wall"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel> -->
+								<Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_5" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_sun_strike"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel>
+								<!-- <Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_6" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboItem" abilityname="item_refresher"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel> -->
+								<!-- <Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_9" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_emp"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboItem" abilityname="item_refresher"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_emp"/>
+								</Panel>
+								<Panel class="combosRow">
+									<RadioButton class="comboRadio" group="combos" id="combo_10" checked="false"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_tornado"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_sun_strike"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboItem" abilityname="item_refresher"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_chaos_meteor"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_sun_strike"/>
+									<Label text="+" class="comboText"/>
+									<DOTAAbilityImage class="comboSkill" abilityname="invoker_deafening_blast"/>
+								</Panel> -->
+							</Panel>
+							<Button class="volvoButton" id="startTraining" onactivate="startProcastTraining(1);">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+						<Panel id="skillshotSettings">
+							<Label text="#menuSkill"/>
+							<Panel id="ssSkillList">
+							</Panel>
+							<Button class="volvoButton" id="startTraining" onactivate="startSkillshotTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+						<Panel id="challangeSettings">
+							<Panel id="challangeContainer">
+								<RadioButton checked="true" class="trainingEntry" group="challenges" id="aim_challenge" >
+									<Label html="true" text="Aim challenge &lt;font color='#29ff62'&gt;&lt;b&gt;EASY&lt;/b&gt;&lt;/font&gt;"/>
+								</RadioButton>
+								<RadioButton checked="true" class="trainingEntry" group="challenges" id="aim_challenge2">
+									<Label html="true" text="Aim challenge &lt;font color='#ffdb29'&gt;&lt;b&gt;NORMAL&lt;/b&gt;&lt;/font&gt;"/>
+								</RadioButton>
+								<RadioButton checked="true" class="trainingEntry" group="challenges" id="aim_challenge3">
+									<Label html="true" text="Aim challenge &lt;font color='#ff2929'&gt;&lt;b&gt;HARD&lt;/b&gt;&lt;/font&gt;"/>
+								</RadioButton>
+								<RadioButton checked="true" class="trainingEntry" group="challenges" id="map_aim_challenge" text="#map_aim_challenge"/>
+								<RadioButton checked="true" class="trainingEntry" group="challenges" id="move_aim_challenge" text="#move_aim_challenge"/>
+								<RadioButton class="trainingEntry" group="challenges" id="morph" text="test morph training"/>
+								<RadioButton checked="true" style="visibility:collapse;" class="trainingEntry" group="challenges" id="manta_challenge" text="#manta_challenge"/>
+								<RadioButton checked="true" style="visibility:collapse;" class="trainingEntry" group="challenges" id="invoker_challenge" text="#invoker_challenge"/>
+							</Panel>
+							<Button class="volvoButton" id="startChallenge" onactivate="startAimTraining();">
+								<Label text="#menuStart"/>
+							</Button>
+						</Panel>
+					</Panel>
+				</Panel>
+			</Panel> 
+		</Panel>
+		<!-- <Panel id="loadscreen">
+			<Panel id="icons"> 
+			</Panel> 
+			<Panel id="mask">
+			</Panel>
+
+ 		</Panel> -->
+ 		<Panel id="popup" class="PopupPanel"> 
+ 			<Label id="popupTitle" text="#popup_title" class="PopupTitle"/>
+ 			<Panel class="MessagePanel">
+ 				<Label id="lb_good" text="#lb_place" class="MessageLabel"/>
+ 				<Label id="lb_bad" text="#lb_last_result" class="MessageLabel"/>
+ 			</Panel>
+ 			<Panel class="PopupButtonRow">
+ 				<Button id="lb_restart" class="PopupButton">
+ 					<Label text="#lb_try_again"/>
+ 				</Button>
+ 				<Button id="lb_exit" class="PopupButton">
+ 					<Label text="#lb_return"/>
+ 				</Button>
+ 			</Panel>
+ 		</Panel> 
+ 		<Panel id="loadingContainer">
+ 			<Panel id="loadingPanel" class="PopupPanel">
+ 				<Label id="popupTitle" text="Loading" class="PopupTitle LoadingTitle"/>
+ 				<Panel class="MessagePanel" id="loadingMsgPanel">
+	 				<Label id="loading_name" text="#loading_name" class="MessageLabel"/>
+	 				<Panel id="loadingImage"/>
+	 				<Panel id="loadingBar">
+					</Panel>	
+	 			</Panel>
+ 			</Panel>
+
+ 		</Panel>
+ 		<Panel id="customDelay">
+ 			<Panel class="delayLeft">
+ 				<Label text="custom delay" class="delayLabel"/>
+ 			</Panel>
+ 			<Panel class="delayRight">
+ 				<Label id="delayValue" text="0" class="delayValueLabel"/>
+ 			</Panel>
+ 		</Panel>
+	    <Panel id="debugOutput">
+	    	<Label id="debugOutputLabel" text="testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttestt esttesttes ttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"/>
+	    	<Panel id="outputsContainer">
+	    		<Panel class="outputsRow">
+		    		<Panel onactivate="aiTestAction(1)" class="outputNeuronFC" id="action1">
+		    			<Label text="FC1"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(2)" class="outputNeuronFC" id="action2">
+		    			<Label text="FC2"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(3)" class="outputNeuronFC" id="action3">
+		    			<Label text="FC3"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(4)" class="outputNeuronFC" id="action4">
+		    			<Label text="FC5"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(5)" class="outputNeuronFC" id="action5">
+		    			<Label text="FC5"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(6)" class="outputNeuronFC" id="action6">
+		    			<Label text="FC6"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(7)" class="outputNeuronFC" id="action7">
+		    			<Label text="FC7"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(8)" class="outputNeuronFC" id="action8">
+		    			<Label text="FC8"/>
+		    		</Panel>
+	    		</Panel>
+	    		<Panel class="outputsRow">
+	    			<Panel onactivate="aiTestAction(9)" class="outputNeuronEC" id="action9">
+		    			<Label text="EC1"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(10)" class="outputNeuronEC" id="action10">
+		    			<Label text="EC2"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(11)" class="outputNeuronEC" id="action11">
+		    			<Label text="EC3"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(12)" class="outputNeuronEC" id="action12">
+		    			<Label text="EC5"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(13)" class="outputNeuronEC" id="action13">
+		    			<Label text="EC5"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(14)" class="outputNeuronEC" id="action14">
+		    			<Label text="EC6"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(15)" class="outputNeuronEC" id="action15">
+		    			<Label text="EC7"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(16)" class="outputNeuronEC" id="action16">
+		    			<Label text="EC8"/>
+		    		</Panel>
+	    		</Panel>
+	    		<Panel class="outputsRow">
+	    			<Panel onactivate="aiTestAction(17)" class="outputNeuronMOVE" id="action17">
+		    			<Label text="W"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(18)" class="outputNeuronMOVE" id="action18">
+		    			<Label text="A"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(19)" class="outputNeuronMOVE" id="action19">
+		    			<Label text="S"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(20)" class="outputNeuronMOVE" id="action20">
+		    			<Label text="D"/>
+		    		</Panel>
+		    		<Panel onactivate="aiTestAction(21)" class="outputNeuronMOVE" id="action21">
+		    			<Label text="STOP"/>
+		    		</Panel>
+	    		</Panel>
+	    	</Panel>
+	    	
+	    </Panel>
+	</Panel>
+
+</root>

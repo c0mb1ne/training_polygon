@@ -1,0 +1,24 @@
+"AddonInfo"
+{
+  "PenaltiesEnabled"    "0"
+  "CheckAFKPlayers"     "0"
+  "TeamCount" "10"
+  "maps"      "template_map"
+  "IsPlayable"  "1"
+  "template_map"
+  {
+          "MaxPlayers"                    "1"
+  }
+//  "dota"
+//  {
+//          "MaxPlayers"                    "2"
+//  }
+//  "desert_duo"
+//  {
+//          "MaxPlayers"                    "10"
+//  }
+//  "forest_solo"
+//  {
+//          "MaxPlayers"                    "10"
+//  }
+}

@@ -1,0 +1,547 @@
+@define titleFont: Reaver,Goudy Trajan Medium,FZKai-Z03,TH Sarabun New,YDYGO 540;
+
+.Main{
+/*	background-color: gradient( linear, 20% 120%, 5% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+*/	
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #000 ),  to( #fff ) );
+	width: 100%;
+	height: 100%;
+	vertical-align: center;
+	horizontal-align: center;
+	flow-children: right;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: #18181A;
+	visibility: collapse;
+	opacity: 0; 
+}
+.avata_menu_icon{
+	width: 68px;
+	height: 68px;
+	vertical-align: center;
+	horizontal-align: center;
+}
+#menu_left_bar{
+	width: 176px;
+	height: 100%;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	flow-children: down;
+
+}
+#menu_button_container{
+	flow-children: down;
+	vertical-align: center;
+	horizontal-align: center;
+
+}
+.menu_button{
+	flow-children: down;
+	horizontal-align: center;
+	vertical-align: center;
+	margin: 2px;
+	width: 144px;
+	height: 144px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	box-shadow: #000000 0px 0px 12px;
+	transition-property: border, background-color, box-shadow;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.normal_button{
+
+	width: fit-children;
+	height: fit-children;
+	padding: 10px;
+}
+.normal_button_label{
+
+	font-size: 24px;
+
+	text-align: center;
+	text-transform: uppercase;
+	font-family: titleFont;
+	font-weight: semi-bold; 
+	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+	transition-property: text-shadow, color;
+	transition-duration: 0.2s;
+}
+.menu_button:enabled:hover{
+	border: 1px solid #ADD9E6; 
+}
+.menu_button:enabled:selected{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+.menu_button:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+.menu_button_label{
+	width: 100%;
+	/*color: #b8d6df;*/
+	font-size: 24px;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	text-transform: uppercase;
+	text-overflow: clip;
+	font-family: titleFont;
+	font-weight: semi-bold; 
+	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+	transition-property: text-shadow, color;
+	transition-duration: 0.2s;
+/*	text-shadow: 0px 0px 10px 5.0 gradient( radial, 50% 50%, 0% 0%, 10% 10%, from( #000000 ), to( #000000 ) );*/
+}
+#menu_play_label{
+	horizontal-align: center;
+}
+.mode_play{
+	padding: 5px;
+	width: 20%;
+	height: fit-children;
+	horizontal-align: left;
+	
+}
+.menu_button:selected Label{
+	color: #1D1E21;
+}
+.menu_button:active Label{
+	color: #1D1E21;
+}
+.avata_menu_icon{
+	/*contrast: 8;*/
+/*	saturation: 0.5;*/
+	saturation: 0;
+}
+#menu_avatar_container{
+	/*background-color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );*/
+
+}
+.menu_button:selected Image{
+	wash-color: #1D1E21;
+}
+.menu_button:active Image{
+	wash-color: #1D1E21;
+}
+.menu_button:selected DOTAAvatarImage{
+	/*wash-color: #1D1E21;*/
+	saturation: 1;
+
+}
+.menu_button_label Label{
+	/*font-family: Arial;*/
+}
+.menu_button_icon_container{
+	width: 68px;
+	height: 68px;
+	horizontal-align: center;
+	margin-top: 18px;
+}
+.menu_button_icon{
+	horizontal-align: center;
+	vertical-align: center;
+}
+#menu_button_icon_play{
+	width: 36px;
+	height: 44px;
+	horizontal-align: center;
+	vertical-align: center;
+}
+#menu_button_icon_settings{
+	width: 56px;
+	height: 56px;
+	horizontal-align: center;
+	vertical-align: center;
+}
+#play_icon{
+	width: 68px;
+	height: 68px;
+	background-size: 36px 44px;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-image: url( "file://{images}/custom_game/play_button.png");
+	margin-top: 18px;
+	margin-left: 38px;
+}
+
+#fake_dota_buttons_container{
+	margin-left: 8px;
+	margin-top: 12px;
+	flow-children: right;
+}
+#fake_dota_menu{
+	background-image: url("s2r://panorama/images/control_icons/return_to_game_png.vtex");
+	transform: scaleY(-1);
+}
+#fake_dota_settings{
+	background-image: url( "s2r://panorama/images/control_icons/gear_png.vtex");
+	background-size: 27px;
+	margin-top: 2px;
+}
+#quit_button{
+	background-image: url( "file://{images}/custom_game/quit.png");
+	background-size: 27px;
+	margin-top: 2px;
+}
+.fake_dota_buttons{
+	tooltip-position: bottom;
+	width: 30px;
+	height: 30px;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 8px;
+	margin-right: 8px;
+	vertical-align: middle;
+	horizontal-align: center;
+	background-position: center;
+	opacity: 0.5;
+	wash-color: #CDF;
+	transition-property: opacity;
+	transition-duration: 0.2s;
+	img-shadow: 0px 0px 3px 3 black;
+}
+.fake_dota_buttons:hover{
+	opacity: 1.0;
+	wash-color: white;
+}
+.testImg{
+ 	img-shadow: 0px 0px 4px 1.0 #FF0000;
+}
+#right_container{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+#tp_header{
+	height: 242px;
+	width: 100%;
+}
+#tp_header_anim_container{
+	height: 100%;
+	width: 100%;
+	background-color: #2222;
+	overflow: clip;
+	box-shadow: inset #00000099 0px 0px 217px 0px;
+}
+#tp_header_label_container{
+	position: 0px 600px 10px;
+	width: 300px;
+	height: 100px;
+	background-color: black;
+/*	vertical-align: middle;
+	horizontal-align: middle;*/
+}
+
+#tp_header_label{
+	margin-right: 55px;
+	margin-top: 39px;
+	color: white;
+	font-size: 96px;
+	vertical-align: top;
+	horizontal-align: right;
+	font-family: titleFont;
+	font-weight: bold;
+	text-transform: uppercase;
+	/*text-shadow: 0px 0px 10px 5.0 gradient( radial, 50% 50%, 0% 0%, 10% 10%, from( #000000 ), to( #000000 ) );*/
+	text-shadow: 0px 0px 8px 3.0 #333333b0;
+}
+#tp_version_label{
+	margin-right: 55px;
+	margin-top: 145px;
+	color: #D1B560;
+	font-size: 40px;
+	vertical-align: top;
+	horizontal-align: right;
+	font-family: titleFont;
+	font-weight: bold;
+/*	text-transform: uppercase;*/
+	/*text-shadow: 0px 0px 10px 5.0 gradient( radial, 50% 50%, 0% 0%, 10% 10%, from( #000000 ), to( #000000 ) );*/
+	text-shadow: 0px 0px 8px 3.0 #333333b0;
+}
+#tp_status_label{
+	margin-right: 70px;
+	margin-top: 190px;
+	font-size: 36px;
+	vertical-align: top;
+	horizontal-align: right;
+	font-family: titleFont;
+	font-weight: bold;
+/*	text-transform: uppercase;*/
+	/*text-shadow: 0px 0px 10px 5.0 gradient( radial, 50% 50%, 0% 0%, 10% 10%, from( #000000 ), to( #000000 ) );*/
+	text-shadow: 0px 0px 8px 3.0 #333333b0;
+}
+.statusOffline{
+	color: #db0028;
+}
+.statusOnline{
+	color: #36ab00;
+}
+#tp_background{
+/*	position: 3% 3% 50%;
+	ui-scale: 100% 100% 170%;
+	pre-transform-scale2d: 1, 1;*/
+	ui-scale: 70%;
+	animation-name: 2dpanelanimation;
+  	animation-duration: 90.11s;
+  	/*animation-duration: 5.11s;*/
+  	animation-timing-function: linear;
+  	animation-iteration-count: infinite;
+}
+
+#menu_content{
+	flow-children:right;
+}
+#welcomeScreen{
+	flow-children:right;
+}
+ @keyframes '2dpanelanimation'{
+
+  0%{
+
+   transform: translateZ( 190px ) translateX( 4px ) translateY( 0px ) rotateY( 10deg ) rotateX( 8deg );
+
+  }
+
+  25%{
+
+   transform: translateZ( 220px ) translateX( 100px ) translateY( -300px ) rotateY( 6deg ) rotateX( 10deg );
+
+  }
+
+  50%{
+
+   transform: translateZ( 190px ) translateX( 180px ) translateY( -600px ) rotateY( 12deg ) rotateX( 8deg );
+
+  }
+
+  75%{
+
+   transform: translateZ( 220px ) translateX( 100px ) translateY( -300px ) rotateY( 8deg ) rotateX( 10deg );
+
+  }
+
+  100%{
+
+   transform: translateZ( 190px ) translateX( 4px ) translateY( 0px ) rotateY( 10deg ) rotateX( 8deg );
+ 
+  }
+ }
+
+.embeedingContainer{
+	min-width: 400px;
+	width: fill-parent-flow(1);
+	height: fill-parent-flow(1);
+	flow-children: down;
+	margin-left: 15px;
+	margin-top: 17px;
+	margin-right: 15px;
+	margin-bottom: 17px;
+	border-width: 0px 1px 1px 1px;
+	border-style: solid;
+	border-color: #212121;
+	background-image: url( "file://{images}/custom_game/noise.png");
+}
+.embeedingHeader{
+	min-height: 55px;
+	width: 100%;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	padding-top: 13px;
+	padding-bottom: 13px;
+}
+.embeedingHeaderLabel{
+
+}
+.embeedingContent{
+	min-height: 300px;
+	padding-right: 20px;
+	padding-left: 20px;
+	padding-top: 16px;
+	padding-bottom: 16px;
+}
+Label{
+
+	color: #FFFFFF;
+	font-family: 'RadianceM';
+	font-style: normal;
+	font-size: 16px;
+	line-height: 19px;
+	text-align: center;
+}
+.embeedingContentLabel{
+	color: #FFFFFF;
+	font-family: 'RadianceM';
+	font-style: normal;
+	font-size: 16px;
+	line-height: 19px;
+	text-align: center;
+} 
+.Row{
+	flow-children: right;
+	width: fill-parent-flow(1);
+	height: fill-parent-flow(1);
+}
+.RowNoFill{
+	flow-children: right;
+	width: fill-parent-flow(1);
+}
+.Col{
+	flow-children: down;
+	width: fill-parent-flow(1);
+	height: fill-parent-flow(1);
+}
+.gameModeContainer{
+	width: 320px;
+	height: 180px;
+	margin: 10px;
+	border-width: 1px 1px 1px 1px;
+	border-style: solid;
+	border-color: black;
+	transition-property: border, wash-color, pre-transform-scale2d, saturation;
+	transition-duration: 0.2s;
+	transition-timing-function: ease-in-out;
+	saturation: 0.5;
+} 
+.gameModeContainer:active{
+	sound: "ui_generic_button_click";
+}
+.gameModeContainer:hover{
+	saturation: 1;
+	pre-transform-scale2d: 1.05;
+}
+
+.testwebm{
+	width: 600px;
+	height: 300px;
+/*	background-size: 100%;
+	background-image: url("file://{resources}/videos/15503461349800.webm");*/
+}
+.testwebm2{
+	width: 600px;
+	height: 300px;
+	background-image: url("s2r://panorama/videos/international2022/abilityfx/aghs_scepter_lvl1.webm");
+}
+.competContainer{
+	margin-right: 0px;
+	margin-left: 0px;
+	
+}
+.sandboxContainer{
+	margin-left: 0px;
+	
+}
+#compMenu{
+	flow-children: right-wrap;
+	horizontal-align: center;
+	overflow: squish scroll;
+}
+#sndbxMenu{
+	flow-children: right-wrap;
+	horizontal-align: center;
+	overflow: squish scroll;
+}
+VerticalScrollBar{
+	margin-right: 0px;
+	height: 100%;
+	width: 8px;
+	horizontal-align: right;
+	layout-position: fixed;
+}
+VerticalScrollBar .ScrollThumb{
+	background-color: #566767;
+	min-height: 32px;
+	border-top: 1px solid #aaaaaa22;
+	border-right: 1px solid #000000aa;
+	transition-property: background-color, transform, position;
+	transition-duration: 0s;
+	transition-timing-function: ease-in-out;
+}
+.gmImageContainer{
+	width: 100%;
+	height: 100%;
+	background-size: 100%;
+/*	background-image: url("file://{images}/custom_game/test.png");*/
+}
+.gmFooter{
+	width: 100%;
+	height: 30px;
+	border-top: 1px solid #00000033;
+	background-color: #000000dd;
+	vertical-align: bottom;
+}
+.gameModeLabel{
+	margin-left: 3px;
+	vertical-align: center;
+}
+.modFilterContainer{
+	width:	200px;
+}
+.filterEmb{
+	margin-right: 0;
+}
+#spellsContainer{
+	width: 100%;
+	height: 100%;
+	flow-children: right-wrap;
+	horizontal-align: center;
+	overflow: squish scroll;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+
+}
+
+
+.customCheckbox {
+	margin-top: 3px;
+	flow-children: right;
+	padding: 1px 4px;
+	color: white;
+	transition-property: background-color, box-shadow, color;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-in-out;
+}
+.customCheckbox:hover .TickBox{
+	border: 2px solid #697879;
+}
+
+.customCheckbox Label{
+	font-size: 16px;
+	margin-left: 8px;
+	color: #7d8688;
+	letter-spacing: 1px;
+	font-weight: thin;
+	transition-property: color;
+	transition-duration: 0.2s;
+	transition-timing-function: linear;
+}
+.customCheckbox .TickBox{
+	width: 18px;
+	height: 18px;
+	vertical-align: center;
+	background-color: black;
+	border: 2px solid #5e686966;
+	box-shadow: #00000055 0px 0px 1px 3px ;
+
+	transition-property: background-color, box-shadow, color, border, background-image, wash-color, pre-transform-scale2d;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+	}
+.customCheckbox:selected Label{
+	color: #FFFFFF;
+}
+.customCheckbox:selected .TickBox{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #e7f6f5 ), to( #a0d6d7 ) );
+	border: 3px solid #000000;
+	box-shadow: #5b62bf77 0px 0px 3px 0px ;
+}
+.customCheckbox:enabled:hover Label{
+	color: #d2d6d1;
+}

@@ -1,0 +1,17 @@
+<root> 
+  <styles>
+    <include src="file://{resources}/styles/custom_loading_screen.css" />
+  </styles>
+  <Panel class="AddonLoadingRoot">
+    <!-- <Panel id="CustomBg" >
+      <Image id="gamemode" class="SeqImg" src="file://{images}/custom_game/loading_screen/gamemode.png" />
+    </Panel>
+    <Panel id="TitlePanel"> 
+
+    </Panel> -->
+    <Panel id="icons"> 
+      </Panel> 
+      <Panel id="mask">
+      </Panel>
+  </Panel>
+</root>

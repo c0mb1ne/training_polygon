@@ -1,0 +1,46 @@
+.skillContainer{
+	height: 63px;
+	width: 63px;
+	margin: 5px;
+}
+.etAbilThumb{ 
+	height: 80px;
+	margin: 5px;
+}
+
+.timingType{
+	height: 80px;
+
+	margin: 5px;
+	padding: 5px;
+	saturation: 0;
+	border: 1px solid #212121;
+	
+	transition-property: border, background-color, box-shadow;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.timingType:enabled:hover{
+	border: 1px solid #ADD9E6; 
+}
+.timingType:enabled:selected{
+	saturation: 1;
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	
+}
+.timingType:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	
+}
+.buttons{
+	horizontal-align:left;
+	margin: 5px;
+}
+#dodgeSpellContainer{
+	flow-children: right-wrap;
+	overflow: squish scroll;
+}

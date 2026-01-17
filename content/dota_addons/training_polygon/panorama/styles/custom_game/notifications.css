@@ -1,0 +1,92 @@
+.Main{
+	margin-top: 420px;
+	transform: scaleY( -1.0 );
+	height: 385px;
+	width: 500px;
+	overflow:  noclip noclip; 
+/*	background-color: #40404062; */
+	flow-children: up;
+}
+Label, TextEntry{
+	font-family: Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+}
+
+@define toastExitDuration: 0.2s;
+
+.NotificationPanel{
+	vertical-align: top;
+	opacity: 0.0;
+	horizontal-align: left;
+	transform: scaleY( -1.0 );
+	flow-children: left;
+	height: 30px;
+	margin-top: 5px;
+	overflow: noclip;
+}
+
+.NotPanelAnimate{
+	opacity: 1.0;
+	transition-property: opacity;
+	transition-duration: toastExitDuration;
+    animation-name: CombatEvent;
+    animation-duration: .41s;
+    horizontal-align: left;
+}
+.NotificationCollapse{
+	opacity: 0.0;
+}
+.EventListLabel
+{
+	color: #ffffff;
+	font-size: 18px;
+    font-weight: bold;
+	text-shadow: 2px 1px 0px 2 black;
+	vertical-align: center;
+    padding-top: 2px;
+	height: 30px;
+    padding-left: 18px;
+    padding-right: 0px;
+}
+.Skilled{
+	padding-left: 40px;
+}
+.skillIcon{
+	margin-left: -35px;
+	width: 30px;
+	height: 30px;
+}
+.pogChamp{
+	background-image: url("file://{images}/custom_game/PogChamp30p.png");
+	margin-left: -35px;
+	width: 30px;
+	height: 30px;
+	margin-bottom: 2px;
+}
+.pepega{
+	background-image: url("file://{images}/custom_game/4.png");
+	background-size: 30px 30px;
+	margin-left: -35px;
+	width: 30px;
+	height: 30px;
+	margin-bottom: 2px;
+}
+@keyframes 'CombatEvent'
+{
+    0%
+    {
+        pre-transform-scale2d: .2;
+        opacity: 0;
+    }
+
+    50%
+    {
+        pre-transform-scale2d: 1.5;
+        opacity: 1;
+    }
+
+    100%
+    {
+        pre-transform-scale2d: 1;
+        opacity: 1;
+    }
+}

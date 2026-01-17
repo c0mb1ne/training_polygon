@@ -1,0 +1,235 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+
+{
+    good1 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_manta_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    good2 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_manta_02.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    good3 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_manta_03.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    good4 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_resist_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    good5 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_win_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad1 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_ability_failure_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad2 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_ability_failure_02.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad3 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_anger_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad4 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_anger_02.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad5 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_anger_03.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad6 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_anger_04.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad7 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_anger_05.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    bad8 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_death_01.vsnd"
+        ]
+        volume = "1.5"
+        distance_max = "3500"
+    }
+
+    bad9 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_lose_01.vsnd"
+        ]
+        volume = "1.5"
+        distance_max = "3500"
+    }
+
+    bad10 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_lose_02.vsnd"
+        ]
+        volume = "1.5"
+        distance_max = "3500"
+    }
+
+    bad11 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_lose_03.vsnd"
+        ]
+        distance_max = "3500"
+    }
+
+    bad12 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/antimage/anti_pain_01.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    wk_reinc = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/weapons/hero/skeleton_king/reincarnate.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    string1 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/music/stingers/reincarnate.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    string2 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/music/stingers/reincarnate_03.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    frog = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/misc/soundboard/frog.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    sproing = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/misc/soundboard/sproing.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    drums = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/misc/soundboard/drum_roll.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    goodSnd = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/items/clarity_potion.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    badSnd = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/items/hotd.vsnd"
+        ]
+        distance_max = "3500"
+    }
+}

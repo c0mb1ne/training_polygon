@@ -1,0 +1,15 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/twitch_link.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/twitch_link.js" />
+    </scripts>
+    <Panel class="twitchContainer">
+        <Panel class="twitchLogo">
+        </Panel>
+        <Label id="link" class="twitchLabel" html="true" text="%username%"/> 
+        <Label id="redC" class="redCircle" text="●"/>
+        <Label id="liveL" class="liveLabel" text="Live"/>
+    </Panel>
+</root>

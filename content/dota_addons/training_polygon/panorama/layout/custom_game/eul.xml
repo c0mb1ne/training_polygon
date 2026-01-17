@@ -1,0 +1,84 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/eul.css" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/custom_game/eul.js" />
+	</scripts>
+	<Panel class="Main" hittest="false">
+		<Button class="volvoButton" id="btnEnd" onactivate="endEulTraining()">
+			<Label text="#trainingEnd"/>
+		</Button>
+		<!-- <Button class="volvoButton" id="asdasdasd" onactivate="test()">
+			<Label text="testo"/>
+		</Button> -->
+		<Panel id="eulTimer" hittest="false" hittestchildren="false">
+			<Label id="timerText" text="0.000"/>
+			<Panel id="timerBar">
+			</Panel>
+			<Panel id="barDynamic">
+			</Panel> 
+			<Panel id="barMarker">
+			</Panel> 
+			<Label id="description" text="#eulTimeBarInfo"/>
+		</Panel>
+		<Panel style='visibility: collapse;' id="invokerDance" hittest="false">
+			<Panel id="castBlock">
+			</Panel>
+			<Panel id="skillContainer"> 
+
+			</Panel>
+			<DOTAHeroImage class="invokeHeroPortrait" id="invokeEarth" heroname="npc_dota_hero_earth_spirit" heroimagestyle="landscape"/>
+			<DOTAHeroImage class="invokeHeroPortrait" id="invokeEmber" heroname="npc_dota_hero_ember_spirit" heroimagestyle="landscape"/>
+			<DOTAHeroImage class="invokeHeroPortrait" id="invokeStorm" heroname="npc_dota_hero_storm_spirit" heroimagestyle="landscape"/>
+		</Panel>
+		<Panel id="invokerBenchmark">
+			<Panel class="benchmarkCol">
+				<Label class="benchmarkLabel benchmarkDesc" text="Skills per min:"/>
+				<Label class="benchmarkLabel benchmarkDesc" text="Avg cast time:"/>
+				<Label class="benchmarkLabel benchmarkDesc" text="Spheres per skill:"/>
+			</Panel>
+			<Panel class="benchmarkCol">
+				<Label class="benchmarkLabel benchmarkValues" id="skillsMin" text="0"/>
+				<Label class="benchmarkLabel benchmarkValues" id="skillsAvg" text="0"/>
+				<Label class="benchmarkLabel benchmarkValues" id="sphersPerSkill" text="0"/>
+			</Panel>
+		</Panel>
+		<Panel style="visibility:collapse;" id="SRSettings">
+			<Panel class="SRRow"> 
+				<Button class="volvoButton plusButtons" onactivate="changeStr(-1)">
+					<Label text="-"/>
+				</Button>
+				<Panel class="SRIcon"/>
+				<Label class="SRLabel" text=":"/>
+				<Label id="SRStrValue" class="SRLabel" text=""/>
+				<Button class="volvoButton plusButtons" onactivate="changeStr(1)">
+					<Label text="+"/>
+				</Button>
+			</Panel>
+			<Panel class="SRRow">
+				<Button id="SRStrPlus" class="volvoButton plusButtons" onactivate="changeSR(-1)">
+					<Label text="-"/>
+				</Button>
+				<Label class="SRLabel" text="Status resistance:"/>
+				<Label id="SRValue" class="SRLabel" text=""/>
+				<Button class="volvoButton plusButtons" onactivate="changeSR(1)">
+					<Label text="+"/>
+				</Button>
+			</Panel>
+		</Panel>
+		<Panel id="eulNotification" hittest="false" hittestchildren="false">
+			<Label id="header" text="Good!"/>
+			<Label id="desc" text="Time between landing and your ability damage:"/>
+		</Panel>
+		<Panel id="lvlChanger">
+			<Label text="Ability level: " style="vertical-align: center;"/>
+			<Button class="volvoButton plusButtons" id="plusLvl" onactivate="ChangeAbilityLvl(1);">
+				<Label text="+"/>
+			</Button>
+			<Button class="volvoButton plusButtons" id="minusLvl" onactivate="ChangeAbilityLvl(0);">
+				<Label text="-"/>
+			</Button>
+		</Panel>
+	</Panel>
+</root>

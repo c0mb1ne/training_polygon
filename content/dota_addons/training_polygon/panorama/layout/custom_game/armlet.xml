@@ -1,0 +1,287 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/armlet.css" />
+		<include src="file://{resources}/styles/custom_game/dotastyles.css" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/custom_game/armlet.js" />
+	</scripts>
+	<Panel class="DemoHud" hittest="false">
+
+	  <Panel id="settingsPanel" class="ControlPanel LeftRightFlow">
+	    <Panel class="ControlPanelContainer">
+	    <Panel id="Maximized">
+	      <Panel id="MinimizeButton">
+	        <Label text="#menuSet" />
+	      </Panel>
+
+	      <Panel id="armletCategory" class="Category">
+		        <Label text="#armEnemy"/>
+		        <Panel class="Row">
+		        	<Label class="buttonDesc" text="#armAttackSpeed"/>
+		        </Panel>
+		        <Panel class="Row">
+	    			<Button class="DemoButton Small" onactivate="ChangeAttackSpeed(-10);">
+		            	<Label text="-"/>
+		          	</Button>
+		          	<Label id="asField" class="Value" text="322"/>
+		          	<Button class="DemoButton Small" onactivate="ChangeAttackSpeed(10);">
+		            	<Label text="+"/>
+		          	</Button>
+		        </Panel>
+		        <Panel class="Row">
+		        	<Label class="buttonDesc" text="#armDamage"/>
+		        </Panel>
+		        <Panel class="Row">
+	    			<Button class="DemoButton Small" onactivate="ChangeAttackDamage(-10);">
+		            	<Label text="-"/>
+		          	</Button>
+		          	<Label id="dmgField" class="Value" text="322"/>
+		          	<Button class="DemoButton Small" onactivate="ChangeAttackDamage(10);">
+		            	<Label text="+"/>
+		          	</Button>
+		        </Panel>
+		        <Panel class="Row">
+		          <ToggleButton class="DemoButton" onactivate="ToggleFakeMod();">
+		            <Label text="#armFakeMode"/>
+		          </ToggleButton>
+		        </Panel>
+	      </Panel>
+	      <Panel id="timingCategory" class="Category">
+		        <Label text="#armEnemy"/>
+		        <Panel class="Row">
+		        	<Label class="buttonDesc" text="#armAttackSpeed"/>
+		        </Panel>
+		        <Panel class="Row">
+	    			<Button class="DemoButton Small" onactivate="ChangeAttackSpeed(-10);">
+		            	<Label text="-"/>
+		          	</Button>
+		          	<Label id="asField" class="Value" text="322"/>
+		          	<Button class="DemoButton Small" onactivate="ChangeAttackSpeed(10);">
+		            	<Label text="+"/>
+		          	</Button>
+		        </Panel>
+		        <Panel class="Row">
+		        	<Label class="buttonDesc" text="#armDamage"/>
+		        </Panel>
+		        <Panel class="Row">
+	    			<Button class="DemoButton Small" onactivate="ChangeAttackDamage(-10);">
+		            	<Label text="-"/>
+		          	</Button>
+		          	<Label id="dmgField" class="Value" text="322"/>
+		          	<Button class="DemoButton Small" onactivate="ChangeAttackDamage(10);">
+		            	<Label text="+"/>
+		          	</Button>
+		        </Panel>
+		        <Panel class="Row">
+		          <ToggleButton class="DemoButton" onactivate="ToggleFakeMod();">
+		            <Label text="#armFakeMode"/>
+		          </ToggleButton>
+		        </Panel>
+	      </Panel>
+  	      <Panel id="invSettings" class="Category">
+	        <Label text="invoker settings"/>
+			<Panel class="Row">
+	        	<Label class="buttonDesc" text="quas"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="changeSphereLevel('quas',0);">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="quasField" class="Value" text="0"/>
+	          	<Button class="DemoButton Small" onactivate="changeSphereLevel('quas',1);">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="wex"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="changeSphereLevel('wex',0);">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="wexField" class="Value" text="0"/>
+	          	<Button class="DemoButton Small" onactivate="changeSphereLevel('wex',1);">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="exort"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="changeSphereLevel('exort',0);">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="exortField" class="Value" text="0"/>
+	          	<Button class="DemoButton Small" onactivate="changeSphereLevel('exort',1);">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	          <ToggleButton class="DemoButton" onactivate="toggleAghanim();">
+	            <Label text="scepter"/>
+	          </ToggleButton>
+	        </Panel>
+	        <Panel class="Row">
+	          <!-- <ToggleButton class="DemoButton" onactivate="toggleTalentTornado();">
+	            <Label text="tornado talent"/>
+	          </ToggleButton> -->
+	        </Panel>
+	        <Panel class="Row">
+	          <Button class="DemoButton" onactivate="randomSpheres();">
+	            <Label text="random"/>
+	          </Button>
+	        </Panel>
+	        <Panel class="Row">
+	          <ToggleButton class="DemoButton" onactivate="toggleTinyMove();">
+	            <Label text="tiny moving"/>
+	          </ToggleButton>
+	        </Panel>
+	        <Panel class="Row">
+	          <ToggleButton class="DemoButton" onactivate="toggleTinyFast();">
+	            <Label text="turbo mode"/>
+	          </ToggleButton>
+	        </Panel>
+	      </Panel>
+	      <Panel id="skillShotCategory" class="Category">
+	        <Label text="Global:"/>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="Trees:"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="ChangeTreeLevel(-1);">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="treeField" class="Value" text="Lvl ?"/>
+	          	<Button class="DemoButton Small" onactivate="ChangeTreeLevel(1);">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="Min range:"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="ChangeSettings(-1,'minR');">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="minRField" class="Value" text="Lvl ?"/>
+	          	<Button class="DemoButton Small" onactivate="ChangeSettings(1,'minR');">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="Max range:"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="ChangeSettings(-1,'maxR');">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="maxRField" class="Value" text="Lvl ?"/>
+	          	<Button class="DemoButton Small" onactivate="ChangeSettings(1,'maxR');">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="Min movespeed:"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="ChangeSettings(-1,'minMs');">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="minMSField" class="Value" text="Lvl ?"/>
+	          	<Button class="DemoButton Small" onactivate="ChangeSettings(1,'minMs');">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Panel class="Row">
+	        	<Label class="buttonDesc" text="Max movespeed:"/>
+	        </Panel>
+	        <Panel class="Row">
+    			<Button class="DemoButton Small" onactivate="ChangeSettings(-1,'maxMs');">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<Label id="maxMSField" class="Value" text="Lvl ?"/>
+	          	<Button class="DemoButton Small" onactivate="ChangeSettings(1,'maxMs');">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel>
+	        <Label text="HERO:"/>
+	        <Panel id="skillchangerTitle" class="Row">
+	        	<Label class="buttonDesc" text="Ability level:"/>
+	        </Panel>
+	        <!-- <Panel id="skillchanger" class="Row">
+    			<Button class="DemoButton Small" onactivate="ChangeSettings(-1);">
+	            	<Label text="-"/>
+	          	</Button>
+	          	<DOTAAbilityImage class="lvlChangerIcon" abilityname="pudge_meat_hook" />
+	          	<Button class="DemoButton Small" onactivate="ChangeSettings(1);">
+	            	<Label text="+"/>
+	          	</Button>
+	        </Panel> -->
+	        <Panel  class="Row">
+	          <ToggleButton id="invScepter" class="DemoButton" onactivate="ssToggleScepter();">
+	            <Label text="scepter"/>
+	          </ToggleButton>
+	        </Panel>
+	        <Panel  class="Row">
+	          <ToggleButton id="invLens" class="DemoButton" onactivate="ssToggleLense();">
+	            <Label text="lense"/>
+	          </ToggleButton>
+	        </Panel>
+         	<Panel  class="Row">
+	          <ToggleButton id="invBlink" class="DemoButton" onactivate="ssToggleBlink();">
+	            <Label text="blink"/>
+	          </ToggleButton>
+	        </Panel>
+	        <Panel id="sfCrosshair" class="Row">
+	          <ToggleButton  class="DemoButton" onactivate="ssCrosshair();">
+	            <Label text="crosshair"/>
+	          </ToggleButton>
+	        </Panel>
+
+	        <Label text="Targets:"/>
+
+	        <Panel class="Row">
+	          	<Label  class="buttonDesc" text="Add:"/>
+	        </Panel>
+	        <Panel id="targetPicker">
+	        	<Panel class="targetRow">
+		        	<DOTAHeroImage onactivate="ssNewTarget('npc_dota_hero_juggernaut')" class="targetToPick" heroname="npc_dota_hero_juggernaut" heroimagestyle="icon" scaling="none"/>
+		        	<DOTAHeroImage onactivate="ssNewTarget('npc_dota_hero_phoenix')" class="targetToPick" heroname="npc_dota_hero_phoenix" heroimagestyle="icon" />
+		        	<DOTAHeroImage onactivate="ssNewTarget('npc_dota_hero_earth_spirit')" class="targetToPick" heroname="npc_dota_hero_earth_spirit" heroimagestyle="icon" />
+		        	<DOTAHeroImage onactivate="ssNewTarget('npc_dota_hero_mirana')" class="targetToPick" heroname="npc_dota_hero_mirana" heroimagestyle="icon" />
+		        </Panel>
+		        <Panel class="targetRow">
+		        	<DOTAHeroImage onactivate="ssNewTarget('npc_dota_hero_queenofpain')" class="targetToPick" heroname="npc_dota_hero_queenofpain" heroimagestyle="icon" />
+		        	<DOTAHeroImage onactivate="ssNewTarget('npc_dota_hero_antimage')" class="targetToPick" heroname="npc_dota_hero_antimage" heroimagestyle="icon" />
+		        </Panel>
+			</Panel>
+			<Panel class="Row">
+	          	<Label  class="buttonDesc" text="Remove:"/>
+	        </Panel>
+			<Panel id="targetRemover"> 
+				<Panel id="remover_1" class="targetRow">
+				</Panel>
+				<Panel id="remover_2" class="targetRow">
+				</Panel>
+			</Panel>
+	      </Panel>
+
+	      <Panel class="Category">
+	        <Label text=""/>
+	        <Panel class="QuitPausePanel">
+	          <Button id="quitButton" class="QuitButton" onactivate="SsEnd()">
+	            <Label text="#trainingEnd"/>
+	          </Button>
+	        </Panel>
+	      </Panel>
+
+	    </Panel>
+	    </Panel>
+	    <Button id="ControlPanelSlideThumb" onactivate="$('#settingsPanel').ToggleClass('Minimized')">
+	      <Panel class="RightArrowButtonIcon"/>
+	    </Button>
+	    <Panel />
+	  </Panel>
+	</Panel>
+</root>

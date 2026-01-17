@@ -1,0 +1,13 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/test.css" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/custom_game/leaderboard.js" />
+	</scripts>
+	<Panel class="Leaderboard" >
+		<Label id="lalka" text="Leaderboard:"/>
+
+
+	</Panel>
+</root>

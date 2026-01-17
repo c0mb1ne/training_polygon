@@ -1,0 +1,387 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+
+{
+    eul_good_1 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_lose_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_2 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_lose_02.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_3 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_lose_03.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_4 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_lose_04.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_5 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_lose_05.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_6 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_death_02.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_7 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_death_07.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_8 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_death_04.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_9 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_death_05.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_10 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_01.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_11 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_02.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_12 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_03.vsnd"
+        ]
+        volume = "3"
+        distance_max = "3500"
+    }
+
+    eul_good_13 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_04.vsnd"
+        ]
+        volume = "1.5"
+        distance_max = "3500"
+    }
+
+    eul_good_14 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_05.vsnd"
+        ]
+        volume = "1.5"
+        distance_max = "3500"
+    }
+
+    eul_good_15 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_06.vsnd"
+        ]
+        volume = "1.5"
+        distance_max = "3500"
+    }
+
+    eul_good_16 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_07.vsnd"
+        ]
+        distance_max = "3500"
+    }
+
+    eul_good_17 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_08.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_good_18 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_09.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_good_19 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_10.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_good_20 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_11.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_good_21 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_12.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_good_22 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_13.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_good_23 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_1 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_2 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_3 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_4 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_5 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_6 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_7 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_8 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_9 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_10 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_11 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_12 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_13 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_14 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_bad_15 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_start_game_1 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_cast_02.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_start_game_2 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_cast_03.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_start_game_3 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_cast_04.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_start_game_4 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/crystalmaiden/cm_cast_05.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_start_game_5 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/lina/lina_item_04.vsnd"
+        ]
+        distance_max = "3500"
+    }
+    eul_start_game_6 = {
+        type = "dota_update_default"
+        vsnd_files = 
+        [
+            "sounds/vo/techies/tech_items_06.vsnd"
+        ]
+        distance_max = "3500"
+    }
+}

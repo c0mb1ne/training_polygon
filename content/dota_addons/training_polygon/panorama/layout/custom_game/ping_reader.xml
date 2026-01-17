@@ -1,0 +1,12 @@
+<root>
+	<styles>
+		
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/custom_game/ping_reader.js" />
+	</scripts>
+	<Panel hittest="false" class="None"> 
+	 	  
+	</Panel> 
+
+</root>

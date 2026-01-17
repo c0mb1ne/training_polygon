@@ -1,0 +1,12 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/timing_primary_skill.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/timing_primary_skill.js" />
+    </scripts>
+    <Panel class="timingEntry">
+        <DOTAAbilityImage id="prim_skill_img"/>
+        <RadioButton class="volvoRadioButton" id="prim_skill_check" group="primarySKills"/>
+    </Panel>
+</root>

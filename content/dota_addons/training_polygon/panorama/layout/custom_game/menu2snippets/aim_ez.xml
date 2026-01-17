@@ -1,0 +1,11 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/aim_ez.js" />
+    </scripts>
+    <Panel class="Row">
+        <Label class="menu_button_label" text="aim_ez" />
+    </Panel>
+</root>

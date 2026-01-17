@@ -1,0 +1,14 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/hof.css" />
+	</styles>
+	<scripts>
+		<include src="file://{resources}/scripts/custom_game/hof.js" />
+	</scripts>
+	<Panel class="Main" >
+		<Label id="debugTitle" text="modifier list:"/>
+		<Button class="volvoButton" id="btnTest" onactivate="onBtnTestClick2('myArgument')">
+			<Label text="test"/>
+		</Button>
+	</Panel>
+</root>

@@ -1,0 +1,459 @@
+.Main {
+	horizontal-align: center;
+	margin-top: 80px;
+	width: 100%;
+	height: 100%;
+}
+.countdown{
+	font-family: Goudy Trajan Medium,FZKai-Z03,TH Sarabun New,YDYGO 540;
+	color: white;
+	horizontal-align: center;
+	font-size: 120px;
+	margin-top: 150px;
+}
+.timerAnimate{
+	animation-name: scaleout;
+    animation-duration: 1s;
+    animation-timing-function: ease-in;
+    animation-iteration-count: 3;
+}
+@keyframes 'scaleout' {
+  from {
+    opacity:0;
+    transform: scaleX(0.5) scaleY(0.5);
+  }
+
+  to {
+    opacity:1;
+    transform: scaleX(1) scaleY(1);
+  }
+}
+#textTest{
+	horizontal-align: right;
+	font-size: 36px;
+	color:#e2edff;
+	margin-right: 100px;
+}
+#aimCombo{
+	horizontal-align: left;
+	vertical-align: bottom;
+	margin-left: 110px;
+	margin-bottom: 230px;
+	font-size: 96px;
+	color:#e2edff;
+	margin-right: 100px;
+}
+#bestScore{
+	margin-top: 38px;
+
+	horizontal-align: right;
+	font-size: 36px;
+	color:#e2edff;
+}
+#livesLeft{
+	opacity: 1;
+	margin-top: 45px;
+	horizontal-align: right;
+	font-size: 36px;
+	color:#e2edff;
+	margin-right: 100px;
+}
+#avgTime{
+	opacity: 1;
+	margin-top: 85px;
+	horizontal-align: right;
+	font-size: 36px;
+	color:#e2edff;
+	margin-right: 100px;
+}
+#mantaNotify{
+	horizontal-align: center;
+	margin-top: 20px;
+	transition-property: opacity;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-in;
+    flow-children: down;
+}
+#notify{
+	horizontal-align: center;
+	text-shadow: 2px 2px 3px 3.0 #000000;
+	font-size: 46px;
+	color:#e2edff;
+}
+#desc{
+	horizontal-align: center;
+	text-shadow: 2px 2px 3px 3.0 #000000;
+	font-size: 16px;
+	color:#ffffff;
+
+}
+.FadeIn
+{	
+	opacity: 1;
+}
+.FadeOut{
+	opacity: 0;
+}
+
+.good{
+	color:#008e04;
+}
+.bad{
+	color:#8e1300;
+}
+#cursor{
+	width: 58px;
+	height: 58px;
+	vertical-align: bottom;
+	background-image: url("file://{images}/custom_game/lel.png");
+}
+#testskill{
+	
+	horizontal-align: center;
+	margin-top: 5px;
+	width: 80%; 
+}
+#myability{
+	border-radius: 50%;
+	width: 67px;
+	height: 67px;
+	opacity: 0;
+	horizontal-align: center;
+}
+
+#Timing{
+	margin-top: 85px;
+	horizontal-align: center;
+
+}
+#TimeBar{
+	margin-bottom: 23px;
+	width: 100%;
+	background-color: #555;
+	height: 40px;
+	border-radius: 25px;
+    padding: 10px;
+    box-shadow: inset #ffffff4D 0 -1px 1px 0px;
+}
+#spellBar{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #f0a3a3 ), to( #f42323 ) );
+	height: 100%;
+	width: 0px;
+	border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+#manta {
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #54f054 ), to( #2bc253 ) );
+	width: 0px;
+	height: 100%;
+	margin-left: 14px;
+	border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+#barControl{
+	margin-top: 50px;
+}
+
+.volvoButton:hover{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #4c5561 ), to( #6c7d88 ) );
+	border-top-color: #aaaaaa77;
+	border-left-color: #aaaaaa33;
+	border-bottom-color: #333333;
+	border-right-color: #404040;
+}
+.volvoButton:active{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #393939 ), to( #555555 ) );
+	border-top-color: #222222;
+	border-left-color: #303030;
+	border-bottom-color: #666666;
+	border-right-color: #444444;
+	sound: "ui_generic_button_click";
+}
+.volvoButton{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d45 ), to( #4d5860 ) );
+	border-style: solid;
+	border-width: 1px;
+	padding: 4px 10px;
+	border-top-color: #555555;
+	border-left-color: #494949;
+	border-bottom-color: #333333;
+	border-right-color: #404040;
+	transition-property: background-color;
+	transition-duration: 0.1s;
+	transition-timing-function: linear;
+/*	box-shadow: #00000055 -2px -2px 4px 4px;*/
+	min-width: 192px;
+	min-height: 36px;
+}
+
+
+.volvoButton Label{
+	margin-top: 2px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	color: #FFFFFF;
+	horizontal-align: center;
+	text-align: center;
+	vertical-align: middle;
+	text-shadow: 2px 2px 4px 1.0 #000000;
+	transition-property: color;
+	transition-duration: 0.35s;
+	transition-timing-function: ease-in-out;
+}
+.volvoButton:active Label{
+	transform: translateY(1px);
+}
+Label, TextEntry{
+	font-family: Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+}
+.volvoCheckbox {
+	flow-children: right;
+	padding: 1px 4px;
+	color: white;
+	transition-property: background-color, box-shadow, color;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-in-out;
+}
+.volvoCheckbox:hover .TickBox{
+	border: 2px solid #697879;
+}
+
+.volvoCheckbox Label{
+	margin-top: 4px;
+	font-size: 16px;
+	margin-left: 8px;
+	color: #7d8688;
+	transition-property: color;
+	transition-duration: 0.2s;
+	transition-timing-function: linear;
+}
+.volvoCheckbox .TickBox{
+	width: 18px;
+	height: 18px;
+	vertical-align: center;
+	background-color: black;
+	border: 2px solid #5e686966;
+	box-shadow: #00000055 -2px -2px 1px 4px;
+	transition-property: background-color, box-shadow, color, border, background-image, wash-color, pre-transform-scale2d;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.volvoCheckbox:selected Label{
+	color: #FFFFFF;
+}
+.volvoCheckbox:selected .TickBox{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #e7f6f5 ), to( #a0d6d7 ) );
+	border: 3px solid #000000;
+	box-shadow: #5b62bf77 -4px -4px 8px 8px;
+}
+.volvoCheckbox:enabled:hover Label{
+	color: #d2d6d1;
+}
+#btnTest{
+	margin-top: 50px;
+	margin-left: 10px;
+}
+#btnRetry{
+	min-width: 50px;
+	margin-top: 100px;
+	margin-left: 10px;
+}
+#btnTest3{
+	margin-left: 600px;
+}
+.Leaderboard{
+	flow-children: down;
+	horizontal-align: right;
+	vertical-align: center;
+	width: 100px;
+	height: 500px;
+	color: white;
+
+
+}
+.leaderboardPos{
+	flow-children: right;
+	padding: 3px;
+}
+.clickPanel{
+	flow-children: down;
+	width: 150px;
+	height: 50px;
+}
+.clickInfo{
+	font-size: 16px;
+	text-shadow: 2px 2px 3px 3.0 #000000;
+}
+.clickInfoBad{
+	color: #E42E1A;
+	font-size: 16px;
+	text-shadow: 2px 2px 3px 3.0 #000000;
+}
+.scoreInfo{
+	text-shadow: 2px 2px 3px 3.0 #000000;
+}
+.clickGood{
+	color:#00E004;
+}
+.clickBad{
+	color:#DB0000;
+}
+.posNum{
+	font-size: 24px;
+	width: 23px;
+	horizontal-align: center;
+	text-shadow: 2px 2px 3px 3.0 #000000;
+}
+.wardTimer{
+
+	animation-name: timerShaking;
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(.07,.95,.98,.74);
+    animation-iteration-count: infinite;
+}
+@keyframes 'timerShaking'
+{
+    0%
+    {
+        transform: rotateZ( 0deg );
+    }
+    10%
+    {
+        transform: rotateZ( 7deg );
+    }
+    20%
+    {
+        transform: rotateZ( -7deg );
+    }
+    30%
+    {
+        transform: rotateZ( 7deg );
+    }
+    40%
+    {
+        transform: rotateZ( 0deg );
+    }
+    100%
+    {
+        transform: rotateZ( 0deg );
+    }
+}
+
+#zalupa{
+	width: 200px;
+	height: 200px;
+	vertical-align: center;
+	horizontal-align: right;
+	background-color: #5B19A3FF;
+	margin-right: 200px;
+	clip: radial( 50.0% 50.0%, 0.0deg, -360deg);
+	border-radius: 100%;
+	animation-name: circleTimer;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+}
+@keyframes 'circleTimer'
+{
+    0%
+    {
+        clip: radial( 50.0% 50.0%, 0.0deg, -360deg);
+    }
+    100%
+    {
+        clip: radial( 50.0% 50.0%, 0.0deg, 0deg);
+    }
+}
+/*.container{
+    width: 110px;
+    height: 110px;
+    margin: 100px auto;
+}
+.prec{
+    margin-top: 30px;
+    font-size: 30px;
+}
+
+
+
+.circle{
+    margin-top: 5px;
+    margin-left: 5px;
+    text-align: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    background-color: #E6F4F7;
+}
+
+.active-border{
+    text-align: center;
+    width: 110px;
+    height: 110px;
+    border-radius: 100%;
+
+    background-color:#39B4CC;
+    background-image:
+        linear-gradient(91deg, transparent 50%, #A2ECFB 50%),
+        linear-gradient(90deg, #A2ECFB 50%, transparent 50%);
+    
+}*/
+#mantaLives{
+	margin-right: 50px;
+	margin-top: 30px;
+	horizontal-align: right;
+	flow-children: right;
+}
+.mantaLive{
+	animation-name: timerShaking;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+	width: 60px;
+	height: 60px;
+	background-size: 125% 110%;
+	background-image: url("file://{images}/custom_game/Aegis-of-the-Immortal.png");
+}
+.mantaLostLive{
+	animation-name: scaleout2;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+}
+@keyframes 'scaleout2' {
+  from {
+    opacity:1;
+    transform: scaleX(1) scaleY(1);
+  }
+
+  to {
+    opacity:2;
+    transform: scaleX(2) scaleY(2);
+  }
+}
+
+#morphHelper{
+	flow-children: down;
+	horizontal-align: right;
+	margin-top: 300px;
+	margin-right: 100px;
+	width: 600px;
+}
+.helperText{
+
+	font-size: 32px;
+	color: white;
+	text-shadow: 2px 2px 3px 3.0 #000000;
+}
+#morphSpellContainer{
+	flow-children:right;
+
+}
+.morphSpell{
+	width: 80px;
+	height: 80px;
+	margin: 5px;
+}

@@ -1,0 +1,63 @@
+.twitchContainer{
+	background-color: #8600FF93;
+	border-radius: 8px;
+	height: 16px;
+	padding-left: 5px;
+	padding-right: 5px;
+	flow-children: right;
+	vertical-align: center;
+	horizontal-align: center;
+
+}
+.redCircle{
+	visibility: collapse;
+	color: red;
+	font-size: 14px;
+
+}
+.liveLabel{
+	visibility: collapse;
+	color: white;
+	font-size: 14px;
+	text-shadow: 1px 0px 3px 3.0 #000000;
+}
+.twitchLogo{
+	width: 16px;
+	height: 16px;
+	background-image: url("file://{images}/custom_game/twitch.png");
+	wash-color: #4B367CFF;
+}
+.twitchLabel{
+
+	text-shadow: 1px 0px 3px 3.0 #000000;
+	font-size: 14px;
+	color: white;
+
+}
+.liveAnim{
+	animation-name: highLevelGlow;
+    animation-duration: 2.35s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+@keyframes 'highLevelGlow'
+{
+    0%
+    {
+        brightness: 2.3;
+/*        box-shadow: #0094FF80 -2px -2px 12px 4px;*/
+    }
+
+
+    50%
+    {
+        brightness: 1;
+/*        box-shadow: #00FFFF80 -1px -1px 2px 2px;*/
+    }
+
+    100%
+    {
+        brightness: 2.3;
+/*        box-shadow: #0094FF80 -2px -2px 12px 4px;*/
+    }
+}
