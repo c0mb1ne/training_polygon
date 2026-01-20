@@ -49,7 +49,7 @@ require('settings')
 require('events')
 require('libraries/dota_database')
 require('gamemodes/dodge')
-require('libraries/modemanager')
+
 require('libraries/action_logging')
 require('libraries/ping_reader')
 require('libraries/precache')
@@ -58,14 +58,10 @@ ping_reader:Init()
 DotaDB:Init()
 action_logging:Init()
 precache:Init()
--- This is a detailed example of many of the containers.lua possibilities, but only activates if you use the provided "playground" map
-if GetMapName() == "playground" then
-  require("examples/playground")
-end
----------------------------------------------------------- cheat check/fakelage setting
+dodge:Init()
 
--------NEW CODE-------
-function activateGameMode( eventSourceIndex, args )
+
+function GameMode:activateGameMode( eventSourceIndex, args )
   --[[ print(params) ]]
   if args['gameModeName']=="dodge" then
     dodge:Init()
@@ -74,10 +70,8 @@ function activateGameMode( eventSourceIndex, args )
   ACTIVE_GAMEMODE:Prepare(args)
   
 end
-CustomGameEventManager:RegisterListener( "activate_game_mode", activateGameMode )
+CustomGameEventManager:RegisterListener( "activate_game_mode", GameMode.activateGameMode )
 
-
--------END OF NEW CODE-------
 
 
 
@@ -90,7 +84,7 @@ end
 
 
 function GameMode:OnFirstPlayerLoaded()
-
+  --nice place to put things that should be performed on very early stage of the game
   TRAINING_PLACE=nil
   TEST_ID=1
   ebalai=nil
@@ -137,7 +131,8 @@ function GameMode:OnFirstPlayerLoaded()
     end
   })
   GameRules:SetTimeOfDay(0.5)
-  --запускаем веселье
+  --doing precache for every hero in game for player, since monster hunter collab PrecacheUnitByNameAsync start accepting playerid argument to precache hero with player's skins, if we dont do that player's heroes with non default skins will have an error model, for non player heroes (bots) we do precache without last argument
+  --this should be switched to precaching players hero right before individual mode starts, code below is temporary solution
   print("precaching every hero")
   local heroesKV=LoadKeyValues("scripts/npc/npc_heroes.txt")
   local heroList={}
@@ -160,7 +155,7 @@ function GameMode:OnFirstPlayerLoaded()
       end
     end,0)
   end
-  precache_for_player(heroList[index])
+  --precache_for_player(heroList[index])
 end
 
 function GameMode:OnAllPlayersLoaded()
@@ -205,7 +200,7 @@ function GameMode:InitGameMode()
   LinkLuaModifier("modifier_no_health_bar", "libraries/modifiers/modifier_no_health_bar.lua", LUA_MODIFIER_MOTION_NONE)
 
   -- Commands can be registered for debugging purposes or as functions that can be called by the custom Scaleform UI
-  Convars:RegisterCommand( "tp_test", Dynamic_Wrap(GameMode, 'TestCommand1'), "A console command example", FCVAR_CHEAT )
+  Convars:RegisterCommand("tp_test", Dynamic_Wrap(GameMode, 'TestCommand1'), "A console command example", FCVAR_CHEAT )
   Convars:RegisterCommand("tp_test2", Dynamic_Wrap(GameMode,'TestCommand2'),"petuch",FCVAR_CHEAT) 
   Convars:RegisterCommand("tp_hide_menu", Dynamic_Wrap(GameMode,'HideMenu'),"petuch",FCVAR_CHEAT) 
   Convars:RegisterCommand("tp_show_menu", Dynamic_Wrap(GameMode,'ShowMenu'),"petuch",FCVAR_CHEAT) 
@@ -223,35 +218,6 @@ function GameMode:InitGameMode()
 end
 
 
-
-function CreateDummyAndCastAbilityOnTarget(owner, ability_name, ability_level, target, release_delay, scepter)
-  local dummy = CreateUnitByNameAsync("npc_dummy", owner:GetOrigin(), false, owner, owner, owner:GetTeam(),
-    function(unit)
-      print("unit created")
-      unit:AddAbility(ability_name)
-      unit:SetForwardVector((target:GetOrigin() - owner:GetOrigin()):Normalized())
-      local ability = unit:FindAbilityByName(ability_name)
-      ability:SetLevel(ability_level)
-      ability:SetOverrideCastPoint(0)
-
-      if scepter then
-        local item = CreateItem("item_ultimate_scepter", unit, unit)  
-        unit:AddItem(item)
-      end
-
-      unit:SetContextThink(DoUniqueString("cast_ability"),
-        function()
-          print("cast ability")
-          unit:CastAbilityOnTarget(target,ability,owner:GetPlayerID())
-        end,
-      0)
-      unit:SetContextThink(DoUniqueString("Remove_Self"),function() print("removing dummy units", release_delay) unit:RemoveSelf() end, release_delay)
-
-      return unit
-    end
-  )
-end
-
 function GameMode:cmdPrintPlace()
   local cmdPlayer=PlayerResource:GetPlayer(0)
   --DeepPrintTable(cmdPlayer)
@@ -266,12 +232,6 @@ function GameMode:cmdPrintPlace()
   DebugDrawCircle(active_hero:GetAbsOrigin(), color1, 20, 20, true, 60)
 
 end
-
-
-
-
-
-
 
 
 function GameMode:HideMenu()
@@ -322,7 +282,7 @@ function custom_manta_training( eventSourceIndex, args )
   if active_hero:GetName()~=hero_name then
     --active_hero:RemoveSelf()
     -- PlayerResource:ReplaceHeroWith(args.PlayerID,hero_name,0,1)
-    replaceHeroSpasiboGaben(active_hero,hero_name)
+    replaceHero(active_hero,hero_name)
     active_hero=player:GetAssignedHero()
   end
   active_hero:SetAbsOrigin(TRAINING_PLACE)
@@ -642,7 +602,7 @@ function timing_training_start( eventSourceIndex, args )
         TIMING_TARGET_UNIT:SetAttackCapability(0)
         player=PlayerResource:GetPlayer(args.PlayerID)
         active_hero=player:GetAssignedHero()
-        active_hero=replaceHeroSpasiboGaben(active_hero,secondary_skills_table[TIMING_SECONDARY_SKILL_ID][2])
+        active_hero=replaceHero(active_hero,secondary_skills_table[TIMING_SECONDARY_SKILL_ID][2])
         active_hero:SetAbsOrigin(TRAINING_PLACE)
         GridNav:DestroyTreesAroundPoint(TRAINING_PLACE, 1500, true)
         TIMING_ABILITY=secondary_skills_table[TIMING_SECONDARY_SKILL_ID][1]
@@ -657,7 +617,7 @@ function timing_training_start( eventSourceIndex, args )
         TIMING_TARGET_UNIT:SetAttackCapability(0)
         player=PlayerResource:GetPlayer(args.PlayerID)
         active_hero=player:GetAssignedHero()
-        active_hero=replaceHeroSpasiboGaben(active_hero,primary_skills_table[TIMING_PRIMARY_SKILL_ID][2])
+        active_hero=replaceHero(active_hero,primary_skills_table[TIMING_PRIMARY_SKILL_ID][2])
         active_hero:SetAbsOrigin(TRAINING_PLACE)
         GridNav:DestroyTreesAroundPoint(TRAINING_PLACE, 1500, true)
         TIMING_ABILITY=primary_skills_table[TIMING_PRIMARY_SKILL_ID][1]
@@ -845,7 +805,7 @@ function euls_training_start( eventSourceIndex, args )
   TIMING_CASTPOINT=eul_castpoints[skill_id]
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  hero=replaceHeroSpasiboGaben(hero,eul_heroes[skill_id])
+  hero=replaceHero(hero,eul_heroes[skill_id])
   hero:SetMoveCapability(1)
   hero:SetAttackCapability(0)
   hero:SetDayTimeVisionRange(4000)
@@ -1125,7 +1085,7 @@ function alchemist_banka_training( eventSourceIndex, args )
   local TimebarState=args['timebar']
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_alchemist")
+  active_hero=replaceHero(hero,"npc_dota_hero_alchemist")
   active_hero:SetMoveCapability(1)
   active_hero:SetBaseHealthRegen(100)
   active_hero:SetAbsOrigin(TRAINING_PLACE)
@@ -1148,7 +1108,7 @@ function bodyblock_start( eventSourceIndex, args )
   local TimebarState=args['timebar']
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_alchemist")
+  active_hero=replaceHero(hero,"npc_dota_hero_alchemist")
   active_hero:SetMoveCapability(1)
   active_hero:SetBaseHealthRegen(100)
   active_hero:SetAbsOrigin(TRAINING_PLACE)
@@ -1305,7 +1265,7 @@ function morph_training_start( eventSourceIndex, args )
   MORPH_INDEX_COUNTER=1
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_morphling")
+  hero=replaceHero(hero,"npc_dota_hero_morphling")
   MORPHLING_ENT=hero
   
   local bloodstone=CreateItem("item_sheepstick",hero,hero)
@@ -1370,7 +1330,7 @@ function armlet_training_start( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
   ARMLET_DAMAGE_BONUS=0
-  active_hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_life_stealer")
+  active_hero=replaceHero(hero,"npc_dota_hero_life_stealer")
   active_hero:SetMoveCapability(1)
   active_hero:SetAttackCapability(0)
   active_hero:SetAbsOrigin(TRAINING_PLACE)
@@ -1576,7 +1536,7 @@ function glimpse_training_start_v2( eventSourceIndex, args )
   local TimebarState=args['timebar']                
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(active_hero,glimpse_hero[skill_id])
+  active_hero=replaceHero(active_hero,glimpse_hero[skill_id])
   removeItems(active_hero)
   active_hero:SetAbsOrigin(glimpse_waypoints[GLIMPSE_POS_COUNTER])
   
@@ -1727,7 +1687,7 @@ function glimpse_training_start( eventSourceIndex, args )
   local TimebarState=args['timebar']                
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(active_hero,glimpse_hero[skill_id])
+  active_hero=replaceHero(active_hero,glimpse_hero[skill_id])
   removeItems(active_hero)
   if GetMapName() == "dota" then
     active_hero:SetAbsOrigin(glimpse_waypoints[1])
@@ -1959,7 +1919,7 @@ function aim_training_start_3( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
   if aim_retry==0 then
-    active_hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_pangolier")
+    active_hero=replaceHero(active_hero,"npc_dota_hero_pangolier")
   end
 
   hero = active_hero
@@ -2101,7 +2061,7 @@ function aim_training_start_2( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
   if aim_retry==0 then
-    active_hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_pangolier")
+    active_hero=replaceHero(active_hero,"npc_dota_hero_pangolier")
   end
 
   hero = active_hero
@@ -2225,7 +2185,7 @@ function aim_training_start( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
   if aim_retry==0 then
-    active_hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_pangolier")
+    active_hero=replaceHero(active_hero,"npc_dota_hero_pangolier")
   end
 
   hero = active_hero
@@ -2375,7 +2335,7 @@ function map_aim_training_start( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
   if aim_retry==0 then
-    active_hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_pangolier")
+    active_hero=replaceHero(active_hero,"npc_dota_hero_pangolier")
 
   end
   
@@ -2532,7 +2492,7 @@ function moving_aim_training_start( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
   if aim_retry==0 then
-    active_hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_pangolier")
+    active_hero=replaceHero(active_hero,"npc_dota_hero_pangolier")
   end
 
   hero = active_hero
@@ -2683,7 +2643,7 @@ function manta_challenge_start( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   active_hero = player:GetAssignedHero()
   removeItems(active_hero)
-  active_hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_antimage")
+  active_hero=replaceHero(active_hero,"npc_dota_hero_antimage")
 
   hero = active_hero
   removeItems(hero)
@@ -3017,7 +2977,7 @@ function invoker_randomize_spheres( eventSourceIndex, args )
       CustomGameEventManager:Send_ServerToAllClients("invoker_quas_tracker",{quas=lvl+INV_AGSH})
     end
   end
-  hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_invoker")
+  hero=replaceHero(hero,"npc_dota_hero_invoker")
   hero:SetBaseIntellect(300)
   hero:SetAttackCapability(0)
 end
@@ -3040,7 +3000,7 @@ function invoker_change_abil_lvl( eventSourceIndex, args )
           CustomGameEventManager:Send_ServerToAllClients("show_notification",{color='red',text='Minimal quas lvl is 3.',icon='invoker_quas'})
         else
           spell:SetLevel(lvl-1)
-          hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_invoker")
+          hero=replaceHero(hero,"npc_dota_hero_invoker")
           hero:SetBaseIntellect(300)
           hero:SetAttackCapability(0)
           CustomGameEventManager:Send_ServerToAllClients("invoker_quas_tracker",{quas=lvl-1+INV_AGSH})
@@ -3050,7 +3010,7 @@ function invoker_change_abil_lvl( eventSourceIndex, args )
           CustomGameEventManager:Send_ServerToAllClients("show_notification",{color='red',text='Minimal quas lvl is 4.',icon='invoker_quas'})
         else
           spell:SetLevel(lvl-1)
-          hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_invoker")
+          hero=replaceHero(hero,"npc_dota_hero_invoker")
           hero:SetBaseIntellect(300)
           hero:SetAttackCapability(0)
           CustomGameEventManager:Send_ServerToAllClients("invoker_quas_tracker",{quas=lvl-1+INV_AGSH})
@@ -3065,7 +3025,7 @@ end
 function invoker_invoke_training( eventSourceIndex, args )
   player=PlayerResource:GetPlayer(args.PlayerID)
   local active_hero = player:GetAssignedHero()
-  hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_invoker")
+  hero=replaceHero(active_hero,"npc_dota_hero_invoker")
   hero:SetBaseIntellect(100)
   hero:SetAttackCapability(0)
   hero:SetAbsOrigin(TRAINING_PLACE)
@@ -3230,7 +3190,7 @@ function invoker_procast_start( eventSourceIndex, args )
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local active_hero = player:GetAssignedHero()
   removeItems(active_hero)
-  hero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_invoker")
+  hero=replaceHero(active_hero,"npc_dota_hero_invoker")
   GridNav:DestroyTreesAroundPoint(TRAINING_PLACE, 1500, true)
   removeItems(hero)
   hero:SetBaseIntellect(100)
@@ -3447,7 +3407,7 @@ function skillshot_training( eventSourceIndex, args )
   SS_MOVE_SPEED={}
   SS_SKILL_ID=args['skill_id']
   SS_MAX_UNITS=6
-  hero=replaceHeroSpasiboGaben(hero,SS_HEROES[SS_SKILL_ID])
+  hero=replaceHero(hero,SS_HEROES[SS_SKILL_ID])
   hero:SetAbsOrigin(TRAINING_PLACE)
   --[[hero:SetDayTimeVisionRange(SS_MAXRANGE+200)--]]
   hero:SetDayTimeVisionRange(8000)
@@ -3597,7 +3557,7 @@ function skillshot_training_v2( eventSourceIndex, args )
   SS_SKILL_ID=args['skill_id']
   SS_MAX_UNITS=6
   SS_PLAYER=nil
-  hero=replaceHeroSpasiboGaben(hero,SS_HEROES[SS_SKILL_ID])
+  hero=replaceHero(hero,SS_HEROES[SS_SKILL_ID])
   SS_PLAYER=hero
   hero:SetBaseManaRegen(100)
 --[[  local item = CreateItem("item_ultimate_scepter", hero, hero)  
@@ -3947,7 +3907,7 @@ function GameMode:TestCommand2()
   --TESTING=1
   local cmdPlayer = Convars:GetCommandClient()
   local old_hero = cmdPlayer:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(old_hero,"npc_dota_hero_nyx_assassin")
+  active_hero=replaceHero(old_hero,"npc_dota_hero_nyx_assassin")
   active_hero:SetAbsOrigin(Vector(732.22778320313,-4061.9580078125,384))
   active_hero:SetBaseManaRegen(100)
   local item = CreateItem("item_ultimate_scepter", active_hero, active_hero)  
@@ -4074,7 +4034,7 @@ function GameMode:TestCommand2()
   end
   print(TEST_TABLE[TEST_ID][2])
   local old_hero = cmdPlayer:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(old_hero,TEST_TABLE[TEST_ID][2])
+  active_hero=replaceHero(old_hero,TEST_TABLE[TEST_ID][2])
   local ability=active_hero:FindAbilityByName(TEST_TABLE[TEST_ID][1])
   ability:SetLevel(1)
   TEST_ID=TEST_ID+1--]]
@@ -4137,7 +4097,7 @@ function kunnka_training_start( eventSourceIndex, args )
   print('KUNNKA_TYPE',KUNNKA_TYPE)
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_kunkka")
+  active_hero=replaceHero(hero,"npc_dota_hero_kunkka")
   active_hero:SetMoveCapability(1)
   active_hero:SetAbsOrigin(TRAINING_PLACE)
   removeItems(active_hero)
@@ -4188,7 +4148,7 @@ function deam_coil_escape( eventSourceIndex, args )
  
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_antimage")
+  active_hero=replaceHero(hero,"npc_dota_hero_antimage")
   active_hero:SetMoveCapability(1)
   active_hero:SetAbsOrigin(TRAINING_PLACE)
   removeItems(active_hero)
@@ -4261,7 +4221,7 @@ function naga_sleep_hammer_start( eventSourceIndex, args )
   print('KUNNKA_TYPE',KUNNKA_TYPE)
   local player=PlayerResource:GetPlayer(args.PlayerID)
   local hero=player:GetAssignedHero()
-  active_hero=replaceHeroSpasiboGaben(hero,"npc_dota_hero_kunkka")
+  active_hero=replaceHero(hero,"npc_dota_hero_kunkka")
   active_hero:SetMoveCapability(1)
   active_hero:SetAbsOrigin(TRAINING_PLACE)
   removeItems(active_hero)
@@ -4353,7 +4313,7 @@ function lasthit_start_fix( eventSourceIndex, args )
   print("PLAYER ID:", args.PlayerID)
   local old_hero=player:GetAssignedHero()
   PlayerResource:SetCustomTeamAssignment(args.PlayerID,player_side)
-  active_hero=replaceHeroSpasiboGaben(old_hero,hero)
+  active_hero=replaceHero(old_hero,hero)
   --active_hero:SetAbsOrigin(hero_respawn)
   active_hero:SetAbsOrigin(Vector(-2717.9250488281,-1176.9210205078,128))
   active_hero:SetMoveCapability(1)
@@ -5723,7 +5683,7 @@ function GameMode:TestCommand1()
   local cmdPlayer=PlayerResource:GetPlayer(0)
   --DeepPrintTable(cmdPlayer)
   active_hero = cmdPlayer:GetAssignedHero()
-  local newHero=replaceHeroSpasiboGaben(active_hero,"npc_dota_hero_antimage")
+  local newHero=replaceHero(active_hero,"npc_dota_hero_antimage")
   --PlayerResource:ReplaceHeroWith(cmdPlayer:GetPlayerID(),"npc_dota_hero_pudge",0,1)
   --[[ for playerId = 0, DOTA_MAX_TEAM_PLAYERS-1 do
       if PlayerResource:IsValidPlayerID(playerId) then

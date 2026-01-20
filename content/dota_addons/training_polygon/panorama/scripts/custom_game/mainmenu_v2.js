@@ -27,19 +27,25 @@ function clearMenuContent(){
 	});
 }
 
-var parentPanel = $('#testPan'); // the root panel of the current XML context
-var newChildPanel = $.CreatePanel( "Panel", parentPanel, "ASDASD" );
-newChildPanel.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/test_snippet.xml", false, false );
-function testgovna(){
-	$.Msg('testgovna proiden')
-}
+var home_page = $.CreatePanel( "Panel", menuContent, "home_page" ); 
+home_page.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml", false, false );
+$('#menu_home').selected=true
 
 $('#menu_play').SetPanelEvent (
 "onactivate", 
 	function() {
 		clearMenuContent()
 		var play_menu = $.CreatePanel( "Panel", menuContent, "play_menu" );
-		play_menu.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/play_menu.xml", false, false );
+		play_menu.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/main_menu/play_menu.xml", false, false );
+	}
+)
+$('#menu_home').SetPanelEvent (
+"onactivate", 
+	function() {
+		$.Msg('trying to load main menu')
+		clearMenuContent()
+		var home_page = $.CreatePanel( "Panel", menuContent, "home_page" ); 
+		home_page.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml", false, false );
 	}
 )
 function showTestUI(){

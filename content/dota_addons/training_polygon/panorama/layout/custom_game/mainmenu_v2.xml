@@ -13,11 +13,18 @@
 				<Button class="fake_dota_buttons" id="quit_button"/>
 			</Panel>
 			<Panel id="menu_button_container">
+				
 				<RadioButton class="menu_button" id="menu_play">
 					<Panel class="menu_button_icon_container">
 						<Image id="menu_button_icon_play" src="file://{images}/custom_game/play_button.png" />
 					</Panel>
 					<Label class="menu_button_label" id="menu_play_label" text="Play"/>
+				</RadioButton>
+				<RadioButton selected="true" class="menu_button" id="menu_home">
+					<Panel class="menu_button_icon_container">
+						<Image id="menu_button_icon_home" src="file://{images}/custom_game/gradient.png" />
+					</Panel>
+					<Label class="menu_button_label" id="menu_play_label" text="Home"/>
 				</RadioButton>
 				<RadioButton class="menu_button" id="menu_settings">
 					<Panel class="menu_button_icon_container">
@@ -55,31 +62,7 @@
 				<Label id="tp_status_label" class="statusOffline" text="offline"/>
 			</Panel>
 			<Panel id="menu_content">
-				<Panel id="welcomeScreen">
-					<Panel class="Col">
-						<Panel class="embeedingContainer">
-							<Panel class="embeedingHeader">
-								<Label class="menu_button_label" text="something"/>
-							</Panel>
-							<Movie hittest="false" class="testwebm" src="file://{resources}/videos/15503461349800.webm" repeat="true" autoplay="onload"/>
-
-							<Panel class="embeedingContent">
-								<Label class="embeedingContentLabel" text="something"/>
-							</Panel>
-						</Panel>
-						<Panel class="embeedingContainer">
-							<Panel class="embeedingHeader">
-								<Label class="menu_button_label" text="something"/>
-							</Panel>
-							<Panel class="embeedingContent">
-								<Label class="embeedingContentLabel" text="something"/>
-							</Panel>
-						</Panel>
-					</Panel>
-					<Panel class="Col" id="testPan">
-						
-					</Panel>
-				</Panel>
+				
 			</Panel>
 		</Panel>
 	</Panel>

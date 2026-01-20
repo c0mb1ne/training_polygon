@@ -1,0 +1,10 @@
+tools_asset_info.bin
+tools_thumbnail_cache.bin
+rich_presence_persistent_data.txt
+server_log.txt
+panorama_debugger.cfg
+*.vpk
+*.vtex_c
+*.vcss_c
+*.vjs_c
+*.vxml_c

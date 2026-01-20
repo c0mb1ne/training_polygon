@@ -1,3 +1,5 @@
+--class for getting ping from client. ping_reader.js just getting it from ui
+--used for leaderboard display of ping
 if ping_reader == nil then
   ping_reader = class({})
 end

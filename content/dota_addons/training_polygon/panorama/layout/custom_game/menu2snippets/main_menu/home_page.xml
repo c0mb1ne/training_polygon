@@ -1,0 +1,35 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/main_menu/home_page.js" />
+    </scripts>
+    <Panel class="Row">
+        <Panel id="welcomeScreen">
+            <Panel class="Col">
+                <Panel class="embeedingContainer">
+                    <Panel class="embeedingHeader">
+                        <Label class="menu_button_label" text="something"/>
+                    </Panel>
+                        
+
+                    <Panel class="embeedingContent">
+                        <Label class="embeedingContentLabel" text="something"/>
+                    </Panel>
+                </Panel>
+                <Panel class="embeedingContainer">
+                    <Panel class="embeedingHeader">
+                        <Label class="menu_button_label" text="something"/>
+                    </Panel>
+                    <Panel class="embeedingContent">
+                        <Label class="embeedingContentLabel" text="something"/>
+                    </Panel>
+                </Panel>
+            </Panel>
+            <Panel class="Col" id="testPan">
+                
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

@@ -1,4 +1,6 @@
 --i'm making this to parse dota_abilities.txt KV file
+--i wish it could be useful for getting spell values for dodge gamemode, because right now castpoints, projectile speed and other stuff are hardcoded and should be changed with patch changes
+--in other hand abilities kv structure can be changed in any patch so idk what is more convenient
 if DotaDB == nil then
   DotaDB = class({})
 end

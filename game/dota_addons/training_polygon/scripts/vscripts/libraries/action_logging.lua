@@ -1,3 +1,4 @@
+--my try to take mouse logs when people play aim challenges to make an anticheat system. logging works, but after one week it made 5 gigs of logs
 if action_logging == nil then
   action_logging = class({})
 end

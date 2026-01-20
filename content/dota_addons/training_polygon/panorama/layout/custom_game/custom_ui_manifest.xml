@@ -1,25 +1,5 @@
 <root> 
-  <scripts>
-
-  </scripts>
-  <script>
-    // Uncomment any of the following lines in order to disable that portion of the default UI
-
-
-    // These lines set up the panorama colors used by each team (for game select/setup, etc)
-    GameUI.CustomUIConfig().team_colors = {}
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_GOODGUYS] = "#3dd296;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_BADGUYS ] = "#F3C909;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_1] = "#c54da8;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_2] = "#FF6C00;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_3] = "#3455FF;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_4] = "#65d413;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_5] = "#815336;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_6] = "#1bc0d8;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_7] = "#c7e40d;";
-    GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_CUSTOM_8] = "#8c2af4;";
-
-  </script> 
+   
 
   <Panel>
     
@@ -31,5 +11,6 @@
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/mainmenu_v2.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/action_logging.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/ping_reader.xml" />
+    <!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/xml_compiler.xml" /> -->
   </Panel>
 </root>

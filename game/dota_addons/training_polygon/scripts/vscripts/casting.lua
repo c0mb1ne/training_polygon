@@ -3696,18 +3696,7 @@ function precache_v2(jsArgs)
 	end
 	precacheTable_v2(PRECACHED_LIST,jsArgs)
 end
-function replaceHeroSpasiboGaben(old_hero,new_hero)
-	local respawn_place=old_hero:GetAbsOrigin()
-	local cmdPlayer=PlayerResource:GetPlayer(0)
-	old_hero:RemoveSelf()
-  print('creating new hero')
-  local newHero=CreateHeroForPlayer(new_hero,cmdPlayer)
-  newHero:SetControllableByPlayer(0,false)
-  newHero:SetRespawnPosition(respawn_place)
-  cmdPlayer:SetAssignedHeroEntity(newHero)
-  return newHero
 
-end
 function addToPrecacheTable(tPrecacheTable,tPrecacheEntity)
 	--[[local type
 	print(string.sub(tPrecacheEntity,1,3))--]]

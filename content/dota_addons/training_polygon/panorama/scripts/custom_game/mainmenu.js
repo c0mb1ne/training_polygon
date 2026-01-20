@@ -1571,13 +1571,7 @@ function drawEulPrimarySkills() {
 	};
 }
 function drawEulPrimarySkill(id) {
-/*	var PrimarySkill=$.CreatePanel('Panel',$('#timingType'),'timing_cont_'+id)
-	PrimarySkill.SetAttributeString("skill_name",eul_primary[id])
-	PrimarySkill.SetAttributeInt("id",id)
-
-	
-	PrimarySkill.BLoadLayout("file://{resources}/layout/custom_game/timing_primary_skill.xml", false, false)
-*/	var parentPanel=$('#timingType')
+	var parentPanel=$('#timingType')
 	var container=$.CreatePanel('Panel', parentPanel, 'timing_cont_' + id)
 	container.AddClass('timingEntry')
 	var SkillImage = $.CreatePanel('DOTAAbilityImage', container, 'timing_prim_img_' + id)
@@ -2518,17 +2512,7 @@ function drawLeaderboardRows(table,place){
 		
 		
 	}
-	/*if (data['twitch']!='' && data['twitch']!=null){
-		var twitchContainer=$.CreatePanel('Panel',nicknameContainer,'twitch_c_'+place)
-		twitchContainer.SetAttributeString("twitch",data['twitch'])
-		if (liveList.indexOf(data['twitch'])==-1){
-			twitchContainer.SetAttributeString("live","offline")
-		}else{
-			twitchContainer.SetAttributeString("live","live")
-		}
-		
-		twitchContainer.BLoadLayout("file://{resources}/layout/custom_game/twitch_link.xml", false, false)
-	}*/
+	
 
 	var scoreRow=$.CreatePanel('Panel',$('#col_score'),'score_'+place)
 	scoreRow.AddClass("row")

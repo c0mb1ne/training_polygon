@@ -1,0 +1,40 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/main_menu/play_menu.js" />
+    </scripts>
+    <Panel class="Row">
+        <Panel class="Col modFilterContainer">
+            <Panel class="embeedingContainer filterEmb">
+                <Panel class="embeedingHeader">
+                    <Label class="menu_button_label" text="filter"/>
+                </Panel>
+                <Panel class="embeedingContent">
+
+                </Panel>
+            </Panel>
+        </Panel>
+        <Panel class="Col">
+            <Panel class="embeedingContainer competContainer">
+                <Panel class="embeedingHeader">
+                    <Label class="menu_button_label" text="Competitive"/>
+                </Panel>
+                <Panel id="compMenu" class="embeedingContent">
+
+                </Panel>
+            </Panel>
+        </Panel>
+        <Panel class="Col">
+            <Panel class="embeedingContainer sandboxContainer">
+                <Panel class="embeedingHeader">
+                    <Label class="menu_button_label testPlayItem" text="Sandbox"/>
+                </Panel>
+                <Panel id="sndbxMenu" class="embeedingContent">
+                    
+                </Panel>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

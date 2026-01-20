@@ -11,8 +11,8 @@
 	flow-children: right;
 	background-image: url( "file://{images}/custom_game/noise.png");
 	background-color: #18181A;
-	visibility: collapse;
-	opacity: 0; 
+	visibility: visible;
+	opacity: 1; 
 }
 .avata_menu_icon{
 	width: 68px;
@@ -544,4 +544,8 @@ VerticalScrollBar .ScrollThumb{
 }
 .customCheckbox:enabled:hover Label{
 	color: #d2d6d1;
+}
+#menu_button_icon_home{
+	opacity-mask: url( "file://{images}/custom_game/home_button.png");
+	opacity-mask-scale: 78% 78%;
 }

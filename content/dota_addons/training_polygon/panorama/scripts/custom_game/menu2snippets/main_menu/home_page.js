@@ -1,0 +1,1 @@
+$.Msg('home page loaded')
