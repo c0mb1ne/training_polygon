@@ -61,17 +61,18 @@ precache:Init()
 dodge:Init()
 
 
-function GameMode:activateGameMode( eventSourceIndex, args )
-  --[[ print(params) ]]
+function GameMode:activateGameMode( args )
+  print(args)
   if args['gameModeName']=="dodge" then
-    dodge:Init()
+    --[[ dodge:Init() ]]
     ACTIVE_GAMEMODE=dodge
   end
   ACTIVE_GAMEMODE:Prepare(args)
   
 end
-CustomGameEventManager:RegisterListener( "activate_game_mode", GameMode.activateGameMode )
-
+CustomGameEventManager:RegisterListener("activate_game_mode", function(_, eventData)
+  GameMode:activateGameMode(eventData)
+end)
 
 
 

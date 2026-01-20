@@ -2,15 +2,16 @@
    
 
   <Panel>
-    
+    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/precache_modal.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/mainmenu.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/manta.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/eul.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/armlet.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/notifications.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/mainmenu_v2.xml" />
-    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/action_logging.xml" />
+    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/action_logging.xml" /> 
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/ping_reader.xml" />
-    <!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/xml_compiler.xml" /> -->
+    
+    <!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/xml_compiler.xml" /> --> 
   </Panel>
 </root>

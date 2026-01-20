@@ -165,7 +165,68 @@ function dodge:Init()
 end
 
 function dodge:Prepare(args)
-    precache:PrecacheAddPlayerUnitToList("npc_dota_hero_antimage")
+    print("[Dodge] Preparing gamemode")
+    precache:clearTable()
+
+    local dodgeName = args.dodgeName or "item_manta"
+    local selectedSpells = args.dodgeSpells or {}
+
+    print("[Dodge] Dodge type: " .. dodgeName)
+    print("[Dodge] Selected spells count: " .. #selectedSpells)
+
+    local unitsToPrecache = {}
+    local unitsAdded = {}
+
+    -- Add player hero based on dodge type
+    local playerHero = self.unitTable[dodgeName]
+    if playerHero then
+        unitsToPrecache[#unitsToPrecache + 1] = playerHero
+        unitsAdded[playerHero] = true
+        print("[Dodge] Adding player hero: " .. playerHero)
+    end
+
+    -- Add enemy caster heroes for selected spells
+    local spellData = self.spellTable[dodgeName] or self.spellTable.item_manta
+    for _, spellName in pairs(selectedSpells) do
+        local spellInfo = spellData[spellName]
+        if spellInfo then
+            local enemyHero = spellInfo[1]
+            if enemyHero and not unitsAdded[enemyHero] then
+                unitsToPrecache[#unitsToPrecache + 1] = enemyHero
+                unitsAdded[enemyHero] = true
+                print("[Dodge] Adding enemy hero: " .. enemyHero)
+            end
+        end
+    end
+
+    -- Add units to precache list
+    if playerHero then
+        precache:PrecacheAddPlayerUnitToList({playerHero})
+    end
+
+    local enemyUnits = {}
+    for _, unit in ipairs(unitsToPrecache) do
+        if unit ~= playerHero then
+            enemyUnits[#enemyUnits + 1] = unit
+        end
+    end
+    if #enemyUnits > 0 then
+        precache:PrecacheAddUnitToList(enemyUnits)
+    end
+
+    -- Store args for use after precaching
+    self.pendingArgs = args
+
+    -- Start precaching with callback to start the actual game
+    precache:doPrecache(function()
+        dodge:StartGame(self.pendingArgs)
+    end)
+end
+
+function dodge:StartGame(args)
+    print("[Dodge] Starting game after precache")
+    self.activated = true
+    -- TODO: Implement actual game start logic here
 end
 function dodge:SendSpellTable()
     --[[ print(self.spellTable)

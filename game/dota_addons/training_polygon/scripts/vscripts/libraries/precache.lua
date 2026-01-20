@@ -6,7 +6,6 @@ end
 
 function precache:Init()
     self.precacheTable={}
-
 end
 
 function precache:PrecaheAddItemToList(itemList)
@@ -31,41 +30,69 @@ function precache:PrecacheAddPlayerUnitToList(unitList)
 end
 
 function precache:doPrecache(callback)
-    print('Precahe started')
+    print('Precache started')
+    local totalCount = #self.precacheTable
+    local currentCount = 0
+
+    -- Send precache_start event to show the modal
+    CustomGameEventManager:Send_ServerToAllClients("precache_start", {total = totalCount})
+    GameMode:HideMenu()
     function precacheElement(callback)
-        if self.precacheTable[1]~=nil then
-            --[[ PrintTable(self.precacheTable[1]) ]]
-            if self.precacheTable[1][1]=="unit" then
-                PrecacheUnitByNameAsync(self.precacheTable[1][2],function()
-                        table.remove(self.precacheTable,1)
-                        precacheElement(callback)
-                end)	
-            elseif self.precacheTable[1][1]=="p_unit" then	
-                 PrecacheUnitByNameAsync(self.precacheTable[1][2],function()
-                        table.remove(self.precacheTable,1)
-                        precacheElement(callback)
-                end,0)
-            else
-                PrecacheItemByNameAsync(self.precacheTable[1][2],function()
-                    table.remove(self.precacheTable,1)
+        if self.precacheTable[1] ~= nil then
+            local itemType = self.precacheTable[1][1]
+            local itemName = self.precacheTable[1][2]
+
+            currentCount = currentCount + 1
+            print("Precaching:", itemType, itemName, "(" .. currentCount .. "/" .. totalCount .. ")")
+
+            -- Send progress event with current/total
+            CustomGameEventManager:Send_ServerToAllClients("precache_progress", {
+                item = itemName,
+                current = currentCount,
+                total = totalCount
+            })
+
+            if itemType == "unit" then
+                PrecacheUnitByNameAsync(itemName, function()
+                    table.remove(self.precacheTable, 1)
                     precacheElement(callback)
-                end)	
+                end)
+            elseif itemType == "p_unit" then
+                PrecacheUnitByNameAsync(itemName, function()
+                    table.remove(self.precacheTable, 1)
+                    precacheElement(callback)
+                end, 0)
+            else
+                PrecacheItemByNameAsync(itemName, function()
+                    table.remove(self.precacheTable, 1)
+                    precacheElement(callback)
+                end)
             end
-            print("Precashing:",self.precacheTable[1][1],self.precacheTable[1][2])
-            CustomGameEventManager:Send_ServerToAllClients("precache_progress",{item=self.precacheTable[1][2]})
         else
-            print("Precahe done")
-            GameMode:HideMenu()
+            print("Precache done")
+            -- Send precache_complete event to hide the modal
+            CustomGameEventManager:Send_ServerToAllClients("precache_complete", {})
+            --[[ GameMode:HideMenu() ]]
             if callback then
                 callback()
             end
         end
-
     end
+
+    -- Handle empty precache list
+    if totalCount == 0 then
+        print("Precache: nothing to precache")
+        CustomGameEventManager:Send_ServerToAllClients("precache_complete", {})
+        --[[ GameMode:HideMenu() ]]
+        if callback then
+            callback()
+        end
+        return
+    end
+
     precacheElement(callback)
 end
 
 function precache:clearTable()
-
-
+    self.precacheTable = {}
 end

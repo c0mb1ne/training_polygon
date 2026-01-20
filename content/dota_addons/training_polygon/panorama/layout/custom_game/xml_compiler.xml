@@ -1,8 +1,8 @@
 <root>
     <Panel class="PreloadContainer" style="visibility: collapse;">
         <!-- Reference all dynamically loaded layouts here -->
-        <Panel id="PreloadHomePage" layoutfile="file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml" />
-        <Panel id="PreloadPlayMenu" layoutfile="file://{resources}/layout/custom_game/menu2snippets/main_menu/play_menu.xml" />
+        <!-- <Panel id="PreloadHomePage" layoutfile="file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml" />
+        <Panel id="PreloadPlayMenu" layoutfile="file://{resources}/layout/custom_game/menu2snippets/main_menu/play_menu.xml" /> -->
         <!-- Add other dynamic layouts here -->
     </Panel>
 </root>

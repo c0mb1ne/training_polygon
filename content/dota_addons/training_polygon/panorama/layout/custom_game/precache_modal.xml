@@ -1,0 +1,18 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/precache_modal.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/precache_modal.js" />
+    </scripts>
+    <Panel class="precache_overlay">
+        <Panel id="precache_modal">
+            <Label id="precache_title" class="precache_title" text="Loading..." />
+            <Label id="precache_item" class="precache_item" text="" />
+            <Panel id="precache_progress_container">
+                <Panel id="precache_progress_bar"></Panel>
+            </Panel>
+            <Label id="precache_counter" class="precache_counter" text="0/0" />
+        </Panel>
+    </Panel>
+</root>

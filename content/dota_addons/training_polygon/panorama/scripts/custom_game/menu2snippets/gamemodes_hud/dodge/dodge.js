@@ -85,7 +85,7 @@ function drawType(parent,name){
             </RadioButton> */
 	var modePanel=$.CreatePanel('RadioButton',parent,name)
 	modePanel.SetAttributeString("name",name)
-	modePanel.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/dodge_type.xml", false, false)
+	modePanel.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/dodge/dodge_type.xml", false, false)
 	modePanel.SetPanelEvent(
 		"onactivate", 
 		function() {
@@ -157,10 +157,6 @@ function getSelectedSkills() {
     
     return selectedSkills;
 }
-function PrecacheInfo(data){
-	var errorMsg=$('#errorMsg')
-	var precahceItem=data.item
-	errorMsg.text='Loading: '+precahceItem;
-}
+// Precache progress is now handled by precache_modal.js
+
 GameEvents.Subscribe("dodge_spell_table", saveData);
-GameEvents.Subscribe("precache_progress", PrecacheInfo);

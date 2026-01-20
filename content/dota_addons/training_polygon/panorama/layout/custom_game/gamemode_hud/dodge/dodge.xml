@@ -1,0 +1,11 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/dodge/dodge.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/dodge/dodge.js" />
+    </scripts>
+    <Panel class="dodgeMain">
+        
+    </Panel>
+</root>
