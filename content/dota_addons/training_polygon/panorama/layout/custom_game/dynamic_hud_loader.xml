@@ -1,7 +1,11 @@
 <root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/dynamic_hud_loader.css" />
+    </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/dynamic_hud_loader.js" />
+       
     </scripts>
-    <Panel class="dynamic_hud_container">
+    <Panel hittest="false" class="dynamic_hud_container">
     </Panel>
 </root>

@@ -5,16 +5,9 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/gamemode_hud/dodge/dodge.js" />
     </scripts>
-    <Panel class="dodgeMain">
-         <Panel id="eulTimer" hittest="false" hittestchildren="false">
-			<Label id="timerText" text="0.000"/>
-			<Panel id="timerBar">
-			</Panel>
-			<Panel id="barDynamic">
-			</Panel> 
-			<Panel id="barMarker">
-			</Panel> 
-			<Label id="description" text="#eulTimeBarInfo"/>
-		</Panel>
+    <Panel hittest="false" class="dodgeMain">
+        <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+            <Label class="menu_button_label" text="#trainingEnd"/>
+        </Button>
     </Panel>
 </root>

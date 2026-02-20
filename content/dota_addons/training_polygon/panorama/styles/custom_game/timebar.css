@@ -19,7 +19,7 @@
 .ResizeAnchor{
 	width: 15px;
 	height: 15px;
-	background-color: #333;
+	background-color: #5a5a5a;
 	vertical-align: bottom;
 	horizontal-align: right;
 	clip: radial( 50% 50%, 45deg, 180deg );
@@ -34,10 +34,25 @@
 	opacity-mask-scale: 100%;
 	vertical-align: top;
 	horizontal-align: right;
+	margin-right: 30px;
+	margin-top: 5px;
+	background-color: #5a5a5a;
+	
+}
+.HideButton{
+	width: 20px;
+	height: 20px;
+	opacity-mask: url("s2r://panorama/images/control_icons/eye_png.vtex");
+	opacity-mask-scale: 120%;
+	vertical-align: top;
+	horizontal-align: right;
 	margin-right: 5px;
 	margin-top: 5px;
-	background-color: #333;
+	background-color: #5a5a5a;
 	
+}
+.HideButton:hover{
+	background-color: #fff;
 }
 .Locked{
 	background-color: #fff;
@@ -92,4 +107,22 @@
 	background-color: white;
 	height: 100%;
 	
+}
+.GreenZone{
+	width: 20px;
+	height: 100%;
+	background-color: #21b6034d;
+	z-index: 3;
+}
+.RedLine{
+	width: 2px;
+	height: 100%;
+	background-color: #bb0000;
+	z-index: 2;
+}
+.BlueLine{
+	width: 2px;
+	height: 100%;
+	background-color: #0300bb;
+	z-index: 2;
 }

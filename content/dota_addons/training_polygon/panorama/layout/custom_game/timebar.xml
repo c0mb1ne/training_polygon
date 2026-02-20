@@ -12,11 +12,15 @@
 			<Panel class="TimerContent" id="TimerContent">
 				<Panel class="UpperSpace" id="UpperSpace">
 					<Panel class="LockButton" id="LockButton"/>
+					<Panel class="HideButton" id="HideButton"/>
 					<Panel class="InfoPanel" id="InfoPanel">
 						<Label class="TimeLabel" text="0.000" id="TimeLabel"/>
 					</Panel>
 				</Panel>
 				<Panel class="MiddleSpace" id="MiddleSpace">
+					<Panel class="GreenZone" id="GreenZone"/>
+					<Panel class="RedLine" id="RedLine"/>
+					<Panel class="BlueLine" id="BlueLine"/>
 					<Panel class="DynamicBarContainer" id="DynamicBarContainer">
 						<Panel class="DynamicBar" id="DynamicBar"/>
 					</Panel>

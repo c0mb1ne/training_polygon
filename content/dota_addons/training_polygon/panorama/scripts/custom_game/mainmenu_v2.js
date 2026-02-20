@@ -55,10 +55,13 @@ function showTestUI(){
 }
 function hideMainMenu() {
     $.GetContextPanel().style['visibility'] = "collapse";
+	$.GetContextPanel().style['opacity'] = "0";
     $.Msg('Main menu hidden');
 }
 function showMainMenu() {
+
     $.GetContextPanel().style['visibility'] = "visible";
+	$.GetContextPanel().style['opacity'] = "1";
     $.Msg('Main menu shown');
 }
 

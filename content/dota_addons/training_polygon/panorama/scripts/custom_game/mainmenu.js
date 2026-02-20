@@ -3641,7 +3641,7 @@ var DinoGame = {
 };
 
 // Initialize the game
-DinoGame.Init()
+/* DinoGame.Init() */
 
 //chat hiding
 var dotaui=$.GetContextPanel().GetParent().GetParent().GetParent().GetParent()
@@ -3692,17 +3692,17 @@ function getAspectRatioType() {
         return "unknown";
     }
 }
-
+/* $('#supportersList').AddClass('forceHide') */
+$('#welcomeButton').enabled = false;
 // Hide elements based on aspect ratio
 var aspectType = getAspectRatioType();
-
+$.Msg('Aspect ratio: ',aspectType)
 if (aspectType === "16:10" || aspectType === "4:3") {
-    // Hide your element
-    $('#supportersList').visible = false;
-    // or
-    $('#supportersList').style.visibility = 'collapse';
+
+    /* $('#supportersList').AddClass('forceHide') */
+	
 } else {
-    $('#supportersList').visible = true;
+    /* $('#supportersList').visible = true; */
 }
 $('#welcomeButtonText').text = "Loading heroes... 0%" 
 

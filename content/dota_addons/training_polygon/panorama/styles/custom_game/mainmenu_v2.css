@@ -11,8 +11,8 @@
 	flow-children: right;
 	background-image: url( "file://{images}/custom_game/noise.png");
 	background-color: #18181A;
-	visibility: visible;
-	opacity: 1; 
+	/* visibility: collapse;
+	opacity: 0;  */
 }
 .avata_menu_icon{
 	width: 68px;
@@ -393,6 +393,9 @@ Label{
 	flow-children: right;
 	width: fill-parent-flow(1);
 }
+.ColNoFill{
+	flow-children: down;
+}
 .Col{
 	flow-children: down;
 	width: fill-parent-flow(1);
@@ -522,6 +525,13 @@ VerticalScrollBar .ScrollThumb{
 	transition-duration: 0.2s;
 	transition-timing-function: linear;
 }
+.settingLabel{
+	font-size: 16px;
+	margin-left: 8px;
+	color: #7d8688;
+	letter-spacing: 1px;
+	font-weight: thin;
+}
 .customCheckbox .TickBox{
 	width: 18px;
 	height: 18px;
@@ -548,4 +558,56 @@ VerticalScrollBar .ScrollThumb{
 #menu_button_icon_home{
 	opacity-mask: url( "file://{images}/custom_game/home_button.png");
 	opacity-mask-scale: 78% 78%;
+}
+.Hidden{
+	visibility: collapse;
+	opacity: 0;
+}
+.NumberSwitcherContainer{
+	flow-children: right;
+}
+.numberSwitcherButton{
+	width: 30px;
+	height: 30px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	
+}
+.numberSwitcherButton:hover{
+	border: 1px solid #ADD9E6; 
+}
+.numberSwitcherButton:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+.numberSwitcherButton Label{
+	horizontal-align: center;
+	vertical-align: center;
+	font-family: titleFont;
+	font-weight: semi-bold; 
+}
+.numberSwitcherField{
+	width: 60px;
+	height: 30px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	text-align: center;
+	/* font-weight: semi-bold;  */
+	color: white;
+	font-size: 22px;
+}
+.numberSwitcherField Label{
+	font-family: titleFont;
+	font-weight: semi-bold; 
+}
+.numberSwitcherFieldValue{
+	vertical-align: center;
+	horizontal-align: center;
+}
+#stormEvadeNumberSwitcher{
+	margin-left: 5px;
 }

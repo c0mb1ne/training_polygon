@@ -13,9 +13,25 @@
             
         </Panel>
         <Label text="#manta_options"/>
-        <ToggleButton checked="true" id="timebarToggle" class="customCheckbox" text="#menuTimebar" />
-        <ToggleButton checked="true" id="mantaShuffle" class="customCheckbox" text="#shuffleMode" />
-        <ToggleButton checked="false" id="mantaBlink" class="customCheckbox" text="#hardcoreMode" />
+        <Panel class="RowNoFill">
+            <Panel class="ColNoFill">
+                <ToggleButton checked="true" id="yashaKayaToggle" class="customCheckbox" text="#menuYashaKaya" />
+            
+                <ToggleButton checked="true" id="mantaShuffle" class="customCheckbox" text="#shuffleMode" />
+                <ToggleButton checked="false" id="mantaBlink" class="customCheckbox" text="#hardcoreMode" />
+                <ToggleButton checked="false" id="cancelAnimToggle" class="customCheckbox" text="#animationCancelMode" />
+            </Panel>
+            <Panel class="ColNoFill">
+                <ToggleButton checked="true" id="yashaKayaPlayerToggle" class="customCheckbox" text="#menuYashaKayaPlayer" />
+                <Panel id="stormTimeSetting" class="stormEvadeSetting RowNoFill">
+                    <Label class="settingLabel" text="#stormEvadeSetting"/>
+                    <Panel id="stormEvadeNumberSwitcher"/>
+                </Panel>
+            </Panel>
+            <Panel class="ColNoFill"/>
+        </Panel>
+        <!-- <ToggleButton checked="true" id="timebarToggle" class="customCheckbox" text="#menuTimebar" /> -->
+        
         <Label text="#menuSkills"/>
         <Panel class="RowNoFill">
             <Button class="menu_button normal_button buttons" id="selectAll" onactivate="selectAllSkills()">

@@ -87,10 +87,7 @@ function drawSkill(parent, key, skillInfo){
 }
 
 function drawType(parent,name){
-	//$.Msg(name)
-	/*<RadioButton class="timingType" checked="checked" group="dodgeMod" id="dtype_0">
-                <DOTAItemImage id="mantaThumb" itemname="item_manta" />
-            </RadioButton> */
+	
 	var modePanel=$.CreatePanel('RadioButton',parent,name)
 	modePanel.SetAttributeString("name",name)
 	modePanel.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/dodge/dodge_type.xml", false, false)
@@ -98,14 +95,25 @@ function drawType(parent,name){
 		"onactivate",
 		function() {
 			drawSpellTable(name)
+			$.Msg(name)
+			//if there is castpoint type of dodge, draw yasha kaya toggle
+			if (name=="storm_spirit_ball_lightning" || name=="bane_nightmare" || name=="void_spirit_dissimilate" || name=="riki_tricks_of_the_trade"){
+				$("#yashaKayaPlayerToggle").RemoveClass("Hidden")
+			}
+			else{
+				$("#yashaKayaPlayerToggle").AddClass("Hidden")
+			}
+			if (name=="storm_spirit_ball_lightning"){
+				$('#stormTimeSetting').RemoveClass("Hidden")
+			}else{
+				$('#stormTimeSetting').AddClass("Hidden")
+			}
 		}
 	)
-/*	if (name=="item_manta"){
-		modePanel.checked=true
-		$.Msg('checked')
 
-	}*/
 }
+
+$('#stormTimeSetting').AddClass("Hidden")
 
 function selectAllSkills(){
 	$.Each($('#dodgeSpellContainer').Children(), function(oPanel) {
@@ -134,12 +142,24 @@ function startGame() {
 
     $.Msg(dodgeName);
     $.Msg(JSON.stringify(selected));
-
+	var yashaKaya=false
+	var yashaKayaPlayer=false
+	if ($('#yashaKayaToggle').checked){
+		yashaKaya=true
+	}
+	if ($('#yashaKayaPlayerToggle').checked){
+		yashaKayaPlayer=true
+	}
+	var stormTime=""
+	stormTime=numberSwitcher.GetAttributeString("value", "")
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 		{
 			gameModeName: "dodge",
 			dodgeName: dodgeName,
-			dodgeSpells: selected
+			dodgeSpells: selected,
+			yashaKaya: yashaKaya,
+			stormTime: stormTime,
+			yashaKayaPlayer: yashaKayaPlayer
 	 	});
 }
 function getDodgeType(){
@@ -174,6 +194,20 @@ function getSelectedSkills() {
 
     return selectedSkills;
 }
+
+
+
+
+$("#yashaKayaPlayerToggle").AddClass("Hidden")
+//making number field for storm type
+var numberSwitcher=$.CreatePanel('Panel',$('#stormEvadeNumberSwitcher'),"storm_time_switcher")
+numberSwitcher.SetAttributeString("min","0.1")
+numberSwitcher.SetAttributeString("max","1")
+numberSwitcher.SetAttributeString("step","0.1")
+numberSwitcher.SetAttributeString("placeholder","0.1")
+numberSwitcher.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/number_switcher.xml", false, false) 
+
+
 // Precache progress is now handled by precache_modal.js
 
 GameEvents.Subscribe("dodge_spell_table", saveData);

@@ -47,18 +47,21 @@ json = require "json"
 require('settings')
 -- events.lua is where you can specify the actions to be taken when any event occurs and is one of the core barebones files.
 require('events')
-require('libraries/dota_database')
+require('libraries/dota_database') --dota kv parser
 require('gamemodes/dodge')
 
 require('libraries/action_logging')
 require('libraries/ping_reader')
 require('libraries/precache')
+require('libraries/timebar')
+require('libraries/notifications')
 require('utils')
+
 ping_reader:Init()
 DotaDB:Init()
 action_logging:Init()
 precache:Init()
-dodge:Init()
+
 
 
 function GameMode:activateGameMode( args )
@@ -156,7 +159,7 @@ function GameMode:OnFirstPlayerLoaded()
       end
     end,0)
   end
-  --precache_for_player(heroList[index])
+  --[[ precache_for_player(heroList[index]) ]]
 end
 
 function GameMode:OnAllPlayersLoaded()
@@ -215,7 +218,8 @@ function GameMode:InitGameMode()
   GameRules:GetGameModeEntity():SetModifierGainedFilter(Dynamic_Wrap(GameMode, "ModifierGained"), self)
   GameRules:GetGameModeEntity():SetModifyExperienceFilter(Dynamic_Wrap(GameMode, "ExpFilter"), self)
   GameRules:GetGameModeEntity():SetModifyGoldFilter(Dynamic_Wrap(GameMode, "GoldFilter"), self)
-
+  LinkLuaModifier("modifier_custom_speed_boost", "libraries/modifiers/modifier_custom_speed_boost.lua", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_set_max_mana.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
 
@@ -361,12 +365,12 @@ function custom_manta_training( eventSourceIndex, args )
   end
   if DODGE_TYPE==8 then
 --[[    active_hero:AddAbility("monkey_king_mischief")--]]
-    local shift=active_hero:FindAbilityByName("nyx_assassin_spiked_carapace")--хуй знает
+    local shift=active_hero:FindAbilityByName("nyx_assassin_spiked_carapace")--
     shift:SetLevel(1)
   end
   if DODGE_TYPE==9 then
 --[[    active_hero:AddAbility("monkey_king_mischief")--]]
-    local shift=active_hero:FindAbilityByName("void_spirit_dissimilate")--хуй знает
+    local shift=active_hero:FindAbilityByName("void_spirit_dissimilate")--
     shift:SetLevel(1)
   end
   --monkey_king_mischief
@@ -4754,7 +4758,9 @@ CustomGameEventManager:RegisterListener( "user_init", user_init )
 
 LAST_NPCSpawnedKeys=nil
 function GameMode:OnNPCSpawned(keys)
-
+  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OnNPCSpawned then
+    ACTIVE_GAMEMODE:OnNPCSpawned(keys)
+  end
   DebugPrint("[BAREBONES] NPC Spawned")
   DebugPrintTable(keys)
   
@@ -5970,6 +5976,9 @@ end
 
 
 function GameMode:OrderFilter(event)
+  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OrderFilter then
+    ACTIVE_GAMEMODE:OrderFilter(event)
+  end
   action_logging:OrderExecuted(event)
     --Check if the order is the glyph type
 --[[    print("POSTUPIL PRIKAZ:",Time())
@@ -6234,6 +6243,9 @@ function GameMode:AbilityTuning(event)
     return true
 end
 function GameMode:ModifierGained(event)
+  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.ModifierGained then
+    ACTIVE_GAMEMODE:ModifierGained(event)
+  end
     --[[print("------------ModCreated:",Time(),event['name_const'])
     DeepPrintTable( event )--]]
     if event['name_const']=="modifier_morphling_replicate_manager" then
@@ -6883,8 +6895,11 @@ end
 
 function GameMode:OnAbilityUsed(keys)
   DebugPrint('[BAREBONES] AbilityUsed')
+  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OnAbilityUsed then
+    ACTIVE_GAMEMODE:OnAbilityUsed(keys)
+  end
   -- DebugPrintTable(keys)
-  print("ability used:",Time(),keys.abilityname)
+  --[[ print("ability used:",Time(),keys.abilityname) ]]
   local player = PlayerResource:GetPlayer(keys.PlayerID)
   local abilityname = keys.abilityname
   glimpseOnSkillUsed(abilityname)
@@ -7738,6 +7753,9 @@ end
 
 function GameMode:OnEntityHurt(keys)
   DebugPrint("[BAREBONES] Entity Hurt")
+  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OnEntityHurt then
+    ACTIVE_GAMEMODE:OnEntityHurt(keys)
+  end
   DebugPrintTable(keys)
   local damagebits = keys.damagebits -- This might always be 0 and therefore useless
   if keys.entindex_attacker ~= nil and keys.entindex_killed ~= nil then

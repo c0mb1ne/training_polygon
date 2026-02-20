@@ -40,6 +40,7 @@
 #supportersList{
 	width: 800px;
 }
+
 #welcomeButton{
 	horizontal-align: center;
 	vertical-align: bottom;
@@ -677,7 +678,10 @@ VerticalScrollBar .ScrollThumb{
 	font-size: 16px;
 	margin-left: 16px;
 }
-
+.forceHide{
+	opacity: 0;
+	visibility: collapse;
+}
 .Hidden{
 	opacity: 0.0;
 	transform: translateX( -120px ) translateY( -60px );

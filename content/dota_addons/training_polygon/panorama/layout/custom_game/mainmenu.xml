@@ -69,11 +69,11 @@
 						<Label id="enGuideLink" class="webLink" html="true" text="&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2798153901&quot;&gt;ENGLISH GUIDE&lt;a&gt;"/>
 						<Label id="ruGuideLink" class="webLink" html="true" text="&lt;a href=&quot;https://steamcommunity.com/sharedfiles/filedetails/?id=2798175717&quot;&gt;РУССКИЙ ГАЙД&lt;a&gt;"/>
 					</Panel>
-					<Panel class="donatorList" id="supportersList">
+					<!-- <Panel class="donatorList" id="supportersList">
 						<Label id="loadingExplain" text="#loadingExplain"/>
 						<Panel id="DinoGame" class="DinoGame">
 							
-							<!-- <Panel id="DinoPlayer" class="dino" /> -->
+							
 							<Panel id="DinoGround" class="ground" />
 							<Panel id="DinoObstaclesContainer" class="obstacles-container" />
 							<DOTAScenePanel id="DinoPlayer" class="dino" style="width:100px;height:100px;" map="piggy" light="light" camera="camera1" particleonly="false"/>
@@ -84,9 +84,8 @@
 								<Label text="RESTART" />
 							</Panel>
 						</Panel>
-						<!-- <DOTAScenePanel style="width:100px;height:100px;" map="piggy" light="light" camera="camera1" particleonly="false"/>
-						<DOTAScenePanel style="width:50px;height:100px;" map="piggy" light="light" camera="camera2" particleonly="false"/> -->
-					</Panel>
+						
+					</Panel> -->
 					
 					<Panel id="firstDonation" class="donatorList">
 						

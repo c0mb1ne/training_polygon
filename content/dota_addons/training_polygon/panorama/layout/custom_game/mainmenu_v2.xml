@@ -5,7 +5,7 @@
 	<scripts>
 		<include src="file://{resources}/scripts/custom_game/mainmenu_v2.js" />
 	</scripts>
-	<Panel class="Main">
+	<Panel hittest="false" class="Main">
 		<Panel id="menu_left_bar">	
 			<Panel id="fake_dota_buttons_container">
 				<Panel class="fake_dota_buttons" id="fake_dota_menu"/>

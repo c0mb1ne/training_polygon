@@ -9,6 +9,12 @@ var counterLabel = $('#precache_counter');
 var totalItems = 0;
 var currentItem = 0;
 
+
+var DotaHud=$.GetContextPanel().GetParent().GetParent().GetParent().GetParent()
+var Hud=DotaHud.FindChild("Hud")
+var HUDElements=Hud.FindChild("HUDElements")
+var lower_hud=HUDElements.FindChild("lower_hud")
+
 function showModal() {
     $.Msg('[PrecacheModal] Showing modal');
     overlay.AddClass('visible');
@@ -69,6 +75,7 @@ function onPrecacheComplete(data) {
         hideModal();
         resetModal();
     });
+    lower_hud.SetFocus()
 }
 
 // Subscribe to events
