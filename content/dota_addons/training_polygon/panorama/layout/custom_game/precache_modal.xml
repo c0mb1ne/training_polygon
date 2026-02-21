@@ -5,7 +5,7 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/precache_modal.js" />
     </scripts>
-    <Panel class="precache_overlay">
+    <Panel class="precache_overlay" hittest="false">
         <Panel id="precache_modal">
             <Label id="precache_title" class="precache_title" text="Loading..." />
             <Label id="precache_item" class="precache_item" text="" />

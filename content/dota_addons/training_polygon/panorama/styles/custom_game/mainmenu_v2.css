@@ -230,7 +230,10 @@
 	background-color: #2222;
 	overflow: clip;
 	box-shadow: inset #00000099 0px 0px 217px 0px;
+	
+	/* ui-scale:120%; */
 }
+
 #tp_header_label_container{
 	position: 0px 600px 10px;
 	width: 300px;
@@ -302,6 +305,7 @@
 #welcomeScreen{
 	flow-children:right;
 }
+
  @keyframes '2dpanelanimation'{
 
   0%{
@@ -333,8 +337,7 @@
    transform: translateZ( 190px ) translateX( 4px ) translateY( 0px ) rotateY( 10deg ) rotateX( 8deg );
  
   }
- }
-
+}
 .embeedingContainer{
 	min-width: 400px;
 	width: fill-parent-flow(1);
@@ -557,7 +560,11 @@ VerticalScrollBar .ScrollThumb{
 }
 #menu_button_icon_home{
 	opacity-mask: url( "file://{images}/custom_game/home_button.png");
-	opacity-mask-scale: 78% 78%;
+	/* opacity-mask-scale: 78% 78%; */
+}
+#menu_button_icon_github{
+	opacity-mask: url( "file://{images}/custom_game/github.png");
+	/* opacity-mask-scale: 78% 78%; */
 }
 .Hidden{
 	visibility: collapse;

@@ -68,6 +68,15 @@ function showMainMenu() {
 function setCameraOnEnt(data){
 	GameUI.MoveCameraToEntity(data.ent)
 }
+function openDiscord(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://discord.gg/9qCAqFH")
+}
+function openGithub(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://github.com/c0mb1ne/training_polygon")
+}
+
+
+
 GameEvents.Subscribe("set_camera_on_ent", setCameraOnEnt);
 GameEvents.Subscribe("show_test_ui", showTestUI);
 GameEvents.Subscribe("hide_main_menu", hideMainMenu);

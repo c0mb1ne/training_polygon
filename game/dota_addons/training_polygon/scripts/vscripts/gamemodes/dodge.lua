@@ -11,7 +11,7 @@ function dodge:Init()
     { item_manta=
         {
         [1]={spell_name="lina_light_strike_array", hero_name="npc_dota_hero_lina", level=1, aghs=false, shard=false, is_ability=true, cast_func="lina_light_strike_array"},
-        [2]={spell_name="kunkka_ghostship", hero_name="npc_dota_hero_kunkka", level=1, aghs=false, shard=false, is_ability=true, cast_func="basic_point_cast"},
+        [2]={spell_name="kunkka_ghostship", hero_name="npc_dota_hero_kunkka", level=1, aghs=false, shard=false, is_ability=true, cast_func="kunkka_ghostship"},
         [3]={spell_name="lina_laguna_blade", hero_name="npc_dota_hero_lina", level=1, aghs=false, shard=false, is_ability=true, cast_func="lina_laguna_blade"},
         [4]={spell_name="bloodseeker_blood_bath", hero_name="npc_dota_hero_bloodseeker", level=1, aghs=false, shard=false, is_ability=true, cast_func="basic_point_cast"},
         [5]={spell_name="pugna_nether_blast", hero_name="npc_dota_hero_pugna", level=1, aghs=false, shard=false, is_ability=true, cast_func="universal_cast"},
@@ -134,7 +134,7 @@ function dodge:Init()
     self.playerHero=nil -- Reference to the player's hero
     self.trainingPlace=Vector(879.7060546875,4036.7941894531,128) -- Location for training
     self.castDelay=2 --delay between unit spawn and cast
-    self.afterCastDelay=1.4 --delay between cast and unit removal
+    self.afterCastDelay=1 --delay between cast and unit removal
     self.currentEnemy=nil --variable to store enemy bot
     self.spellIndex=0
     self.currentDodgeType=nil
@@ -143,7 +143,7 @@ function dodge:Init()
         dodge:SendSpellTable()
     end)
     CustomGameEventManager:RegisterListener("dodge_training_end", function(_, event)
-        dodge:Deactivate()
+        dodge:PrepareDeactivate()
     end)
     print('dodge inited')
     self.mantaEnt=nil
@@ -161,6 +161,8 @@ function dodge:Init()
     self.yashaKayaPlayer=false
     self.dodgeCastPoint=0
     self.debugTime=0
+    self.currentAbilityName=""
+    self.deactivateCalled=false
 end
 
 function dodge:Prepare(args)
@@ -244,7 +246,7 @@ function dodge:lina_light_strike_array(entry)
     end
     castPoint=castPoint+damageDelay
     Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
-    self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay)
+    self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint)
 end
 function dodge:lina_laguna_blade(entry)
     local abilityName=entry.spell_name
@@ -256,9 +258,23 @@ function dodge:lina_laguna_blade(entry)
     end
     castPoint=castPoint+damageDelay
     Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
-    self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay)
+    self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint)
 end
-function dodge:doTargetCast(enemyName,enemySpell)
+function dodge:kunkka_ghostship(entry)
+    local abilityName=entry.spell_name
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local travel_distance=parseQuadroValue(abilityKV["AbilityValues"]["ghostship_distance"])
+    local travel_speed=parseQuadroValue(abilityKV["AbilityValues"]["ghostship_speed"])
+    local damageDelay=travel_distance/travel_speed
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint)
+end
+function dodge:doTargetCast(enemyName,enemySpell,preCastDelay,afterCastDelay,spawnRange)
     --[[ print('do target cast:',enemyName,enemySpell) ]]
     local spawnpoint=randomCirclePositionVector(400,self.playerHero:GetAbsOrigin())
     self.currentEnemy=CreateUnitByNameAsync(enemyName,spawnpoint,true,nil,nil,DOTA_TEAM_BADGUYS,function(unit)
@@ -268,7 +284,7 @@ function dodge:doTargetCast(enemyName,enemySpell)
 		unit:SetAttackCapability(0)
 		unit:UpgradeAbility(ability)
         
-        local delay=self.castDelay+self:getRandomDelay()
+        local delay=preCastDelay+self:getRandomDelay()
         
         function tryToCast()
             unit:SetContextThink(DoUniqueString("try_cast_ability"),
@@ -287,7 +303,7 @@ function dodge:doTargetCast(enemyName,enemySpell)
                     delay=0.15
                     if ability:IsCooldownReady()==false then
                         --go to unit removal
-                        self.removeTimer=Timers:CreateTimer(dodge.afterCastDelay, function()
+                        self.removeTimer=Timers:CreateTimer(afterCastDelay, function()
                             if IsValidEntity(unit) then
                                 unit:RemoveSelf()
                             end
@@ -307,7 +323,7 @@ function dodge:doTargetCast(enemyName,enemySpell)
         return unit
     end)
 end
-function dodge:doPointCast(enemyName,enemySpell,preCastDelay,afterCastDelay)
+function dodge:doPointCast(enemyName,enemySpell,preCastDelay,afterCastDelay,spawnRange)
     --[[ print('do point cast called:',enemyName,enemySpell) ]]
     local spawnpoint=randomCirclePositionVector(400,self.playerHero:GetAbsOrigin())
     self.currentEnemy=CreateUnitByNameAsync(enemyName,spawnpoint,true,nil,nil,DOTA_TEAM_BADGUYS,function(unit)
@@ -416,6 +432,9 @@ function dodge:StartGame(args)
 end
 
 function dodge:cycleEnemies()
+    if self.deactivateCalled==true then
+        self:Deactivate()
+    end
     if self.activated==false then
         return
     end
@@ -426,6 +445,7 @@ function dodge:cycleEnemies()
     local currentSpellIndex=self.selectedSpells[self.spellIndex]
 
     local entry = self.spellTable[self.currentDodgeType][currentSpellIndex]
+    self.currentAbilityName=entry.spell_name
     if self.spellIndex==#self.selectedSpells then
         self.spellIndex=1
     else
@@ -447,13 +467,18 @@ function dodge:cycleEnemies()
     self.firstCycle=false
 end
 function dodge:checkResult()
-
+    
     if self.playerGotHurt then
         --bad result
-        Notifications:Show('red','bad','none')
+        if self.dodgePressed then
+            local delay=self.playerDodgeTime-self.playerHurtTime
+            Notifications:Show('red','bad, delay:'..delay,self.currentAbilityName)
+        else
+            Notifications:Show('red','bad',self.currentAbilityName)
+        end
     else
         --good result
-        Notifications:Show('green','good','none')
+        Notifications:Show('green','good',self.currentAbilityName)
     end
     self.playerGotHurt=false
     self.dodgePressed=false
@@ -491,6 +516,7 @@ function dodge:OrderFilter(event)
             --reset checker in checkResult()
             if self.dodgePressed==false then
                 self.dodgePressed=true
+                self.playerDodgeTime=Time()
                 print('manta pressed')
                 Timebar:PlayerAction()
             end
@@ -594,11 +620,17 @@ function dodge:OnEntityHurt(keys)
     end
 end
 
+function dodge:PrepareDeactivate()
+    self.deactivateCalled=true
+    CustomGameEventManager:Send_ServerToAllClients("clear_hud",{})
+end
+
 function dodge:Deactivate()
     self.activated=false
-    CustomGameEventManager:Send_ServerToAllClients("clear_hud",{})
-    CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
+    
     Timebar:Hide()
+    CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
+    
     --[[ self.currentEnemy:RemoveSelf() ]] --do not do this, if we remove unit in middle of a cast, game would crash
 end
 

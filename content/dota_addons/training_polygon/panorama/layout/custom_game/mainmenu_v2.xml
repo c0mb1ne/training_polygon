@@ -38,11 +38,17 @@
 					</Panel>
 					<Label class="menu_button_label" text="Profile"/>
 				</RadioButton>
-				<Button class="menu_button" id="menu_sub">
+				<Button class="menu_button" id="menu_sub" onactivate="openDiscord()">
 					<Panel class="menu_button_icon_container">
 						<Image class="menu_button_icon" src="file://{images}/custom_game/discord.png" />
 					</Panel>
 					<Label class="menu_button_label" text="Discord"/>
+				</Button>
+				<Button class="menu_button" id="menu_github" onactivate="openGithub()">
+					<Panel class="menu_button_icon_container">
+						<Image id="menu_button_icon_github" src="file://{images}/custom_game/gradient.png" />
+					</Panel>
+					<Label class="menu_button_label" text="Github"/> 
 				</Button>
 				<!-- <Button class="menu_button" id="menu_discord">
 					<Panel class="menu_button_icon_container">
