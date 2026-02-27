@@ -37,4 +37,7 @@ end
 function Timebar:BlueLine()
     CustomGameEventManager:Send_ServerToAllClients("timebar_blue_line", {})
 end
+function Timebar:ResetLines()
+    CustomGameEventManager:Send_ServerToAllClients("timebar_reset_lines", {})
+end
 Timebar:Init()

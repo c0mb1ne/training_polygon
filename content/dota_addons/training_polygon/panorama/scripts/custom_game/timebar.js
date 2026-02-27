@@ -333,6 +333,13 @@ function SetBlueLine(){
     BlueLine.style['margin-left'] = dynamicBar.style['width']
     
 }
+function ResetLines(){
+    BlueLine.style['horizontal-align'] = "left";
+    BlueLine.style['margin-left'] = "-5px;";
+    RedLine.style['horizontal-align'] = "left";
+    RedLine.style['margin-left'] = "-5px;";
+}
+GameEvents.Subscribe("timebar_reset_lines", ResetLines);
 GameEvents.Subscribe("timebar_blue_line", SetBlueLine);
 GameEvents.Subscribe("timebar_player_action", PlayerAction);
 GameEvents.Subscribe("timebar_prepare", PrepareTimebar);
