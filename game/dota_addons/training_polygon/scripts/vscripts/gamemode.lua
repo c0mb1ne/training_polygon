@@ -218,11 +218,19 @@ function GameMode:InitGameMode()
   GameRules:GetGameModeEntity():SetModifierGainedFilter(Dynamic_Wrap(GameMode, "ModifierGained"), self)
   GameRules:GetGameModeEntity():SetModifyExperienceFilter(Dynamic_Wrap(GameMode, "ExpFilter"), self)
   GameRules:GetGameModeEntity():SetModifyGoldFilter(Dynamic_Wrap(GameMode, "GoldFilter"), self)
+  GameRules:GetGameModeEntity():SetDamageFilter(Dynamic_Wrap(GameMode, "DamageFilter"), self)
   LinkLuaModifier("modifier_custom_speed_boost", "libraries/modifiers/modifier_custom_speed_boost.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_set_max_mana.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
-
+function GameMode:DamageFilter(event)
+  local result=true
+  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.DamageFilter then
+    result=ACTIVE_GAMEMODE:DamageFilter(event)
+  end
+  return result
+  
+end
 function GameMode:cmdPrintPlace()
   local cmdPlayer=PlayerResource:GetPlayer(0)
   --DeepPrintTable(cmdPlayer)
@@ -5976,8 +5984,12 @@ end
 
 
 function GameMode:OrderFilter(event)
+  local result
   if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OrderFilter then
-    ACTIVE_GAMEMODE:OrderFilter(event)
+    result=ACTIVE_GAMEMODE:OrderFilter(event)
+  end
+  if result==false then
+    return result
   end
   action_logging:OrderExecuted(event)
     --Check if the order is the glyph type

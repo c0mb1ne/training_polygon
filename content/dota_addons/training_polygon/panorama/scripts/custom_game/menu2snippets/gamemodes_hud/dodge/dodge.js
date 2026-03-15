@@ -69,9 +69,14 @@ function drawSkill(parent, key, skillInfo){
 	container.SetAttributeInt("aghs", skillInfo.aghs ? 1 : 0)
 	container.SetAttributeInt("shard", skillInfo.shard ? 1 : 0)
 	container.SetAttributeInt("is_ability", skillInfo.is_ability ? 1 : 0)
-
+	
 	let SkillImage = $.CreatePanel('DOTAAbilityImage', container, 'skillI_' + key)
 	SkillImage.abilityname = spellName
+	if (skillInfo.level>1){
+		var lvlLabel=$.CreatePanel("Label",container,'lvl_'+key)
+		lvlLabel.text="lvl. "+skillInfo.level
+		lvlLabel.AddClass("lvlLabel")
+	}
 	container.SetPanelEvent(
 		"onmouseover",
 		function() {
