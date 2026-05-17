@@ -6,51 +6,81 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dodge/dodge.js" />
     </scripts>
-    <Panel class="Col">
-        <Label class="menu_button_label" text="dodge"/>
-        <Label class="embeedingContentLabel" text="#timingType"/>
-        <Panel id="dodgeTypes" class="RowNoFill">
-            
-        </Panel>
-        <Label text="#manta_options"/>
-        <Panel class="RowNoFill">
-            <Panel class="ColNoFill">
-                <ToggleButton checked="true" id="yashaKayaToggle" class="customCheckbox" text="#menuYashaKaya" />
-            
-                <ToggleButton checked="true" id="mantaShuffle" class="customCheckbox" text="#shuffleMode" />
-                <ToggleButton checked="false" id="hardcoreMode" class="customCheckbox" text="#hardcoreMode" />
-                <ToggleButton checked="false" id="cancelAnimToggle" class="customCheckbox" text="#animationCancelMode" />
+    <Panel class="dodgeMain">
+        <Panel class="Col">
+            <Label class="menu_button_label" text="dodge"/>
+            <Label class="embeedingContentLabel" text="#timingType"/>
+            <Panel id="dodgeTypes" class="RowNoFill">
+                
             </Panel>
-            <Panel class="ColNoFill">
-                <ToggleButton checked="true" id="yashaKayaPlayerToggle" class="customCheckbox" text="#menuYashaKayaPlayer" />
-                <Panel id="stormTimeSetting" class="stormEvadeSetting RowNoFill">
-                    <Label class="settingLabel" text="#stormEvadeSetting"/>
-                    <Panel id="stormEvadeNumberSwitcher"/>
+            <Label text="#manta_options"/>
+            <Panel class="RowNoFill">
+                <Panel class="ColNoFill padding5">
+                    <ToggleButton checked="true" id="yashaKayaToggle" class="customCheckbox" text="#menuYashaKaya" />
+                
+                    <ToggleButton checked="true" id="mantaShuffle" class="customCheckbox" text="#shuffleMode" />
+                    <ToggleButton checked="false" id="hardcoreMode" class="customCheckbox" text="#hardcoreMode" />
+                    <ToggleButton checked="false" id="cancelAnimToggle" class="customCheckbox" text="#animationCancelMode" />
+                </Panel>
+                <Panel class="ColNoFill padding5">
+                    <Panel class="RowNoFill">
+                        <Label class="settingLabel" text="#currentRespawnPos"/>
+                        <Label id="respawnPosSetting" class="settingLabel" text="0,67,67"/>
+                    </Panel>
+                    <Panel class="RowNoFill">
+                        <Button class="menu_button normal_button buttons" id="changeRespawn" onactivate="placePickerStart()">
+                            <Label text="#changeRespawn"/>
+                        </Button>
+                        <Button class="menu_button normal_button buttons" id="resetRespawn" onactivate="resetRespawnPlace()">
+                            <Label text="#resetRespawn"/>
+                        </Button>
+                    </Panel>
+                    <ToggleButton checked="true" id="treesToggle" class="customCheckbox" text="#clearTrees" />
+                </Panel>
+                <Panel id="heroPickerContainer" class="ColNoFill padding5">
+                    <Panel id="hero_picker" class="HeroPicker">
+                        <Button id="hero_icon_container" class="HeroPickerIconContainer">
+                            <DOTAHeroImage id="hero_picker_selected" class="heroPickerIcon" heroname="npc_dota_hero_pudge" heroimagestyle="icon"/>
+                        </Button>
+                        <Panel class="BadgeCircle">
+                        </Panel>
+                    </Panel>
+                </Panel>
+                <Panel class="ColNoFill padding5">
+                    <ToggleButton checked="true" id="yashaKayaPlayerToggle" class="customCheckbox" text="#menuYashaKayaPlayer" />
+                    <Panel id="stormTimeSetting" class="stormEvadeSetting RowNoFill">
+                        <Label class="settingLabel" text="#stormEvadeSetting"/>
+                        <Panel id="stormEvadeNumberSwitcher"/>
+                    </Panel>
+                </Panel>
+                
+                <!-- <Panel class="ColNoFill"/> -->
+            </Panel>
+            <!-- <ToggleButton checked="true" id="timebarToggle" class="customCheckbox" text="#menuTimebar" /> -->
+            
+            <Label text="#menuSkills"/>
+            <Panel class="RowNoFill">
+                <Button class="menu_button normal_button buttons" id="selectAll" onactivate="selectAllSkills()">
+                    <Label text="#skillsAll"/>
+                </Button>
+                <Button class="menu_button normal_button buttons" id="unmarkAll" onactivate="unmarkAllSkills()">
+                    <Label text="#skillsNone"/>
+                </Button>
+            </Panel>
+            <Panel class="RowNoFill">
+                <Panel id="dodgeSpellContainer">
+
                 </Panel>
             </Panel>
-            <Panel class="ColNoFill"/>
+            <Panel class="RowNoFill">
+                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
+                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                </Button>
+                <Label id="errorMsg"></Label>
+            </Panel> 
         </Panel>
-        <!-- <ToggleButton checked="true" id="timebarToggle" class="customCheckbox" text="#menuTimebar" /> -->
-        
-        <Label text="#menuSkills"/>
-        <Panel class="RowNoFill">
-            <Button class="menu_button normal_button buttons" id="selectAll" onactivate="selectAllSkills()">
-                <Label text="#skillsAll"/>
-            </Button>
-            <Button class="menu_button normal_button buttons" id="unmarkAll" onactivate="unmarkAllSkills()">
-                <Label text="#skillsNone"/>
-            </Button>
+        <Panel id="dodge_popup_container">
+            <Panel id="manta_hero_picker_popup" class="heroPickerPopup"/>
         </Panel>
-        <Panel class="RowNoFill">
-            <Panel id="dodgeSpellContainer">
-
-            </Panel>
-        </Panel>
-        <Panel class="RowNoFill">
-            <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
-				<Label class="mode_play_label" id="menu_play_label" text="Play"/>
-            </Button>
-            <Label id="errorMsg"></Label>
-        </Panel> 
     </Panel>
 </root>

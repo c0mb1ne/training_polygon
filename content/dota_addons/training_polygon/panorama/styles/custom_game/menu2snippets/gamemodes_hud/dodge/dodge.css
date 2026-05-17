@@ -1,3 +1,7 @@
+.dodgeMain{
+	width: 100%;
+	height: 100%;
+}
 .skillContainer{
 	height: 63px;
 	width: 63px;
@@ -43,4 +47,33 @@
 #dodgeSpellContainer{
 	flow-children: right-wrap;
 	overflow: squish scroll;
+}
+#dodge_popup_container{
+	width: 100%;
+	height: 100%;
+	background-color: #212121d2;
+	opacity: 0;
+	visibility: collapse;
+}
+.heroPickerPopup{
+	width: 50%;
+	height: 40%;
+	vertical-align: center;
+	horizontal-align: center;
+	background-color: #474747;
+	flow-children: right-wrap;
+	overflow: squish scroll;
+}
+.heroPickerButton{
+	padding: 5px;
+}
+.heroPickerButton:hover{
+	background-color: #8EBDCB;
+}
+.heroPickerIcon{
+	vertical-align: center;
+	horizontal-align: center;
+}
+.heroPickerSelected{
+	background-color: #8ebdcb77;
 }

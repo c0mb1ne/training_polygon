@@ -1,0 +1,14 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/place_picker.css" />
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/place_picker.js" />
+    </scripts>
+    <Panel class="placePicker Hidden" hittest="false">
+        <Button class="menu_button" id="pickButton" onactivate="pickPlace()">
+            <Label class="pickButtonLabel" text="#pickPlace"/>
+        </Button>
+    </Panel>
+</root>

@@ -6,70 +6,74 @@
 		<include src="file://{resources}/scripts/custom_game/mainmenu_v2.js" />
 	</scripts>
 	<Panel hittest="false" class="Main">
-		<Panel id="menu_left_bar">	
-			<Panel id="fake_dota_buttons_container">
-				<Panel class="fake_dota_buttons" id="fake_dota_menu"/>
-				<Panel class="fake_dota_buttons" id="fake_dota_settings"/>
-				<Button class="fake_dota_buttons" id="quit_button"/>
+		<Panel class="menuContainer">
+			<Panel id="menu_left_bar">	
+				<Panel id="fake_dota_buttons_container">
+					<Panel class="fake_dota_buttons" id="fake_dota_menu"/>
+					<Panel class="fake_dota_buttons" id="fake_dota_settings"/>
+					<Button class="fake_dota_buttons" id="quit_button"/>
+				</Panel>
+				<Panel id="menu_button_container">
+					
+					<RadioButton class="menu_button" id="menu_play">
+						<Panel class="menu_button_icon_container">
+							<Image id="menu_button_icon_play" src="file://{images}/custom_game/play_button.png" />
+						</Panel>
+						<Label class="menu_button_label" id="menu_play_label" text="Play"/>
+					</RadioButton>
+					<RadioButton selected="true" class="menu_button" id="menu_home">
+						<Panel class="menu_button_icon_container">
+							<Image id="menu_button_icon_home" src="file://{images}/custom_game/gradient.png" />
+						</Panel>
+						<Label class="menu_button_label" id="menu_play_label" text="Home"/>
+					</RadioButton>
+					<RadioButton class="menu_button" id="menu_settings">
+						<Panel class="menu_button_icon_container">
+							<Image id="menu_button_icon_settings" src="file://{images}/custom_game/settings.png" />
+						</Panel>
+						<Label class="menu_button_label" text="Settings"/>
+					</RadioButton>
+					<RadioButton class="menu_button" id="menu_profile">
+						<Panel id="menu_avatar_container" class="menu_button_icon_container">
+							<DOTAAvatarImage class="avata_menu_icon" steamid="local" id="menu_button_avatar"/>
+						</Panel>
+						<Label class="menu_button_label" text="Profile"/>
+					</RadioButton>
+					<Button class="menu_button" id="menu_sub" onactivate="openDiscord()">
+						<Panel class="menu_button_icon_container">
+							<Image class="menu_button_icon" src="file://{images}/custom_game/discord.png" />
+						</Panel>
+						<Label class="menu_button_label" text="Discord"/>
+					</Button>
+					<Button class="menu_button" id="menu_github" onactivate="openGithub()">
+						<Panel class="menu_button_icon_container">
+							<Image id="menu_button_icon_github" src="file://{images}/custom_game/gradient.png" />
+						</Panel>
+						<Label class="menu_button_label" text="Github"/> 
+					</Button>
+					<!-- <Button class="menu_button" id="menu_discord">
+						<Panel class="menu_button_icon_container">
+							<Image class="menu_button_icon" src="file://{images}/custom_game/coins.png" />
+						</Panel>
+						<Label class="menu_button_label" text="Support"/>
+					</Button> -->
+				</Panel>
 			</Panel>
-			<Panel id="menu_button_container">
-				
-				<RadioButton class="menu_button" id="menu_play">
-					<Panel class="menu_button_icon_container">
-						<Image id="menu_button_icon_play" src="file://{images}/custom_game/play_button.png" />
+			<Panel id="right_container">
+				<Panel id="tp_header">
+					<Panel id="tp_header_anim_container">
+						<Image id="tp_background" src="file://{images}/custom_game/icons.jpg" />
 					</Panel>
-					<Label class="menu_button_label" id="menu_play_label" text="Play"/>
-				</RadioButton>
-				<RadioButton selected="true" class="menu_button" id="menu_home">
-					<Panel class="menu_button_icon_container">
-						<Image id="menu_button_icon_home" src="file://{images}/custom_game/gradient.png" />
-					</Panel>
-					<Label class="menu_button_label" id="menu_play_label" text="Home"/>
-				</RadioButton>
-				<RadioButton class="menu_button" id="menu_settings">
-					<Panel class="menu_button_icon_container">
-						<Image id="menu_button_icon_settings" src="file://{images}/custom_game/settings.png" />
-					</Panel>
-					<Label class="menu_button_label" text="Settings"/>
-				</RadioButton>
-				<RadioButton class="menu_button" id="menu_profile">
-					<Panel id="menu_avatar_container" class="menu_button_icon_container">
-						<DOTAAvatarImage class="avata_menu_icon" steamid="local" id="menu_button_avatar"/>
-					</Panel>
-					<Label class="menu_button_label" text="Profile"/>
-				</RadioButton>
-				<Button class="menu_button" id="menu_sub" onactivate="openDiscord()">
-					<Panel class="menu_button_icon_container">
-						<Image class="menu_button_icon" src="file://{images}/custom_game/discord.png" />
-					</Panel>
-					<Label class="menu_button_label" text="Discord"/>
-				</Button>
-				<Button class="menu_button" id="menu_github" onactivate="openGithub()">
-					<Panel class="menu_button_icon_container">
-						<Image id="menu_button_icon_github" src="file://{images}/custom_game/gradient.png" />
-					</Panel>
-					<Label class="menu_button_label" text="Github"/> 
-				</Button>
-				<!-- <Button class="menu_button" id="menu_discord">
-					<Panel class="menu_button_icon_container">
-						<Image class="menu_button_icon" src="file://{images}/custom_game/coins.png" />
-					</Panel>
-					<Label class="menu_button_label" text="Support"/>
-				</Button> -->
+					<Label id="tp_header_label" text="Training polygon"/>
+					<Label id="tp_version_label" text="version 1.0"/>
+					<Label id="tp_status_label" class="statusOffline" text="offline"/>
+				</Panel>
+				<Panel id="menu_content">
+					
+				</Panel>
 			</Panel>
 		</Panel>
-		<Panel id="right_container">
-			<Panel id="tp_header">
-				<Panel id="tp_header_anim_container">
-					<Image id="tp_background" src="file://{images}/custom_game/icons.jpg" />
-				</Panel>
-				<Label id="tp_header_label" text="Training polygon"/>
-				<Label id="tp_version_label" text="version 1.0"/>
-				<Label id="tp_status_label" class="statusOffline" text="offline"/>
-			</Panel>
-			<Panel id="menu_content">
-				
-			</Panel>
+		<Panel id="popup_container">
 		</Panel>
 	</Panel>
 </root>

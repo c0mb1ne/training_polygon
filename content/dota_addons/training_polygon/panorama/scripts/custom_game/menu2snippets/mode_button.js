@@ -3,7 +3,7 @@
 var mode=$.GetContextPanel().GetAttributeString("mode", "")
 var type=$.GetContextPanel().GetAttributeString("type", "")
 var menuContent = $.GetContextPanel().GetParent().GetParent().GetParent().GetParent().GetParent();
-var leftMenu = $.GetContextPanel().GetParent().GetParent().GetParent().GetParent().GetParent().GetParent().GetParent().FindChild("menu_left_bar");
+var leftMenu = $.GetContextPanel().GetParent().GetParent().GetParent().GetParent().GetParent().GetParent().GetParent().GetParent().GetParent().FindChild("menu_left_bar");
 var playButton=leftMenu.FindChild("menu_button_container").FindChild("menu_play")
 //$.Msg(playButton.id)
 var image=$('#gmImage')
@@ -31,14 +31,20 @@ $.GetContextPanel().SetPanelEvent(
 	"onactivate", 
 	function() {
 		$.Msg('clicked')
-		clearMenuContentAndDrawModePanel()
-		var mode_menu = $.CreatePanel( "Panel", menuContent, mode+"_menu" );
-		var result=mode_menu.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/"+mode+".xml", false, false ); 
-		if (result){
+		/* clearMenuContentAndDrawModePanel()
+		var mode_menu = $.CreatePanel( "Panel", menuContent, mode+"_menu" ); */
+		/* var result=mode_menu.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/"+mode+".xml", false, false );  */
+		GameEvents.SendCustomGameEventToServer (
+			"main_menu_load_page_request",
+				{
+					page:"file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/"+mode+".xml"
+				}
+		);
+		/* if (result){
 			$.Msg('panel loaded ',mode)
 		}else{
 			$.Msg('panel not loaded ',mode)
-		}
+		} */
 	}
 )
 $.GetContextPanel().SetPanelEvent(

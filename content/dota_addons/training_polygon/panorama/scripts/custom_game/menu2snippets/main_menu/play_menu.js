@@ -23,6 +23,8 @@ for (var i =  0; i < sandbox_mods.length; i++) {
 }
 
 function clearMenuContent(){
+	$.Msg('clearing content of')
+	$.Msg(menuContainer.id)
 	$.Each(menuContainer.Children(), function( oPanel )
 	{
 		oPanel.DeleteAsync(0)

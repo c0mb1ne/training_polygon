@@ -3,7 +3,6 @@ if Timebar == nil then
 end
 
 function Timebar:Init()
-    CustomGameEventManager:RegisterListener("timebar_prepare", Dynamic_Wrap(Timebar, "Prepare"))
     CustomGameEventManager:RegisterListener("timebar_show", Dynamic_Wrap(Timebar, "Show"))
     CustomGameEventManager:RegisterListener("timebar_show", Dynamic_Wrap(Timebar, "Hide"))
     CustomGameEventManager:RegisterListener("timebar_start", Dynamic_Wrap(Timebar, "Start"))

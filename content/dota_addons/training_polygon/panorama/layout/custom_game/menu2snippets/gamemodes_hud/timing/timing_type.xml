@@ -1,0 +1,11 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/timing/timing.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/timing/timing_type.js" />
+    </scripts>
+    <RadioButton class="timingType" group="timingMod">
+        
+    </RadioButton> 
+</root>

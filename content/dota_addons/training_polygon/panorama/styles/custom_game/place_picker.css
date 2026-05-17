@@ -1,0 +1,17 @@
+.placePicker{
+    width: 100%;
+    height: 100%;
+}
+#pickButton{
+    margin-top: 40%;
+    width: 13%;
+    height: 5%;
+}
+.pickButtonLabel{
+    vertical-align: center;
+    horizontal-align: center;
+}
+.Hidden{
+    opacity: 0;
+    visibility: collapse;
+}

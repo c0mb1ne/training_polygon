@@ -5,7 +5,7 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/menu2snippets/main_menu/play_menu.js" />
     </scripts>
-    <Panel class="Row">
+    <Panel class="RowHFill">
         <Panel class="Col modFilterContainer">
             <Panel class="embeedingContainer filterEmb">
                 <Panel class="embeedingHeader">
@@ -17,22 +17,26 @@
             </Panel>
         </Panel>
         <Panel class="Col">
-            <Panel class="embeedingContainer competContainer">
-                <Panel class="embeedingHeader">
-                    <Label class="menu_button_label" text="Competitive"/>
-                </Panel>
-                <Panel id="compMenu" class="embeedingContent">
+            <Panel class="Row">
+                <Panel class="ColWFill">
+                    <Panel class="embeedingContainer competContainer">
+                        <Panel class="embeedingHeader">
+                            <Label class="menu_button_label" text="Competitive"/>
+                        </Panel>
+                        <Panel id="compMenu" class="embeedingContent">
 
+                        </Panel>
+                    </Panel>
                 </Panel>
-            </Panel>
-        </Panel>
-        <Panel class="Col">
-            <Panel class="embeedingContainer sandboxContainer">
-                <Panel class="embeedingHeader">
-                    <Label class="menu_button_label testPlayItem" text="Sandbox"/>
-                </Panel>
-                <Panel id="sndbxMenu" class="embeedingContent">
-                    
+                <Panel class="ColWFill">
+                    <Panel class="embeedingContainer sandboxContainer">
+                        <Panel class="embeedingHeader">
+                            <Label class="menu_button_label testPlayItem" text="Sandbox"/>
+                        </Panel>
+                        <Panel id="sndbxMenu" class="embeedingContent">
+                            
+                        </Panel>
+                    </Panel>
                 </Panel>
             </Panel>
         </Panel>

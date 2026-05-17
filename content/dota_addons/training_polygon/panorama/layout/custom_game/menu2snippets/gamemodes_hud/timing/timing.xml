@@ -7,6 +7,17 @@
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/timing/timing.js" />
     </scripts>
     <Panel class="Col">
+        <Label class="menu_button_label" text="timing"/>
+        <Label class="embeedingContentLabel" text="#timingType"/>
+        <Panel id="timingTypes" class="RowNoFill">
+            
+        </Panel>
+        <Label class="embeedingContentLabel" text="#menuSkill"/>
+        <Panel class="RowNoFill">
+            <Panel id="timingSpellContainer">
+
+            </Panel>
+        </Panel>
         <Label text="template"/>
         <Panel class="RowNoFill">
             <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">

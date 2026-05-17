@@ -7,7 +7,7 @@
     </scripts>
     <Panel class="Row">
         <Panel id="welcomeScreen">
-            <Panel class="Col">
+            <Panel class="ColWFill">
                 <Panel class="embeedingContainer">
                     <Panel class="embeedingHeader">
                         <Label class="menu_button_label" text="something"/>
@@ -27,7 +27,7 @@
                     </Panel>
                 </Panel>
             </Panel>
-            <Panel class="Col" id="testPan">
+            <Panel class="ColWFill" id="testPan">
                 
             </Panel>
         </Panel>

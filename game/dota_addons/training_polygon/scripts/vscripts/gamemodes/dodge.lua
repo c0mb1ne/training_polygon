@@ -96,7 +96,7 @@ function dodge:Init()
         riki_tricks_of_the_trade = "npc_dota_hero_riki",
         nyx_assassin_spiked_carapace = "npc_dota_hero_nyx_assassin",
     }
-    self.mofifierTable = {
+    self.modifierTable = {
         item_manta = "modifier_invulnerable",
         ember_spirit_sleight_of_fist = "modifier_ember_spirit_sleight_of_fist_caster_invulnerability", --maybe "modifier_ember_spirit_sleight_of_fist_in_progress"
         puck_phase_shift = "modifier_puck_phase_shift",
@@ -144,7 +144,8 @@ function dodge:Init()
     self.activated=false -- Whether the mode is activated
     self.Player=nil -- Reference to the player
     self.playerHero=nil -- Reference to the player's hero
-    self.trainingPlace=Vector(879.7060546875,4036.7941894531,128) -- Location for training
+    self.trainingPlaceDefault=Vector(-6020.6640625,4100.78564453125,128)-- Location for training
+    self.trainingPlace=self.trainingPlaceDefault
     self.castDelay=2 --delay between unit spawn and cast
     self.afterCastDelay=1 --delay between cast and unit removal
     self.currentEnemy=nil --variable to store enemy bot
@@ -153,6 +154,12 @@ function dodge:Init()
     --register listeners here
     CustomGameEventManager:RegisterListener("get_dodge_spell_table", function(_, event)
         dodge:SendSpellTable()
+    end)
+    CustomGameEventManager:RegisterListener("get_dodge_respawn_pos", function(_, event)
+        dodge:SendRespawnPos()
+    end)
+    CustomGameEventManager:RegisterListener("dodge_reset_respawn_pos", function(_, event)
+        dodge:ResetRespawn()
     end)
     CustomGameEventManager:RegisterListener("dodge_training_end", function(_, event)
         dodge:PrepareDeactivate()
@@ -182,6 +189,13 @@ function dodge:Init()
     self.currentAbilityLevel=0
 end
 
+function dodge:SendRespawnPos()
+    CustomGameEventManager:Send_ServerToAllClients("dodge_respawn_pos",{pos={self.trainingPlace.x,self.trainingPlace.y,self.trainingPlace.z}})
+end
+function dodge:ResetRespawn()
+    self.trainingPlace=self.trainingPlaceDefault
+    CustomGameEventManager:Send_ServerToAllClients("dodge_respawn_pos",{pos={self.trainingPlace.x,self.trainingPlace.y,self.trainingPlace.z}})
+end
 function dodge:Prepare(args)
     print("[Dodge] Preparing gamemode")
     precache:clearTable()
@@ -201,6 +215,9 @@ function dodge:Prepare(args)
 
     -- Add player hero based on dodge type
     local playerHero = self.unitTable[dodgeName]
+    if dodgeName=="item_manta" then
+        playerHero=args.selectedHero
+    end
     if playerHero then
         unitsToPrecache[#unitsToPrecache + 1] = playerHero
         unitsAdded[playerHero] = true
@@ -1733,10 +1750,24 @@ function dodge:StartGame(args)
     self.Player=PlayerResource:GetPlayer(0)
     local old_hero=self.Player:GetAssignedHero()
     local new_hero=self.unitTable[self.currentDodgeType]
-    
+    if self.currentDodgeType=="item_manta" then
+        new_hero=args['selectedHero']
+    end
     self.playerHero=replaceHero(old_hero,new_hero)
     self.playerHero:SetBaseHealthRegen(300)
     self.playerHero:SetBaseManaRegen(300)
+    --[[ print("repawnPos:")
+    DeepPrintTable(args.respawnPos) ]]
+    local pos = args.respawnPos
+    self.trainingPlace = Vector(
+        tonumber(pos["0"]),
+        tonumber(pos["1"]),
+        tonumber(pos["2"])
+    )
+    --[[ print(self.trainingPlace) ]]
+    if args['destroyTrees']==1 then
+        GridNav:DestroyTreesAroundPoint(self.trainingPlace, 1500, true)
+    end
     self.playerHero:SetAbsOrigin(self.trainingPlace)
     if self.hardcoreMode then
         self.playerHero:SetDayTimeVisionRange(675)
@@ -1771,7 +1802,7 @@ function dodge:StartGame(args)
     for k,v in pairs(args['dodgeSpells']) do
         table.insert(self.selectedSpells,tonumber(k))
     end
-    self.dodgeModifier=self.mofifierTable[self.currentDodgeType]
+    self.dodgeModifier=self.modifierTable[self.currentDodgeType]
     self.dodgePressed=false
     self.playerDodgeTime=0
     self.playerGotHurt=false
@@ -2030,7 +2061,7 @@ function dodge:Deactivate()
     self.playerHero:SetDayTimeVisionRange(2000)
     Timebar:Hide()
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
-    
+    GridNav:RegrowAllTrees()
     --[[ self.currentEnemy:RemoveSelf() ]] --do not do this, if we remove unit in middle of a cast, game would crash
 end
 

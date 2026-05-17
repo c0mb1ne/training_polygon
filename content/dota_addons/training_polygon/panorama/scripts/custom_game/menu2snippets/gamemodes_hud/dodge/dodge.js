@@ -27,7 +27,7 @@ function drawTypes(){
 	for (let type in spells_to_pick){
 		drawType(typesPanel,type)
 	}
-
+	
 
 }
 function clearSpellTable(){
@@ -113,13 +113,21 @@ function drawType(parent,name){
 			}else{
 				$('#stormTimeSetting').AddClass("Hidden")
 			}
+			if (name=="item_manta"){
+				$('#heroPickerContainer').RemoveClass("Hidden")
+			}else{
+				$('#heroPickerContainer').AddClass("Hidden")
+			}
 		}
 	)
-
+	if (name=="item_manta"){
+		modePanel.checked=true
+		drawSpellTable(name)
+	}
 }
 
 $('#stormTimeSetting').AddClass("Hidden")
-
+/* $('#heroPickerContainer').AddClass("Hidden") */
 function selectAllSkills(){
 	$.Each($('#dodgeSpellContainer').Children(), function(oPanel) {
 		oPanel.checked=true
@@ -150,6 +158,7 @@ function startGame() {
 	var yashaKaya=false
 	var yashaKayaPlayer=false
 	var hardcoreMode=false
+	var destroyTrees=false
 	if ($('#yashaKayaToggle').checked){
 		yashaKaya=true
 	}
@@ -159,8 +168,12 @@ function startGame() {
 	if ($('#hardcoreMode').checked){
 		hardcoreMode=true
 	}
+	if ($('#treesToggle').checked){
+		destroyTrees=true
+	}
 	var stormTime=""
 	stormTime=numberSwitcher.GetAttributeString("value", "")
+	var selectedHero=defaultHero
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 		{
 			gameModeName: "dodge",
@@ -169,7 +182,10 @@ function startGame() {
 			yashaKaya: yashaKaya,
 			stormTime: stormTime,
 			yashaKayaPlayer: yashaKayaPlayer,
-			hardcoreMode: hardcoreMode
+			hardcoreMode: hardcoreMode,
+			selectedHero: selectedHero,
+			respawnPos: respawnPos,
+			destroyTrees: destroyTrees
 	 	});
 }
 function getDodgeType(){
@@ -204,20 +220,135 @@ function getSelectedSkills() {
 
     return selectedSkills;
 }
-
-
-
+GameEvents.SendCustomGameEventToServer ("get_dodge_respawn_pos",{});
+let wait_for_place=false
+let respawnPos
+function placePickerStart(){
+	wait_for_place=true
+	GameEvents.SendCustomGameEventToServer (
+	"place_picker_start",
+		{
+		}
+	);
+}
+function placePicked(data){
+	if (wait_for_place){
+		$.Msg('picked place:',data)
+		$('#respawnPosSetting').text=data.pos[0].toFixed(0)+","+data.pos[1].toFixed(0)+","+data.pos[2].toFixed(0)
+		respawnPos=[data.pos[0],data.pos[1],data.pos[2]]
+		wait_for_place=false
+	}
+}
+function setRespawn(data){
+	/* $.Msg('default respawn:',data) */
+	$('#respawnPosSetting').text=data.pos[1].toFixed(0)+","+data.pos[2].toFixed(0)+","+data.pos[3].toFixed(0)
+	respawnPos=[data.pos[1],data.pos[2],data.pos[3]]
+}
+function resetRespawnPlace(data){
+	GameEvents.SendCustomGameEventToServer("dodge_reset_respawn_pos",{});
+}
+$('#treesToggle').checked=true
 $('#cancelAnimToggle').AddClass("Hidden")
 $("#yashaKayaPlayerToggle").AddClass("Hidden")
 //making number field for storm type
-var numberSwitcher=$.CreatePanel('Panel',$('#stormEvadeNumberSwitcher'),"storm_time_switcher")
+let numberSwitcher=$.CreatePanel('Panel',$('#stormEvadeNumberSwitcher'),"storm_time_switcher")
 numberSwitcher.SetAttributeString("min","0.1")
 numberSwitcher.SetAttributeString("max","1")
 numberSwitcher.SetAttributeString("step","0.1")
 numberSwitcher.SetAttributeString("placeholder","0.1")
 numberSwitcher.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/number_switcher.xml", false, false) 
 
+//making hero picker for manta 
+
+let defaultHero="npc_dota_hero_antimage"
+let heroPicker=$('#hero_picker')
+let popupContainer=$('#dodge_popup_container')
+let heroPickerIcon=$('#hero_picker_selected')
+heroPickerIcon.heroname=defaultHero
+let heroList=[]
+GameEvents.SendCustomGameEventToServer (
+	"dotadb_get_hero_list",
+		{
+		}
+);
+function saveHeroList(data) {
+    heroList = data.hero_list;
+
+   /*  $.Msg(heroList); */
+
+    // Extract keys into an array manually
+    let keys = [];
+    for (let key in heroList) {
+        keys[keys.length] = key;
+    }
+
+    // Simple sort by hero name string
+    for (let i = 0; i < keys.length - 1; i++) {
+        for (let j = i + 1; j < keys.length; j++) {
+            let nameA = heroList[keys[i]].replace("npc_dota_hero_", "");
+            let nameB = heroList[keys[j]].replace("npc_dota_hero_", "");
+            if (nameA > nameB) {
+                let tmp = keys[i];
+                keys[i] = keys[j];
+                keys[j] = tmp;
+            }
+        }
+    }
+
+    // Iterate in sorted order
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        let heroButton = $.CreatePanel('Button', $('#manta_hero_picker_popup'),  heroList[key]);
+        heroButton.AddClass('heroPickerButton');
+        let heroIcon = $.CreatePanel('DOTAHeroImage', heroButton, "hero_icon_" + key);
+        heroIcon.heroimagestyle = "icon";
+        heroIcon.heroname = heroList[key];
+        /* if (heroList[key] == heroPickerIcon.heroname) {
+            heroButton.AddClass('heroPickerSelected');
+        } */
+	   	if (heroList[key] == defaultHero) {
+			/* $.Msg(heroPickerIcon.heroname) */
+            heroButton.AddClass('heroPickerSelected');
+        }
+		heroButton.SetPanelEvent(
+			"onactivate",
+			function() {
+				$('#'+defaultHero).RemoveClass('heroPickerSelected')
+				defaultHero=heroButton.id
+				heroPickerIcon.heroname=defaultHero
+				heroButton.AddClass('heroPickerSelected');
+				popupContainer.style['opacity']="0"
+				popupContainer.style['visibility']="collapse"
+
+			}
+		)
+    }
+}
+
+heroPicker.SetPanelEvent(
+	"onactivate",
+	function() {
+		/* heroPickerPopup=$.CreatePanel('Panel',popupContainer,"manta_hero_picker_popup")
+		heroPickerPopup.AddClass('heroPickerPopup') */
+		popupContainer.style['opacity']="1"
+		popupContainer.style['visibility']="visible"
+	}
+)
+popupContainer.SetPanelEvent(
+	"onactivate",
+	function() {
+		/* heroPickerPopup=$.CreatePanel('Panel',popupContainer,"manta_hero_picker_popup")
+		heroPickerPopup.AddClass('heroPickerPopup') */
+		popupContainer.style['opacity']="0"
+		popupContainer.style['visibility']="collapse"
+	}
+)
+
+
 
 // Precache progress is now handled by precache_modal.js
-
+GameEvents.Subscribe("dodge_respawn_pos", setRespawn);
+GameEvents.Subscribe("dotadb_get_hero_list_answer", saveHeroList);
+GameEvents.Subscribe("place_picker_result", placePicked);
 GameEvents.Subscribe("dodge_spell_table", saveData);
+

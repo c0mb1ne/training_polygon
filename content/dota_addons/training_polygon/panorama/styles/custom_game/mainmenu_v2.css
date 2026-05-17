@@ -3,6 +3,14 @@
 .Main{
 /*	background-color: gradient( linear, 20% 120%, 5% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
 */	
+	
+	width: 100%;
+	height: 100%;
+	
+	/* visibility: collapse;
+	opacity: 0;  */
+}
+.menuContainer{
 	background-color: gradient( linear, 0% 0%, 0% 100%, from( #000 ),  to( #fff ) );
 	width: 100%;
 	height: 100%;
@@ -11,8 +19,6 @@
 	flow-children: right;
 	background-image: url( "file://{images}/custom_game/noise.png");
 	background-color: #18181A;
-	/* visibility: collapse;
-	opacity: 0;  */
 }
 .avata_menu_icon{
 	width: 68px;
@@ -35,6 +41,7 @@
 
 }
 .menu_button{
+	z-index: 2;
 	flow-children: down;
 	horizontal-align: center;
 	vertical-align: center;
@@ -71,12 +78,14 @@
 	border: 1px solid #ADD9E6; 
 }
 .menu_button:enabled:selected{
+	z-index: 1;
 	sound: "ui_generic_button_click";
 	border: 1px solid #212121;
 	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
 	box-shadow: #5FA5BA26 0px 0px 18px 0px;
 }
 .menu_button:active{
+	
 	sound: "ui_generic_button_click";
 	border: 1px solid #212121;
 	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
@@ -103,10 +112,14 @@
 }
 .mode_play{
 	padding: 5px;
-	width: 20%;
-	height: fit-children;
+	width: 130px;
+	height: 50px;
 	horizontal-align: left;
-	
+	font-size: 32px;
+}
+.mode_play_label{
+	font-size: 24px;
+	vertical-align: center;
 }
 .menu_button:selected Label{
 	color: #1D1E21;
@@ -215,6 +228,10 @@
 .testImg{
  	img-shadow: 0px 0px 4px 1.0 #FF0000;
 }
+#popup_container{
+	/* width: 100%;
+	height: 100%; */
+}
 #right_container{
 	width: 100%;
 	height: 100%;
@@ -300,7 +317,10 @@
 }
 
 #menu_content{
-	flow-children:right;
+	/* flow-children:right; */
+	flow-children:down;
+	height: fill-parent-flow(1);
+	width: 100%;
 }
 #welcomeScreen{
 	flow-children:right;
@@ -340,7 +360,8 @@
 }
 .embeedingContainer{
 	min-width: 400px;
-	width: fill-parent-flow(1);
+	/* width: fill-parent-flow(1); */
+	width: 100%;
 	height: fill-parent-flow(1);
 	flow-children: down;
 	margin-left: 15px;
@@ -389,20 +410,40 @@ Label{
 } 
 .Row{
 	flow-children: right;
-	width: fill-parent-flow(1);
-	height: fill-parent-flow(1);
+	/* width: fill-parent-flow(1);
+	height: fill-parent-flow(1); */
 }
 .RowNoFill{
 	flow-children: right;
+	/* width: fill-parent-flow(1); */
+}
+.RowWFill{
+	flow-children: right;
 	width: fill-parent-flow(1);
+}
+.height100{
+	height: 100%;
+}
+.width100{
+	width: 100%;
+}
+.RowHFill{
+	flow-children: right;
+	height: fill-parent-flow(1);
 }
 .ColNoFill{
 	flow-children: down;
 }
 .Col{
 	flow-children: down;
+	/* height: 100%; */
+	/* width: fill-parent-flow(1);
+	height: fill-parent-flow(1); */
+}
+.ColWFill{
+	/* height: 100%; */
+	flow-children: down;
 	width: fill-parent-flow(1);
-	height: fill-parent-flow(1);
 }
 .gameModeContainer{
 	width: 320px;
@@ -620,4 +661,57 @@ VerticalScrollBar .ScrollThumb{
 }
 .lvlLabel{
 	text-shadow: 5px 5px 8px 8.0 #000000b0;
+}
+.HeroPicker{
+	width: 50px;
+	height: 50px;
+	/* border: 1px solid #212121; */
+}
+.HeroPickerChangeIcon{
+	
+	width: 24px;
+	height: 24px; 
+}
+.BadgeCircle {
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/refresh.vsvg");
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: #7d8688;
+    /* border: 1px solid #4fc3f7ff; */
+    horizontal-align: right;
+    vertical-align: top;
+    margin-top: -8px;
+    margin-right: -8px;
+	transition-property: background-color;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-in-out;
+}
+.HeroPicker:hover .BadgeCircle{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #e7f6f5 ), to( #a0d6d7 ) );
+}
+.HeroPicker:hover .HeroPickerIconContainer{
+	/* border: 1px solid #ADD9E6;  */
+}
+.HeroPickerIconContainer:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #ADD9E6; 
+	
+}
+.HeroPickerIconContainer{
+	border: 1px solid #212121;
+	width: 100%;
+	height: 100%;
+	transition-property: border, background-color;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.HeroPickedIconAnimation{
+	animation-name: heroPickerRotate;
+  	animation-duration: 1s;
+  	animation-timing-function: linear;
+  	animation-iteration-count: infinite;
+}
+.padding5{
+	padding: 5px;
 }

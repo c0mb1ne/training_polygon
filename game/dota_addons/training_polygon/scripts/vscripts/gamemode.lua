@@ -49,12 +49,14 @@ require('settings')
 require('events')
 require('libraries/dota_database') --dota kv parser
 require('gamemodes/dodge')
-
+require('gamemodes/timing')
 require('libraries/action_logging')
+require('libraries/main_menu_communicator')
 require('libraries/ping_reader')
 require('libraries/precache')
 require('libraries/timebar')
 require('libraries/notifications')
+require('libraries/place_picker')
 require('utils')
 
 ping_reader:Init()
@@ -93,7 +95,7 @@ function GameMode:OnFirstPlayerLoaded()
   TEST_ID=1
   ebalai=nil
   DebugPrint("[BAREBONES] First Player has loaded")
-  if GetMapName() == "dotaaaaa" then
+  if GetMapName() == "dota" then
     TRAINING_PLACE=Vector(-2276.069336, 5846.962891, 256.000000)
     local classes_to_remove={"npc_dota_neutral_spawner",
                             "npc_dota_spawner_good_bot",
@@ -159,7 +161,7 @@ function GameMode:OnFirstPlayerLoaded()
       end
     end,0)
   end
-  --[[ precache_for_player(heroList[index]) ]]
+  --precache_for_player(heroList[index])
 end
 
 function GameMode:OnAllPlayersLoaded()

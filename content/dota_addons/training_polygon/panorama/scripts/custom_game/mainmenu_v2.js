@@ -75,9 +75,21 @@ function openDiscord(){
 function openGithub(){
 	$.DispatchEvent("ExternalBrowserGoToURL", "https://github.com/c0mb1ne/training_polygon")
 }
+function menuLoadPage(data){
+	let page_path=data.page
+	$.Msg('trying to load ',page_path)
+	clearMenuContent()
+	let home_page = $.CreatePanel( "Panel", menuContent, "loaded_page" ); 
+	let result=home_page.BLoadLayout( page_path, false, false );
+	if (result){
+		$.Msg('panel loaded ',page_path)
+	}else{
+		$.Msg('panel not loaded ',page_path)
+	}
+	$('#menu_play').checked=false
+}
 
-
-
+GameEvents.Subscribe("main_menu_load_page", menuLoadPage);
 GameEvents.Subscribe("set_camera_on_ent", setCameraOnEnt);
 GameEvents.Subscribe("show_test_ui", showTestUI);
 GameEvents.Subscribe("hide_main_menu", hideMainMenu);

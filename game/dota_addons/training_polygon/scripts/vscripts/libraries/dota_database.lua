@@ -27,12 +27,15 @@ function DotaDB:Init()
   end
   self.units_KV=LoadKeyValues("scripts/npc/npc_units.txt")
   self.items_KV=LoadKeyValues("scripts/npc/items.txt")
+
+  CustomGameEventManager:RegisterListener("dotadb_get_hero_list", function(_, event)
+    DotaDB:HeroListForPanorama()
+  end)
 end
 
-function DotaDB:RequestDB(uiEvent)
-  local DBdata=DotaDB:GetAllAbilities()
-  --DeepPrintTable(DBdata)
-  CustomGameEventManager:Send_ServerToAllClients("dotadb_answer",{data=DBdata})
+function DotaDB:HeroListForPanorama(args)
+  local heroList=self:GetAllHeroes()
+  CustomGameEventManager:Send_ServerToAllClients("dotadb_get_hero_list_answer",{hero_list=heroList})
 end
 
 function DotaDB:GetAbilityKV(abilityName)
@@ -50,7 +53,7 @@ function DotaDB:GetAllHeroes()
   
   for k,v in pairs(self.heroes_KV) do
     --[[ print(k,v) ]]
-    if k~="Version" and k~="npc_dota_hero_base" then
+    if k~="Version" and k~="npc_dota_hero_base" and k~="npc_dota_hero_target_dummy" then
       table.insert(heroTable,k)
     end
   end
@@ -99,9 +102,3 @@ function DotaDB:test()
   print('dotadb test')
 end
 
-function dota_db_request( eventSourceIndex, args )
-  print('dota_db_request called')
-  DotaDB:RequestDB(args['uiEvent'])
-end
-
-CustomGameEventManager:RegisterListener( "dota_db_request", dota_db_request )
