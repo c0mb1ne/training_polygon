@@ -5791,7 +5791,7 @@ function isReadyToNextIteration()
 			local playerId=MORPHLING_ENT:GetPlayerOwnerID()
 			local steam=PlayerResource:GetSteamID(playerId)
 			local result_time=(Time()-MORPHLING_START_TIME)*1000
-			sendResult_v2('morph',tostring(steam),result_time,other)
+			Networking:SendChallengeResult('morph',tostring(steam),result_time,other)
 			MORPH_TRAINING=0
 			CustomGameEventManager:Send_ServerToAllClients("morph_ended",{time=result_time})
 		else
@@ -5879,6 +5879,7 @@ end
 
 
 function getConfigAndApply(hero,mode)
+	--[[ DeepPrintTable(PLAYER_CONFIG) ]]
 	if PLAYER_CONFIG~=nil and PLAYER_CONFIG~='no config' then
 		if PLAYER_CONFIG[mode]~=nil then
 			for k,v in pairs(PLAYER_CONFIG[mode]) do

@@ -1,9 +1,11 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
-CMB_SERVER="http://vh184007.eurodir.ru/tpserver/"
+CMB_SERVER="https://combine.isgood.host/"
 DEVBUG_SERVER="http://tpsite/"
 PLAYER_CONFIG=nil
 ACTIVE_GAMEMODE=nil
+LEGACY_SWITCH=1 -- when this 1, everything old
+
 -- Set this to true if you want to see a complete debug output of all events/processes done by barebones
 -- You can also change the cvar 'barebones_spew' at any time to 1 or 0 for output/no output
 BAREBONES_DEBUG_SPEW = false
@@ -50,6 +52,7 @@ require('events')
 require('libraries/dota_database') --dota kv parser
 require('gamemodes/dodge')
 require('gamemodes/timing')
+require('libraries/networking')
 require('libraries/action_logging')
 require('libraries/main_menu_communicator')
 require('libraries/ping_reader')
@@ -126,7 +129,8 @@ function GameMode:OnFirstPlayerLoaded()
       if not IsInToolsMode() then
         if GameRules:IsCheatMode() and CHEAT_MODE==0 then
           print("Cheat mode detected")
-          CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes="Cheat mode detected"})
+          Networking:DebugLog("Cheat mode detected")
+          
           CHEAT_MODE=1
         end
       end
@@ -161,7 +165,12 @@ function GameMode:OnFirstPlayerLoaded()
       end
     end,0)
   end
-  --precache_for_player(heroList[index])
+  if LEGACY_SWITCH==1 then
+    precache_for_player(heroList[index])
+    CustomGameEventManager:Send_ServerToAllClients("old_hud_mode",{})
+  else
+    CustomGameEventManager:Send_ServerToAllClients("new_hud_mode",{})
+  end
 end
 
 function GameMode:OnAllPlayersLoaded()
@@ -1977,7 +1986,7 @@ function aim_training_start_3( eventSourceIndex, args )
           print(steam,AIM_SCORE)
           setItemConfig(hero,'aim3')
 
-          sendResult_v2('aim3',tostring(steam),AIM_SCORE,other,log_result_id,ping)
+          Networking:SendChallengeResult('aim3',tostring(steam),AIM_SCORE,other,log_result_id,ping)
           --[[ action_logging:SetID(log_result_id)
           action_logging:SetSteam(tostring(steam))
           action_logging:SetMode('aim3')
@@ -2116,7 +2125,7 @@ function aim_training_start_2( eventSourceIndex, args )
           local ping=ping_reader:GetPing()
           print(steam,AIM_SCORE)
           setItemConfig(hero,'aim2')
-          sendResult_v2('aim2',tostring(steam),AIM_SCORE,other,log_result_id,ping)
+          Networking:SendChallengeResult('aim2',tostring(steam),AIM_SCORE,other,log_result_id,ping)
           --[[ action_logging:SetID(log_result_id)
           action_logging:SetSteam(tostring(steam))
           action_logging:SetMode('aim2')
@@ -2240,7 +2249,7 @@ function aim_training_start( eventSourceIndex, args )
           local log_result_id=generateRandomString(10)
           local ping=ping_reader:GetPing()
           print('log_id=',log_result_id)
-          sendResult_v2('aim',tostring(steam),AIM_SCORE,other,log_result_id,ping)
+          Networking:SendChallengeResult('aim',tostring(steam),AIM_SCORE,other,log_result_id,ping)
           --[[ action_logging:SetID(log_result_id)
           action_logging:SetSteam(tostring(steam))
           action_logging:SetMode('aim')
@@ -2400,7 +2409,7 @@ function map_aim_training_start( eventSourceIndex, args )
           local other={combo=AIM_MAX_COMBO,avg=math.floor(AIM_AVG_TIME*1000)/1000}
           local ping=ping_reader:GetPing()
           print(steam,AIM_SCORE)
-          sendResult_v2('map_aim',tostring(steam),AIM_SCORE,other,log_result_id,ping)
+          Networking:SendChallengeResult('map_aim',tostring(steam),AIM_SCORE,other,log_result_id,ping)
           --[[ action_logging:SetID(log_result_id)
           action_logging:SetSteam(tostring(steam))
           action_logging:SetMode('map_aim')
@@ -2548,7 +2557,7 @@ function moving_aim_training_start( eventSourceIndex, args )
           print(steam,AIM_SCORE)
           local ping=ping_reader:GetPing()
           setItemConfig(hero,'move_aim')
-          sendResult_v2('move_aim',tostring(steam),AIM_SCORE,other,log_result_id,ping)
+          Networking:SendChallengeResult('move_aim',tostring(steam),AIM_SCORE,other,log_result_id,ping)
           --[[ action_logging:SetID(log_result_id)
           action_logging:SetSteam(tostring(steam))
           action_logging:SetMode('move_aim')
@@ -2894,50 +2903,7 @@ function manta_challenge_start( eventSourceIndex, args )
 
 end
 
-function SendResult(Mode,steam,Score,other)
 
-  
-  if CHEAT_MODE~=1 then
-    local req = CreateHTTPRequestScriptVM("POST",CMB_SERVER)
-    req:SetHTTPRequestGetOrPostParameter("key",SECURE_KEY)
-    req:SetHTTPRequestGetOrPostParameter("request",'sentResult')
-    req:SetHTTPRequestGetOrPostParameter("Mode",Mode)
-    CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes="mode:"..Mode})
-    req:SetHTTPRequestGetOrPostParameter("steam",tostring(steam))
-    CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes="steam:"..steam})
-    req:SetHTTPRequestGetOrPostParameter("Score",tostring(Score))
-    CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes="Score:"..Score})
-    
-    if other~=nil then
-      local json='{'
-      for k,v in pairs(other) do
-        json=json..'"'..k..'":'..'"'..v..'",'
-      end
-      json=string.sub(json,1,string.len(json)-1)
-      json=json..'}'
-      req:SetHTTPRequestGetOrPostParameter("other",json)
-      CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes="json:"..json})
-    end
-    req:Send(
-        function(result)
-            local res_table={}
-            print(result['Body'])
-            string.gsub(result['Body'],"{(.-)}",function(c) table.insert(res_table,c) end)
-            for k,v in pairs(res_table) do
-              print(k,v)
-              CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes=k..":"..v})
-            end
-            if res_table[1]=="highscore" then
-              CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=1,mod=Mode,score=res_table[2],place=res_table[3],total=res_table[4]})
-            else
-              CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=0,mod=Mode,score=res_table[2]})
-            end
-        end
-    )
-  else
-    CustomGameEventManager:Send_ServerToAllClients("send_nudes",{nudes="cheats detected"})
-  end
-end
 function aimClear()
   REACTION_TRAINING=0
   RESULTS_TABLE={}
@@ -4423,223 +4389,25 @@ function tp_precache( eventSourceIndex, args )
 
 end
 
-function saveJson(json)
-  local key=GetDedicatedServerKeyV2('dick')
-  local req1 = CreateHTTPRequestScriptVM('POST', 'https://c0mb1ne.ru/nai/test.php')
-  req1:SetHTTPRequestHeaderValue("Auth-Token", key)
-  req1:SetHTTPRequestGetOrPostParameter("request","save_json")
-  req1:SetHTTPRequestGetOrPostParameter("json",json)
-  req1:Send(function(res)
-    print('json sent',res.StatusCode,res.Body)
-  end)
-
-end
-
-function user_init( eventSourceIndex, args )
-
-    local key=GetDedicatedServerKeyV2('dick')
-    local type=args['type']
-    local data=args['data']
-    local url="http://vh184007.eurodir.ru/tpserver/"
-    --DeepPrintTable(args)
-    local req = CreateHTTPRequestScriptVM(type, url)
-    req:SetHTTPRequestHeaderValue("Auth-Token", key)
-    for k,v in pairs(args['data']) do
-      print(k,v)
-      req:SetHTTPRequestGetOrPostParameter(tostring(k),tostring(v))
-    end
-    --req:SetHTTPRequestHeaderValue("Accept", "application/json")
-    --req:SetHTTPRequestGetOrPostParameter("request","sendResult_v2")
-
-    req:Send(function(res)
-
-      if res.StatusCode ~= 200 then
-
-        my_output("Failed to contact server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-        my_output("Body:".. (res.Body or "nil"))
-        
-        
-      else
-        if string.find(res.Body,"opendns") then
-          my_output("looks like opendns shit happened. attempt to resend data after 0.5 sec.")
-          
-        else
-          --res_table=json.decode(res.Body)
-          --[[if res_table["msg"]=="highscore" then
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=1,mod=mode,score=res_table['score'],place=res_table['place'],total=res_table['total']})
-          else
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=0,mod=mode,score=res_table['score']})
-          end--]]
-          my_output("Connected to leaderboard server "..res.StatusCode)
-          my_output("Body:".. (res.Body or "nil"))
-          CustomGameEventManager:Send_ServerToAllClients("user_init_answer",{data=res.Body})
-        end
-      end
-
-      if not res.Body then
-        my_output("No result returned from server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-      end
-
-    end)
-end
-
-function web_req_from_client( eventSourceIndex, args )
-
-    local key=GetDedicatedServerKeyV2('dick')
-    local type=args['type']
-    local data=args['data']
-    local url="http://vh184007.eurodir.ru/tpserver/"
-    --DeepPrintTable(args)
-    local req = CreateHTTPRequestScriptVM(type, url)
-    req:SetHTTPRequestHeaderValue("Auth-Token", key)
-    for k,v in pairs(args['data']) do
-      print(k,v)
-      req:SetHTTPRequestGetOrPostParameter(tostring(k),tostring(v))
-    end
-    --req:SetHTTPRequestHeaderValue("Accept", "application/json")
-    --req:SetHTTPRequestGetOrPostParameter("request","sendResult_v2")
-
-    req:Send(function(res)
-
-      if res.StatusCode ~= 200 then
-
-        my_output("Failed to contact server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-        my_output("Body:".. (res.Body or "nil"))
-        
-        
-      else
-        if string.find(res.Body,"opendns") then
-          my_output("looks like opendns shit happened. attempt to resend data after 0.5 sec.")
-          
-        else
-          --res_table=json.decode(res.Body)
-          --[[if res_table["msg"]=="highscore" then
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=1,mod=mode,score=res_table['score'],place=res_table['place'],total=res_table['total']})
-          else
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=0,mod=mode,score=res_table['score']})
-          end--]]
-          my_output("Connected to leaderboard server "..res.StatusCode)
-          my_output("Body:".. (res.Body or "nil"))
-          CustomGameEventManager:Send_ServerToAllClients("web_client_recieve",{data=res.Body})
-        end
-      end
-
-      if not res.Body then
-        my_output("No result returned from server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-      end
-
-    end)
-end
 
 function getConfigData(steam)
-    local answer=nil
-    local key=GetDedicatedServerKeyV2('dick')
-
-    local req = CreateHTTPRequestScriptVM('POST', CMB_SERVER)
-    req:SetHTTPRequestHeaderValue("Auth-Token", key)
-    req:SetHTTPRequestGetOrPostParameter('request','get_config')
-    req:SetHTTPRequestGetOrPostParameter('steam',tostring(steam))
-    --req:SetHTTPRequestHeaderValue("Accept", "application/json")
-    --req:SetHTTPRequestGetOrPostParameter("request","sendResult_v2")
-
-    req:Send(function(res)
-
-      if res.StatusCode ~= 200 then
-
-        my_output("Failed to contact server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-        my_output("Body:".. (res.Body or "nil"))
-        
-        
-      else
-        if string.find(res.Body,"opendns") then
-          my_output("looks like opendns shit happened. attempt to resend data after 0.5 sec.")
-          
-        else
-          --res_table=json.decode(res.Body)
-          --[[if res_table["msg"]=="highscore" then
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=1,mod=mode,score=res_table['score'],place=res_table['place'],total=res_table['total']})
-          else
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=0,mod=mode,score=res_table['score']})
-          end--]]
-          my_output("Connected to leaderboard server "..res.StatusCode)
-          my_output("Body:".. (res.Body or "nil"))
-          if res.Body=="no config" or res.Body==nil then
-            PLAYER_CONFIG="no config"
-          else
-            PLAYER_CONFIG=json.decode(res.Body)
-          end
-          
-        end
-      end
-
-      if not res.Body then
-        my_output("No result returned from server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-      end
-
-    end)
-
+  Networking:GetUserConfig(steam)
 end
 
 function sendNewConfigData()
-
-    local answer=nil
-    local key=GetDedicatedServerKeyV2('dick')
-    local encoded_config=json.encode(PLAYER_CONFIG)
-    local cmdPlayer=PlayerResource:GetPlayer(0)
-    local steam=PlayerResource:GetSteamID(cmdPlayer:GetPlayerID())
-    print('sending new config',encoded_config)
-    local req = CreateHTTPRequestScriptVM('POST', CMB_SERVER)
-    req:SetHTTPRequestHeaderValue("Auth-Token", key)
-    req:SetHTTPRequestGetOrPostParameter('request','refresh_config')
-    req:SetHTTPRequestGetOrPostParameter('config',encoded_config)
-    req:SetHTTPRequestGetOrPostParameter('steam',tostring(steam))
-    --req:SetHTTPRequestHeaderValue("Accept", "application/json")
-    --req:SetHTTPRequestGetOrPostParameter("request","sendResult_v2")
-
-    req:Send(function(res)
-
-      if res.StatusCode ~= 200 then
-
-        my_output("Failed to contact server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-        my_output("Body:".. (res.Body or "nil"))
-       
-        
-      else
-        if string.find(res.Body,"opendns") then
-          my_output("looks like opendns shit happened. attempt to resend data after 0.5 sec.")
-          
-        else
-          --res_table=json.decode(res.Body)
-          --[[if res_table["msg"]=="highscore" then
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=1,mod=mode,score=res_table['score'],place=res_table['place'],total=res_table['total']})
-          else
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=0,mod=mode,score=res_table['score']})
-          end--]]
-          my_output("Connected to leaderboard server "..res.StatusCode)
-          my_output("Body:".. (res.Body or "nil"))
-
-        end
-      end
-
-      if not res.Body then
-        my_output("No result returned from server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-      end
-
-    end)
+  Networking:RefreshConfig()
 end
 
 function ai_test_action( eventSourceIndex, args )
   aiDoAction(args['action'])
 end
-
+function legacy_check(eventSourceIndex, args)
+  if LEGACY_SWITCH==1 then
+    CustomGameEventManager:Send_ServerToAllClients("old_hud_mode",{})
+  else
+    CustomGameEventManager:Send_ServerToAllClients("new_hud_mode",{})
+  end
+end
 CustomGameEventManager:RegisterListener( "ai_test_action", ai_test_action )
 
 CustomGameEventManager:RegisterListener( "tp_precache", tp_precache )
@@ -4752,17 +4520,11 @@ CustomGameEventManager:RegisterListener( "morph_training_start", morph_training_
 CustomGameEventManager:RegisterListener( "morph_training_end", morph_training_end )
 
 CustomGameEventManager:RegisterListener( "aim_start2", aim_training_start_2 )
-
-CustomGameEventManager:RegisterListener( "aim_end2", aim_training_end_2 )
-
-
 CustomGameEventManager:RegisterListener( "aim_start3", aim_training_start_3 )
+CustomGameEventManager:RegisterListener( "legacy_check", legacy_check )
 
-CustomGameEventManager:RegisterListener( "aim_end3", aim_training_end_3 )
 
-CustomGameEventManager:RegisterListener( "web_req_from_client", web_req_from_client )
 
-CustomGameEventManager:RegisterListener( "user_init", user_init )
 --morph_training_start
 -- CustomGameEventManager:RegisterListener( "ping_setting", setPing ) invoker_scepter_toggle moving_aim_training_start
 
@@ -5702,7 +5464,12 @@ function GameMode:TestCommand1()
   local cmdPlayer=PlayerResource:GetPlayer(0)
   --DeepPrintTable(cmdPlayer)
   active_hero = cmdPlayer:GetAssignedHero()
-  local newHero=replaceHero(active_hero,"npc_dota_hero_antimage")
+  --[[ local newHero=replaceHero(active_hero,"npc_dota_hero_antimage") ]]
+  local steam=PlayerResource:GetSteamID(0)
+  local other={combo=67,avg=0.420}
+  local log_result_id=generateRandomString(10)
+  local ping=ping_reader:GetPing()
+  Networking:SendChallengeResult('aim',tostring(steam),12312312,other,log_result_id,ping)
   --PlayerResource:ReplaceHeroWith(cmdPlayer:GetPlayerID(),"npc_dota_hero_pudge",0,1)
   --[[ for playerId = 0, DOTA_MAX_TEAM_PLAYERS-1 do
       if PlayerResource:IsValidPlayerID(playerId) then
@@ -5808,75 +5575,7 @@ function GameMode:TestCommand1()
 
 end
 
-function sendResult_v2(mode,steam,score,other,log_id,ping)
-  if CHEAT_MODE~=1 then
-    local key=GetDedicatedServerKeyV2('dick')
-    local result={}
-    result['mode']=mode
-    result['steam']=tostring(steam)
-    result['score']=score
-    result['other']=other
-    local result_to_send=json.encode(result)
-    my_output("data:"..result_to_send)
-    local req = CreateHTTPRequestScriptVM('POST', CMB_SERVER)
-    req:SetHTTPRequestHeaderValue("Auth-Token", key)
-    --req:SetHTTPRequestHeaderValue("Accept", "application/json")
-    req:SetHTTPRequestGetOrPostParameter("request","sendResult_v2")
-    req:SetHTTPRequestGetOrPostParameter("data",result_to_send)
-    if log_id~=nil then
-      req:SetHTTPRequestGetOrPostParameter("log_id",log_id)
-    end
-    req:SetHTTPRequestGetOrPostParameter("ping",tostring(ping))
-    req:Send(function(res)
 
-      if res.StatusCode ~= 200 then
-
-        my_output("Failed to contact server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-        my_output("Body:".. (res.Body or "nil"))
-        if string.find(res.Body,"opendns") then
-          my_output("looks like opendns shit happened. attempt to resend data after 0.5 sec.")
-          Timers:CreateTimer({
-            useGameTime = false,
-            endTime = 3,
-            callback = function()
-              sendResult_v2(mode,steam,score,other,log_id,ping)
-            end
-          })
-        end
-        
-      else
-        if string.find(res.Body,"opendns") then
-          my_output("looks like opendns shit happened. attempt to resend data after 0.5 sec.")
-          Timers:CreateTimer({
-            useGameTime = false,
-            endTime = 3,
-            callback = function()
-              sendResult_v2(mode,steam,score,other,log_id,ping)
-            end
-          })
-        else
-          res_table=json.decode(res.Body)
-          if res_table["msg"]=="highscore" then
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=1,mod=mode,score=res_table['score'],place=res_table['place'],total=res_table['total']})
-          else
-            CustomGameEventManager:Send_ServerToAllClients("result_popup",{highscore=0,mod=mode,score=res_table['score']})
-          end
-          my_output("Connected to leaderboard server "..res.StatusCode)
-          my_output("Body:".. (res.Body or "nil"))
-        end
-      end
-
-      if not res.Body then
-        my_output("No result returned from server")
-        my_output("Status Code:".. (res.StatusCode or "nil"))
-      end
-
-    end)
-  else
-    my_output("No requests in cheat mode")
-  end
-end
 
 
 

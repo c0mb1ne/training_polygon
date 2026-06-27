@@ -60,8 +60,8 @@
 				</Panel>
 				<Panel id="donationsTable">
 					<Panel class="donatorList" id="importantMessage">
-						<Label id="enImpMsg" text="I kinda tired of fixing this custom game, but i know how much it helps you guys. It is such a pain in the ass fixing stuff that was working fine for years, especially when codebase is a mess. I would like to rebuild it require so much time, and i have no motivation at all, especially knowing that no matter how i design it, it can be broken by valve. Merry christmas and thanks for your support."/> 
-						<Label id="ruImpMsg" text="Как же я заебался постоянно это чинить, но зачем-то продолжаю это делать. Спасибо вам за поддержку и добрые слова. Нового контента пока не планируется, т.к. я не знаю как его делать, если в процессе разработки ломается старый, по не зависящим от меня причинам. С наступающим новым годом и успехов вам."/>
+						<Label id="enImpMsg" text="Putting codebase of training polygon on new rails 10% done, if you like to help feel free to contact me and contribute on github"/> 
+						<Label id="ruImpMsg" text="Реворк кастомки готов на 10%, буду рад помощи"/>
 					</Panel>
 					<Panel class="donatorList" id="guideAds">
 						<Label id="enGuideLabel" text="check out guide which explains how to launch this custom game locally (with 0 ping) and play while queing"/>
@@ -106,29 +106,38 @@
 							<Label text="#playersCounter"/>
 							<Label id="uniquePlayers"/>
 						</Panel>
-						<Panel id="boosty2">
+						<Panel class="linkButtons" id="boosty2">
 							<Panel id="bLogoContainer">
 								<Panel id="boostyLogo"/>
 							</Panel>
 							<Panel id="bLabelContainer">
-								<Label html="true" class="boostyLabel" text="&lt;a href=&quot;https://boosty.to/combine&quot;&gt;Поддержите автора подпиской на Boosty&lt;a&gt;"/>	
+								<Label  class="boostyLabel" text="Поддержите автора подпиской на Boosty"/>	
 							</Panel>
 						</Panel>
-						<Panel id="patreon2">
+						<Panel class="linkButtons" id="patreon2">
 							<Panel id="pLogoContainer">
 								<Panel id="patreonLogo"/>
 							</Panel>
 							<Panel id="pLabelContainer">
-								<Label html="true" class="patreonLabel" text="&lt;a href=&quot;https://www.patreon.com/c0mb1ne&quot;&gt;Support me on patreon&lt;a&gt;"/>	
+								<Label  class="patreonLabel" text="Support me on patreon"/>	
 							</Panel>
 						</Panel>
 						
-						<Panel id="discord2">
+						<Panel class="linkButtons" id="discord2">
 							<Panel id="dLogoContainer">
 								<Panel id="discordLogo"/>
 							</Panel>
 							<Panel id="dLabelContainer">
-								<Label html="true" class="discordLabel" text="&lt;a href=&quot;https://discord.gg/9qCAqFH&quot;&gt;Join discord discord.gg/9qCAqFH&lt;a&gt;"/>
+								<Label class="discordLabel" text="Join discord"/>
+							</Panel>
+						</Panel>
+
+						<Panel class="linkButtons" id="github">
+							<Panel id="bLogoContainer">
+								<Panel id="githubLogo"/>
+							</Panel>
+							<Panel id="bLabelContainer">
+								<Label class="discordLabel" text="github"/>
 							</Panel>
 						</Panel>
 						<Panel style="visibility:collapse;" id="translatorsContainer">

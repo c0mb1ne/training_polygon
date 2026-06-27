@@ -1669,10 +1669,22 @@ Label, TextEntry{
 	transition-delay: 0.0s ;
 	transition-timing-function: ease-in-out;
 }
+
 #boosty2{
 	flow-children: right;
 	horizontal-align: left;
 	
+}
+.linkButtons{
+	padding: 10px;
+	pre-transform-scale2d: 1;
+	transition-property: pre-transform-scale2d;
+	transition-duration: 0.1s;
+	transition-delay: 0.0s ;
+	transition-timing-function: ease-in-out;
+}
+.linkButtons:hover{
+	pre-transform-scale2d: 1.1;
 }
 #discord{
 /*	visibility: collapse;
@@ -1688,6 +1700,10 @@ Label, TextEntry{
 	transition-timing-function: ease-in-out;
 }
 #discord2{
+	flow-children: right;
+	horizontal-align: left;
+}
+#github{
 	flow-children: right;
 	horizontal-align: left;
 }
@@ -1710,6 +1726,16 @@ Label, TextEntry{
 	background-color: #f86754;
 }
 #pLabelContainer{
+	width: 160px;
+	height: 64px;
+	background-color: #153a5d;
+}
+#gLogoContainer{
+	width: 64px;
+	height: 64px;
+	background-color: #f86754;
+}
+#gLabelContainer{
 	width: 160px;
 	height: 64px;
 	background-color: #153a5d;
@@ -1758,6 +1784,7 @@ Label, TextEntry{
 	color: white;
 	vertical-align: center;
 	text-align: center;
+	width: 100%;
 }
 .twitterLabel{
 	color: white;
@@ -1787,6 +1814,14 @@ Label, TextEntry{
 	horizontal-align: center;
 	background-size: 100% 100%;
 	background-image: url("file://{images}/custom_game/Discord-Logo-Color.png");
+}
+#githubLogo{
+	width: 40px;
+	height: 40px;
+	vertical-align: center;
+	horizontal-align: center;
+	background-size: 100% 100%;
+	background-image: url("file://{images}/custom_game/github.png");
 }
 #twitterLogo{
 	width: 40px;

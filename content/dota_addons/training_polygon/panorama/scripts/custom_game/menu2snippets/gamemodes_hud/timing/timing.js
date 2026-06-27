@@ -83,9 +83,9 @@ function getTimingType(){
 	return timingName
 }
 
-function getSelectedSkill() {
+function getSelectedSkills() {
     let selectedSkills = {};
-    let skillContainer = $('#dodgeSpellContainer');
+    let skillContainer = $('#timingSpellContainer');
 
     $.Each(skillContainer.Children(), function(oPanel) {
         if (oPanel.checked) {
@@ -107,10 +107,10 @@ function getSelectedSkill() {
 
 function startGame() {
     // getting selected mode and spells
-    var dodgeName = getTimingType();
+    var timingType = getTimingType();
     var selected = getSelectedSkills();
 	var errorMsg=$('#errorMsg')
-    if (!dodgeName) {
+    if (!timingType) {
         errorMsg.text='Error: No dodge type selected.';
         return;
     }
@@ -120,31 +120,24 @@ function startGame() {
         return;
     }
 
-    $.Msg(dodgeName);
+    $.Msg(timingType);
     $.Msg(JSON.stringify(selected));
-	var yashaKaya=false
-	var yashaKayaPlayer=false
-	var hardcoreMode=false
-	if ($('#yashaKayaToggle').checked){
-		yashaKaya=true
+	var rubickMode=false
+	if ($('#rubickMode').checked){
+		rubickMode=true
 	}
-	if ($('#yashaKayaPlayerToggle').checked){
-		yashaKayaPlayer=true
+	var helperMode=false
+	if ($('#helperMode').checked){
+		helperMode=true
 	}
-	if ($('#hardcoreMode').checked){
-		hardcoreMode=true
-	}
-	var stormTime=""
-	stormTime=numberSwitcher.GetAttributeString("value", "")
+	
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 		{
-			gameModeName: "dodge",
-			dodgeName: dodgeName,
-			dodgeSpells: selected,
-			yashaKaya: yashaKaya,
-			stormTime: stormTime,
-			yashaKayaPlayer: yashaKayaPlayer,
-			hardcoreMode: hardcoreMode
+			gameModeName: "timing",
+			timingType: timingType,
+			selectedSpell: selected,
+			rubickMode: rubickMode,
+			
 	 	});
 }
 

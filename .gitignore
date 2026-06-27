@@ -11,3 +11,4 @@ panorama_debugger.cfg
 nul
 .claude/
 CLAUDE.md
+dev_secret.lua

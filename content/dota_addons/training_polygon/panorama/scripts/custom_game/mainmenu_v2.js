@@ -89,6 +89,25 @@ function menuLoadPage(data){
 	$('#menu_play').checked=false
 }
 
+function debugOutput(data){
+	$.Msg(data.text) 
+}
+
+function newHudMode(){
+	let menu=$.GetContextPanel()
+	menu.style['opacity']='1'
+	menu.style['visibility']='visible'
+}
+function oldHudMode(){
+	$.Msg('hiding new hud')
+	let menu=$.GetContextPanel()
+	/* menu.DeleteAsync(0) */
+	menu.style['opacity']='0'
+	menu.style['visibility']='collapse'
+}
+GameEvents.Subscribe("old_hud_mode", oldHudMode);
+GameEvents.Subscribe("new_hud_mode", newHudMode);
+GameEvents.Subscribe("debug_output", debugOutput);
 GameEvents.Subscribe("main_menu_load_page", menuLoadPage);
 GameEvents.Subscribe("set_camera_on_ent", setCameraOnEnt);
 GameEvents.Subscribe("show_test_ui", showTestUI);

@@ -69,17 +69,27 @@ function timing:Init()
     self.spellTable.item_travel_boots = self.spellTable.item_cyclone
     --declaring spells this way, so we can declare different lists of spells to different types of timings
     --for now let them be the same
+    --bot npcs for types:
     self.unitTable = {
-        item_cyclone = "npc_dota_hero_antimage",
+        item_cyclone = "npc_dota_hero_lion",
         shadow_demon_disruption = "npc_dota_hero_ember_spirit",
         obsidian_destroyer_astral_imprisonment = "npc_dota_hero_puck",
         item_aegis = "npc_dota_hero_storm_spirit",
-        skeleton_king_reincarnation = "npc_dota_hero_bane"
+        skeleton_king_reincarnation = "npc_dota_hero_skeleton_king"
     }
     --register listeners here
     CustomGameEventManager:RegisterListener("get_timing_spell_table", function(_, event)
         timing:SendSpellTable()
     end)
+end
+function timing:Prepare(args)
+    print("[Timing] Preparing gamemode")
+    precache:clearTable()
+    print("[Timing] Selected type:",args.timingType)
+    print("[Timing] Selected spell:",args.selectedSpell)
+end
+function timing:StartGame(args)
+
 end
 
 function timing:SendSpellTable()

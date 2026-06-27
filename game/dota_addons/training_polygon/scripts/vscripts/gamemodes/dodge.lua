@@ -279,7 +279,7 @@ function dodge:lina_light_strike_array(entry)
     local abilityName=entry.spell_name
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
-    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["light_strike_array_delay_time"])
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["light_strike_array_delay_time"]["value"])
     local range=parseQuadroValue(abilityKV["AbilityCastRange"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier

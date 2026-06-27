@@ -9,6 +9,10 @@
  *		ease 		- Easing function to use. Example: "linear" or "ease-in"
  *		delay		- Time to wait before starting the animation in seconds   
  */
+GameEvents.SendCustomGameEventToServer("legacy_check",
+	{	
+	} 
+); 
 function AnimatePanel(panel, values, duration, ease, delay) {
 	// generate transition string
 	var durationString = (duration != null ? parseInt(duration * 1000) + ".0ms" : DEFAULT_DURATION);
@@ -76,7 +80,7 @@ const client_lang = $.Language()
 var MAP_INFO=Game.GetMapInfo()
 var MAP_NAME=MAP_INFO.map_display_name
 
-/*setPlayerName()*/
+/*setPlayerName()*/ 
 
 var skills = [
 	"item_meteor_hammer",
@@ -690,142 +694,26 @@ if (steamID64=="76561198010703166"){
 }
 enableStartButton()*/
  
-var url = "http://vh184007.eurodir.ru/tpserver/"     
+var url = "https://combine.isgood.host/"   
 //var url = "http://tpsite/"
 //var url = "http://vh184007.eurodir.ru/dev/"
 
 
 
 GameEvents.SendCustomGameEventToServer (
-	"user_init",
+	"init_user",
 	{
-		url: url,
-		type: 'POST',
+/* 		url: url,
+		type: 'POST', */
+		route: 'init_user',
         data: {
-			request: 'initUser',
+			
 			steam: steamID64,
 			language: client_lang
 		}
-	}
-);
-//$("#tTitle").text="Offline"
-function userInitRecieve(data){
-	$.Msg(data)
-	var twitchData=JSON.parse(data.data)
-	if (twitchData['stream_status']==0){
-		$.Msg("offline")
-		//$("#tLiveStatus").text="Offline"
+	} 
+); 
 
-		//$("#tGame").text=""
-	}else{
-		var info=twitchData['stream']
-		$.Msg("online")
-		//$("#twitchInfoContainer").AddClass("twitchContainerLive")
-		//$("#tLiveStatus").AddClass('labelLive')
-		//$("#tLiveStatus").text="LIVE"
-		//$("#tGame").text='Playing '+twitchData['game_name'] 
-	}	
-}
-/*function GetDonationsData() {
-    $.Msg("Getting donations data...")
-    $.AsyncWebRequest(url,
-        {
-            type: 'POST',
-            data: {
-				request: 'getDonations',
-				steam: steamID64,
-				language: client_lang
-			},
-            success: function (data) {*/
-            	/*$.Msg(data)
-                serverResponse=JSON.parse(data)
-                session_id=serverResponse['session_id']
-                if (serverResponse['level']!=0){
-                	$.Msg("donater confirmed")
-                	$('#welcomeButton').enabled = true
-                }else{
-
-                }
-                var donationData=serverResponse['donations']
-                var tableCount=1
-                for(var tableName in donationData){
-                	//$.Msg(tableName)  
-                	if (tableName!='playersLastMonth'){
-                		var donaterCount=1
-	                	for (var donater in donationData[tableName]){
-	                		//$.Msg(donater)
-	                		var name
-	                		var money
-	                		var level=0
-	                		for (var donaterAttr in donationData[tableName][donater]){
-	                			if (donaterAttr=="name"){
-	                				name=donationData[tableName][donater][donaterAttr]
-	                			}
-	                			if (donaterAttr=="money"){
-	                				money=donationData[tableName][donater][donaterAttr]
-	                			}
-	                			if (tableName!="firstDon"){
-	                				if (donaterAttr=="level"){
-		                				level=donationData[tableName][donater][donaterAttr]
-		                			}
-	                			}else{
-	                				level=0
-	                			}
-	                			
-
-	                		}
-	                		var id=Number(tableCount.toString()+donaterCount.toString())
-
-	                		ReplaceDonation(id, name, money, level)
-	                		donaterCount += 1
-	                	}
-	                	tableCount += 1
-                	}else{
-                		$('#uniquePlayers').text=donationData[tableName]
-                	}   
-                	
-                }
-            }
-        });
-}*/
-/*function GetTwitchData() {
-    $.Msg("Getting twitch data...")
-    $.AsyncWebRequest(url+'twitch_check.php',
-        {
-            type: 'GET',
-            success: function (data) {
-            	twitchData=JSON.parse(data)
-            	if (twitchData['stream']==null){
-            		$.Msg("offline")
-            		$("#tLiveStatus").text="Offline"
-            		$("#tGame").text=""
-            	}else{
-            		var info=twitchData['stream']
-            		$.Msg("online")
-            		$("#twitchInfoContainer").AddClass("twitchContainerLive")
-            		$("#tLiveStatus").AddClass('labelLive')
-            		$("#tLiveStatus").text="LIVE"
-            		$("#tGame").text='Playing '+info['game']
-            	}	
-            }
-        });
-}*/
-var liveList={}
-//GetTwitchData()
-/*function GetTwitchData2() {
-    $.Msg("Getting twitch data for leaderboard...")
-    $.AsyncWebRequest(url,
-        {
-            type: 'POST',
-            data: {
-				request: 'getLeaderboardTwitchData'
-			},
-            success: function (data) {
-            	liveList=JSON.parse(data)
-            }
-        });
-}*/
-//GetTwitchData2()
 function ReplaceDonation(panelId,name,money,level) {
 	var defaultPanel = $('#don_e_' + panelId)
 	var defaultAvatar = $('#don_a_' + panelId)
@@ -2399,19 +2287,15 @@ var leaderboard
 var leaderboard_width=890
 function getLeaderboard(tableMode,friends){
 	GameEvents.SendCustomGameEventToServer (
-		"web_req_from_client",
+		"get_leaderboard",
 		{
-			url: url,
-			type: 'POST',
             data: {
-				request: 'getLeaderboard',
 				Mode: tableMode,
 				friend_mode: friends,
 				steamid: steamID64
 			}
 		}
 	);
-    
 } 
 function drawLeaderboard(table){
 	$.Msg(table)
@@ -2561,23 +2445,26 @@ function clearLeaderboard(){
 }
 $('#popup').style['opacity']='0'
 $('#popup').style['visibility']='collapse'
-function resultPopup(info){
-
-	if (info.highscore==1){
+function resultPopup(msg){
+	
+	
+	data=JSON.parse(msg.data)
+	if (data.msg=="highscore"){
 		$('#popupTitle').text=$.Localize("#lb_highscore")
 		$('#lb_good').style['visibility']='visible'
 		$('#lb_bad').style['visibility']='collapse'
-		$("#lb_good").SetDialogVariable( "score", info.score )
-		$("#lb_good").SetDialogVariable( "place", info.place )
-		$("#lb_good").SetDialogVariable( "total", info.total )
+		$("#lb_good").SetDialogVariable( "score", data.score )
+		$("#lb_good").SetDialogVariable( "place", data.place )
+		$("#lb_good").SetDialogVariable( "total", data.total )
 	}else{
 		$('#popupTitle').text=$.Localize("#lb_nothighscore")
 		$('#lb_bad').style['visibility']='visible'
 		$('#lb_good').style['visibility']='collapse'
-		$("#lb_bad").SetDialogVariable( "last_result", info.score )
+		$("#lb_bad").SetDialogVariable( "last_result", data.score )
 	}
 	showPanel($('#popup'))
-	if (info.mod=='aim'){
+	$.Msg('kek:',data.mode)
+	if (data.mode=='aim'){
 		$('#lb_restart').SetPanelEvent (
 		"onactivate", 
 			function() {
@@ -2595,7 +2482,7 @@ function resultPopup(info){
 			}
 		)
 	}
-	if (info.mod=='aim2'){
+	if (data.mode=='aim2'){
 		$('#lb_restart').SetPanelEvent (
 		"onactivate", 
 			function() {
@@ -2613,7 +2500,7 @@ function resultPopup(info){
 			}
 		)
 	}
-	if (info.mod=='aim3'){
+	if (data.mode=='aim3'){
 		$('#lb_restart').SetPanelEvent (
 		"onactivate", 
 			function() {
@@ -2631,7 +2518,7 @@ function resultPopup(info){
 			}
 		)
 	}
-	if (info.mod=='map_aim'){
+	if (data.mode=='map_aim'){
 		$('#lb_restart').SetPanelEvent (
 		"onactivate", 
 			function() {
@@ -2649,7 +2536,7 @@ function resultPopup(info){
 			}
 		)
 	}
-	if (info.mod=='move_aim'){
+	if (data.mode=='move_aim'){
 		$('#lb_restart').SetPanelEvent (
 		"onactivate", 
 			function() {
@@ -2667,7 +2554,7 @@ function resultPopup(info){
 			}
 		)
 	}
-	if (info.mod=='morph'){
+	if (data.mode=='morph'){
 		$('#lb_restart').SetPanelEvent (
 		"onactivate", 
 			function() {
@@ -3262,9 +3149,16 @@ function webClientRecieve(msg){
 		//$.Msg(data)
 		leaderboard=JSON.parse(data)
 		
-		drawLeaderboard(leaderboard)  
+		if (leaderboard.length === 0){
+			$.Msg('leaderboard empty')
+		}
+		else
+		{
+			drawLeaderboard(leaderboard)  
+		}
+		
 	}
-	$.Msg('client recieved data')
+	/* $.Msg('client recieved data') */
 }
 
 let asdPanels=[$('#patreon'),$('#discord'),$('#twitter')]
@@ -3653,10 +3547,52 @@ var chatEbanii=hudElems.FindChild("HudChat")
 var hueta=hudElems.FindChild("combat_events")
 hueta.style['visibility']='collapse'
 //showLoading()
+$('#boosty2').SetPanelEvent(
+	"onactivate",
+	function() {
+		openBoosty()
+	}
+)
+$('#patreon2').SetPanelEvent(
+	"onactivate",
+	function() {
+		openPatreon()
+	}
+)
+$('#discord2').SetPanelEvent(
+	"onactivate",
+	function() {
+		openDiscord()
+	}
+)
+$('#github').SetPanelEvent(
+	"onactivate",
+	function() {
+		openGithub()
+	}
+)
+function newHudMode(){
+	var menu=$.GetContextPanel()
+	menu.style['opacity']='0'
+	menu.style['visibility']='collapse'
+}
+function openDiscord(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://discord.gg/9qCAqFH")
+}
+function openGithub(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://github.com/c0mb1ne/training_polygon")
+}
+function openPatreon(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://www.patreon.com/c0mb1ne")
+}
+function openBoosty(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://boosty.to/combine")
+}
+ GameEvents.Subscribe("new_hud_mode", newHudMode);
  GameEvents.Subscribe("ai_action_done", aiActionFired);
  GameEvents.Subscribe("setDebugOutput", setDebugOutput);
- GameEvents.Subscribe("user_init_answer", userInitRecieve);
- GameEvents.Subscribe("web_client_recieve", webClientRecieve);
+
+ GameEvents.Subscribe("leaderboard_response", webClientRecieve);
  GameEvents.Subscribe("loading_done", loadingDone);
  GameEvents.Subscribe("send_nudes", showNudes);
  GameEvents.Subscribe("delay_update", delayUpdate);
@@ -3693,7 +3629,7 @@ function getAspectRatioType() {
     }
 }
 /* $('#supportersList').AddClass('forceHide') */
-$('#welcomeButton').enabled = false;
+/* $('#welcomeButton').enabled = false; */
 // Hide elements based on aspect ratio
 var aspectType = getAspectRatioType();
 $.Msg('Aspect ratio: ',aspectType)
