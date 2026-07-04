@@ -45,7 +45,9 @@ end
 
 function DotaDB:GetItemKV(abilityName)
   return self.items_KV[abilityName]
-
+end
+function DotaDB:GetHeroKV(heroName)
+  return self.heroes_KV[heroName]
 end
 
 function DotaDB:GetAllHeroes()
@@ -102,3 +104,4 @@ function DotaDB:test()
   print('dotadb test')
 end
 
+DotaDB:Init()

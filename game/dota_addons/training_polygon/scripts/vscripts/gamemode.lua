@@ -2,9 +2,9 @@
 BAREBONES_VERSION = "1.00"
 CMB_SERVER="https://combine.isgood.host/"
 DEVBUG_SERVER="http://tpsite/"
-PLAYER_CONFIG=nil
+PLAYER_CONFIG=nil --should be moved to separate class like player config manager or whatever
 ACTIVE_GAMEMODE=nil
-LEGACY_SWITCH=1 -- when this 1, everything old
+LEGACY_SWITCH=0 -- when this 1, everything old
 
 -- Set this to true if you want to see a complete debug output of all events/processes done by barebones
 -- You can also change the cvar 'barebones_spew' at any time to 1 or 0 for output/no output
@@ -17,26 +17,7 @@ end
 
 -- This library allow for easily delayed/timed actions
 require('libraries/timers')
--- This library can be used for advancted physics/motion/collision of units.  See PhysicsReadme.txt for more information.
---require('libraries/physics')
--- This library can be used for advanced 3D projectile systems.
---require('libraries/projectiles')
--- This library can be used for sending panorama notifications to the UIs of players/teams/everyone
---require('libraries/notifications')
--- This library can be used for starting customized animations on units from lua
---require('libraries/animations')
--- This library can be used for performing "Frankenstein" attachments on units
---require('libraries/attachments')
--- This library can be used to synchronize client-server data via player/client-specific nettables
---require('libraries/playertables')
--- This library can be used to create container inventories or container shops
---require('libraries/containers')
--- This library provides a searchable, automatically updating lua API in the tools-mode via "modmaker_api" console command
---require('libraries/modmaker')
--- This library provides an automatic graph construction of path_corner entities within the map
---require('libraries/pathgraph')
--- This library (by Noya) provides player selection inspection and management from server lua
---require('libraries/selection')
+
 
 -- These internal libraries set up barebones's events and processes.  Feel free to inspect them/change them if you need to.
 require('internal/gamemode')
@@ -49,34 +30,29 @@ json = require "json"
 require('settings')
 -- events.lua is where you can specify the actions to be taken when any event occurs and is one of the core barebones files.
 require('events')
+require('libraries/gamemode_manager') --class for registering gamemodes, so main menu load list declared here
 require('libraries/dota_database') --dota kv parser
+
+require('libraries/networking') -- class for leaderboard sever communications
+require('libraries/action_logging') --class for action logging but not needed for now
+require('libraries/main_menu_communicator') --class for loading menu pages
+require('libraries/ping_reader') --class for fetching ping from ui and sending it to lua
+require('libraries/precache') --class for precaching resources before gamemode starts to avoid crashes and error models
+require('libraries/timebar') --class for controlling timebar useful for timing stuff
+require('libraries/notifications') --class for notification display
+require('libraries/place_picker') --class for picking place for training
+require('utils')-- useful methods for anything
+
+
+
+
+--gamemodes:
 require('gamemodes/dodge')
 require('gamemodes/timing')
-require('libraries/networking')
-require('libraries/action_logging')
-require('libraries/main_menu_communicator')
-require('libraries/ping_reader')
-require('libraries/precache')
-require('libraries/timebar')
-require('libraries/notifications')
-require('libraries/place_picker')
-require('utils')
-
-ping_reader:Init()
-DotaDB:Init()
-action_logging:Init()
-precache:Init()
-
-
 
 function GameMode:activateGameMode( args )
-  print(args)
-  if args['gameModeName']=="dodge" then
-    --[[ dodge:Init() ]]
-    ACTIVE_GAMEMODE=dodge
-  end
-  ACTIVE_GAMEMODE:Prepare(args)
-  
+  GamemodeManager:SetActiveGamemode(args['gameModeName'])
+  GamemodeManager.activeGameMode:Prepare(args)
 end
 CustomGameEventManager:RegisterListener("activate_game_mode", function(_, eventData)
   GameMode:activateGameMode(eventData)
@@ -96,7 +72,6 @@ function GameMode:OnFirstPlayerLoaded()
   --nice place to put things that should be performed on very early stage of the game
   TRAINING_PLACE=nil
   TEST_ID=1
-  ebalai=nil
   DebugPrint("[BAREBONES] First Player has loaded")
   if GetMapName() == "dota" then
     TRAINING_PLACE=Vector(-2276.069336, 5846.962891, 256.000000)
@@ -236,8 +211,8 @@ end
 
 function GameMode:DamageFilter(event)
   local result=true
-  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.DamageFilter then
-    result=ACTIVE_GAMEMODE:DamageFilter(event)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.DamageFilter then
+    result=GamemodeManager.activeGameMode:DamageFilter(event)
   end
   return result
   
@@ -3950,119 +3925,6 @@ function GameMode:TestCommand2()
   end
   beglec=SS_ENEMIES[RandomInt(1,6)]
   ss_beglec(beglec,waypoints1[waypoint1_ind],waypoints2[waypoint2_ind],waypoint3)
---[[  TEST_TABLE={
-  {"axe_berserkers_call", "npc_dota_hero_axe"},
-  {"centaur_hoof_stomp", "npc_dota_hero_centaur"},
-  {"rattletrap_power_cogs", "npc_dota_hero_rattletrap"},
-  {"earth_spirit_boulder_smash", "npc_dota_hero_earth_spirit"},
-  {"earthshaker_fissure", "npc_dota_hero_earthshaker"},
-  {"earthshaker_enchant_totem", "npc_dota_hero_earthshaker"},
-  {"earthshaker_enchant_totem", "npc_dota_hero_earthshaker"},
-  {"earthshaker_echo_slam", "npc_dota_hero_earthshaker"},
-  {"elder_titan_echo_stomp", "npc_dota_hero_elder_titan"},
-  {"ember_spirit_searing_chains", "npc_dota_hero_ember_spirit"},
-  {"gyrocopter_call_down", "npc_dota_hero_gyrocopter"},
-  {"kunkka_torrent", "npc_dota_hero_kunkka"},
-  {"kunkka_ghostship", "npc_dota_hero_kunkka"},
-  {"kunkka_ghostship", "npc_dota_hero_kunkka"},
-  {"magnataur_skewer", "npc_dota_hero_magnataur"},
-  {"magnataur_reverse_polarity", "npc_dota_hero_magnataur"},
-  {"pudge_meat_hook", "npc_dota_hero_pudge"},
-  {"sandking_burrowstrike", "npc_dota_hero_sand_king"},
-  {"slardar_slithereen_crush", "npc_dota_hero_slardar"},
-  {"spirit_breaker_charge_of_darkness", "npc_dota_hero_spirit_breaker"},
-  {"tidehunter_ravage", "npc_dota_hero_tidehunter"},
-  {"tusk_snowball", "npc_dota_hero_tusk"},
-  {"bloodseeker_blood_bath", "npc_dota_hero_bloodseeker"},
-  {"lone_druid_savage_roar", "npc_dota_hero_lone_druid"},
-  {"meepo_poof", "npc_dota_hero_meepo"},
-  {"mirana_arrow", "npc_dota_hero_mirana"},
-  {"monkey_king_boundless_strike", "npc_dota_hero_monkey_king"},
-  {"nyx_assassin_impale", "npc_dota_hero_nyx_assassin"},
-  {"pangolier_shield_crash", "npc_dota_hero_pangolier"},
-  {"nevermore_shadowraze1", "npc_dota_hero_nevermore"},
-  {"nevermore_shadowraze2", "npc_dota_hero_nevermore"},
-  {"nevermore_shadowraze3", "npc_dota_hero_nevermore"},
-  {"nevermore_requiem", "npc_dota_hero_nevermore"},
-  {"slark_pounce", "npc_dota_hero_slark"},
-  {"ancient_apparition_cold_feet", "npc_dota_hero_ancient_apparition"},
-  {"ancient_apparition_ice_blast", "npc_dota_hero_ancient_apparition"},
-  {"dark_seer_vacuum", "npc_dota_hero_dark_seer"},
-  {"dark_willow_cursed_crown", "npc_dota_hero_dark_willow"},
-  {"death_prophet_silence", "npc_dota_hero_death_prophet"},
-  {"invoker_tornado", "npc_dota_hero_invoker"},
-  {"invoker_emp", "npc_dota_hero_invoker"},
-  {"invoker_chaos_meteor", "npc_dota_hero_invoker"},
-  {"invoker_sun_strike", "npc_dota_hero_invoker"},
-  {"invoker_deafening_blast", "npc_dota_hero_invoker"},
-  {"leshrac_split_earth", "npc_dota_hero_leshrac"},
-  {"lina_light_strike_array", "npc_dota_hero_lina"},
-  {"lion_impale", "npc_dota_hero_lion"},
-  {"puck_waning_rift", "npc_dota_hero_puck"},
-  {"pugna_nether_blast", "npc_dota_hero_pugna"},
-  {"visage_summon_familiars",  "npc_dota_hero_visage"},
-  {"warlock_rain_of_chaos", "npc_dota_hero_warlock"},
-  {"windrunner_shackleshot", "npc_dota_hero_windrunner"}
-  }
-
-  if TEST_ID==1 then
-    ebalai=CreateUnitByName("npc_dota_hero_storm_spirit", Vector(0,0,128), true, nil, nil, DOTA_TEAM_BADGUYS)
-    ebalai:SetAttackCapability(0)
-    for i=1,4 do
-      local booster=CreateItem("item_heart",ebalai,ebalai)
-      ebalai:AddItem(booster)
-    end
-  end
-  print(TEST_TABLE[TEST_ID][2])
-  local old_hero = cmdPlayer:GetAssignedHero()
-  active_hero=replaceHero(old_hero,TEST_TABLE[TEST_ID][2])
-  local ability=active_hero:FindAbilityByName(TEST_TABLE[TEST_ID][1])
-  ability:SetLevel(1)
-  TEST_ID=TEST_ID+1--]]
-  
-  --[[for i=-5,5 do
-    for j=-5,5 do
-      local ward=CreateUnitByName("npc_dota_observer_wards", Vector(1600*i,1600*j,128), true, nil, nil, DOTA_TEAM_GOODGUYS)
-    end
-  end--]]
-
-  --8000
-  --print("hidden:",sunstrike:IsHidden())
---[[
-  local cmdPlayer = Convars:GetCommandClient()
-  local active_hero = cmdPlayer:GetAssignedHero()
-  local radius=1200
-
-  local kekus=CreateUnitByNameAsync("npc_dota_hero_antimage", randomCirclePositionVector(radius,Vector(0,0,128)), true, nil, nil, DOTA_TEAM_BADGUYS, function(targetUnit) 
-
-    local speed=targetUnit:GetBaseMoveSpeed()
-    targetUnit:SetMoveCapability(1)
-    targetUnit:SetAttackCapability(0)
-    local direction_seed=RandomInt(-100,100)
-    local direction
-    if direction_seed<0 then
-      direction=-1
-    else
-      direction=1
-    end
-    local target_index=targetUnit:entindex()
-    SS_MOVE_DIR[target_index]=direction
-    SS_TARGETS[target_index]=targetUnit
-    SS_TARGET_MOVE_RADIUS[target_index]=radius
-    SS_MOVE_DIR[target_index]=direction
-    SS_MOVE_SPEED[target_index]=speed
-    local unit_pos=targetUnit:GetAbsOrigin()
-    local move_dir=(Vector(0,0,128)-unit_pos):Normalized()
-    local move_dir_radius=-move_dir*SS_TARGET_MOVE_RADIUS[target_index]
-    if direction>0 then
-      new_dir=Vector(move_dir.y,-move_dir.x,0)
-    else
-      new_dir=Vector(-move_dir.y,move_dir.x,0)
-    end
-    targetUnit:SetForwardVector(new_dir)
-    CustomGameEventManager:Send_ServerToAllClients("skillshot_new_target",{index=target_index,name="npc_dota_hero_antimage"})
-    ssAmBlinking(target_index,true)
-  end)--]]
 
 end
 
@@ -4530,8 +4392,8 @@ CustomGameEventManager:RegisterListener( "legacy_check", legacy_check )
 
 LAST_NPCSpawnedKeys=nil
 function GameMode:OnNPCSpawned(keys)
-  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OnNPCSpawned then
-    ACTIVE_GAMEMODE:OnNPCSpawned(keys)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.OnNPCSpawned then
+    GamemodeManager.activeGameMode:OnNPCSpawned(keys)
   end
   DebugPrint("[BAREBONES] NPC Spawned")
   DebugPrintTable(keys)
@@ -5688,8 +5550,8 @@ end
 
 function GameMode:OrderFilter(event)
   local result
-  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OrderFilter then
-    result=ACTIVE_GAMEMODE:OrderFilter(event)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.OrderFilter then
+    result=GamemodeManager.activeGameMode:OrderFilter(event)
   end
   if result==false then
     return result
@@ -5958,8 +5820,8 @@ function GameMode:AbilityTuning(event)
     return true
 end
 function GameMode:ModifierGained(event)
-  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.ModifierGained then
-    ACTIVE_GAMEMODE:ModifierGained(event)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.ModifierGained then
+    GamemodeManager.activeGameMode:ModifierGained(event)
   end
     --[[print("------------ModCreated:",Time(),event['name_const'])
     DeepPrintTable( event )--]]
@@ -6610,8 +6472,8 @@ end
 
 function GameMode:OnAbilityUsed(keys)
   DebugPrint('[BAREBONES] AbilityUsed')
-  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OnAbilityUsed then
-    ACTIVE_GAMEMODE:OnAbilityUsed(keys)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.OnAbilityUsed then
+    GamemodeManager.activeGameMode:OnAbilityUsed(keys)
   end
   -- DebugPrintTable(keys)
   --[[ print("ability used:",Time(),keys.abilityname) ]]
@@ -7468,8 +7330,8 @@ end
 
 function GameMode:OnEntityHurt(keys)
   DebugPrint("[BAREBONES] Entity Hurt")
-  if ACTIVE_GAMEMODE~=nil and ACTIVE_GAMEMODE.OnEntityHurt then
-    ACTIVE_GAMEMODE:OnEntityHurt(keys)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.OnEntityHurt then
+    GamemodeManager.activeGameMode:OnEntityHurt(keys)
   end
   DebugPrintTable(keys)
   local damagebits = keys.damagebits -- This might always be 0 and therefore useless

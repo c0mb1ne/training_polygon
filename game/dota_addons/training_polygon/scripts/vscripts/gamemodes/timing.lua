@@ -97,3 +97,4 @@ function timing:SendSpellTable()
 end
 
 timing:Init()
+GamemodeManager:RegisterMode(timing.name,timing,timing.type)

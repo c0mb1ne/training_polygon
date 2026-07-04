@@ -601,10 +601,12 @@ function dodge:earthshaker_enchant_totem(entry)
 end
 function dodge:tidehunter_anchor_smash(entry)
     local abilityName=entry.spell_name
+    local heroKV=DotaDB:GetHeroKV(entry.hero_name)
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
     local damageDelay=0
-    local range=parseQuadroValue(abilityKV["AbilityValues"]["radius"]["value"])
+    local additionalRange=parseQuadroValue(abilityKV["AbilityValues"]["radius"]["value"])
+    local range=parseQuadroValue(heroKV["AttackRange"])+additionalRange
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
     end
@@ -2066,3 +2068,4 @@ function dodge:Deactivate()
 end
 
 dodge:Init()
+GamemodeManager:RegisterMode(dodge.name,dodge,dodge.type)

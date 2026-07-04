@@ -137,7 +137,7 @@ function startGame() {
 			timingType: timingType,
 			selectedSpell: selected,
 			rubickMode: rubickMode,
-			
+			helperMode: helperMode,
 	 	});
 }
 

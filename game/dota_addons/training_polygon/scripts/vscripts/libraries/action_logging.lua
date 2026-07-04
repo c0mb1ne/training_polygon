@@ -122,3 +122,5 @@ function sendLogToServer(log,steam,log_id,mode,part)
 end
 
 CustomGameEventManager:RegisterListener( "logger_send_log", LogReciever )
+
+action_logging:Init()

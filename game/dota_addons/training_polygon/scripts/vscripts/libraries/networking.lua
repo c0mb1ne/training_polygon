@@ -6,7 +6,7 @@ function Networking:Init()
   self.serverAdress="https://combine.isgood.host/"
   self.secretKey=GetDedicatedServerKeyV3('qweqwe')
 
-  self.devSecret="67e54ac39d3570221069a2eaa54960d9fbe3aa4317ce7e1f927c0437dd59997b"
+  self.devSecret="67e54aqweqweqw7ce7e1f927c0437dd59997b"
   CustomGameEventManager:RegisterListener("init_user", function(_, args)
       Networking:InitUser(args)
   end)

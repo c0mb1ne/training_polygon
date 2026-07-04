@@ -31,20 +31,12 @@ $.GetContextPanel().SetPanelEvent(
 	"onactivate", 
 	function() {
 		$.Msg('clicked')
-		/* clearMenuContentAndDrawModePanel()
-		var mode_menu = $.CreatePanel( "Panel", menuContent, mode+"_menu" ); */
-		/* var result=mode_menu.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/"+mode+".xml", false, false );  */
 		GameEvents.SendCustomGameEventToServer (
 			"main_menu_load_page_request",
 				{
 					page:"file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/"+mode+".xml"
 				}
 		);
-		/* if (result){
-			$.Msg('panel loaded ',mode)
-		}else{
-			$.Msg('panel not loaded ',mode)
-		} */
 	}
 )
 $.GetContextPanel().SetPanelEvent(

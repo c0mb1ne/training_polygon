@@ -29,7 +29,6 @@ function store_ping( eventSourceIndex, args )
   ping_reader:SetPing(ping_from_ui)
 end
 
-
-
-
 CustomGameEventManager:RegisterListener( "store_ping", store_ping )
+
+ping_reader:Init()

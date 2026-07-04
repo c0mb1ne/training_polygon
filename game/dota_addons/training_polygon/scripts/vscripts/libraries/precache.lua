@@ -96,3 +96,5 @@ end
 function precache:clearTable()
     self.precacheTable = {}
 end
+
+precache:Init()
