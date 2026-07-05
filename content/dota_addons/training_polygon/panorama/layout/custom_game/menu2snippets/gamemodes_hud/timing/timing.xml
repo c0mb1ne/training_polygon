@@ -8,6 +8,29 @@
     </scripts>
     <Panel class="Col">
         <Label class="menu_button_label" text="timing"/>
+        <Panel class="RowNoFill">
+            <Panel class="ColNoFill padding5">
+                <Panel class="RowNoFill">
+                    <Label class="settingLabel" text="#currentRespawnPos"/>
+                    <Label id="respawnPosSetting" class="settingLabel" text="0,67,67"/>
+                </Panel>
+                <Panel class="RowNoFill">
+                    <Button class="menu_button normal_button buttons" id="changeRespawn" onactivate="placePickerStart()">
+                        <Label text="#changeRespawn"/>
+                    </Button>
+                    <Button class="menu_button normal_button buttons" id="resetRespawn" onactivate="resetRespawnPlace()">
+                        <Label text="#resetRespawn"/>
+                    </Button>
+                </Panel>
+                <ToggleButton checked="true" id="treesToggle" class="customCheckbox" text="#clearTrees" />
+            </Panel>
+            <Panel class="ColNoFill padding5">
+                <ToggleButton checked="true" id="helperMode" class="customCheckbox" text="#helperMode" />
+            </Panel>
+            <Panel class="ColNoFill padding5">
+                <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
+            </Panel>
+        </Panel>
         <Label class="embeedingContentLabel" text="#timingType"/>
         <Panel id="timingTypes" class="RowNoFill">
             
@@ -19,14 +42,7 @@
             </Panel>
         </Panel>
         <Label text="template"/>
-        <Panel class="RowNoFill">
-            <Panel class="ColNoFill padding5">
-                <ToggleButton checked="true" id="helperMode" class="customCheckbox" text="#helperMode" />
-            </Panel>
-            <Panel class="ColNoFill padding5">
-                <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
-            </Panel>
-        </Panel>
+        
         <Panel class="RowNoFill">
             <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
 				<Label class="mode_play_label" id="menu_play_label" text="Play"/>

@@ -4,7 +4,7 @@ CMB_SERVER="https://combine.isgood.host/"
 DEVBUG_SERVER="http://tpsite/"
 PLAYER_CONFIG=nil --should be moved to separate class like player config manager or whatever
 ACTIVE_GAMEMODE=nil
-LEGACY_SWITCH=0 -- when this 1, everything old
+LEGACY_SWITCH=1 -- when this 1, everything old
 
 -- Set this to true if you want to see a complete debug output of all events/processes done by barebones
 -- You can also change the cvar 'barebones_spew' at any time to 1 or 0 for output/no output
@@ -2566,7 +2566,7 @@ function moving_aim_training_start( eventSourceIndex, args )
           start_interval=start_interval-0.08
         end
         kek=kek+1
-        local ward=CreateUnitByName("npc_dota_neutral_centaur_khan", randomSquarePositionAim(750,350,750,650,hero), true, nil, nil, DOTA_TEAM_BADGUYS)
+        local ward=CreateUnitByName("npc_dota_neutral_centaur_khan_custom", randomSquarePositionAim(750,350,750,650,hero), true, nil, nil, DOTA_TEAM_BADGUYS)
         --ward:AddNewModifier(ward, nil, "modifier_pugna_decrepify", {})
         ward:SetModelScale(MA_SCALE)
         ward:SetDeathXP(0)

@@ -85,11 +85,32 @@ end
 function timing:Prepare(args)
     print("[Timing] Preparing gamemode")
     precache:clearTable()
-    print("[Timing] Selected type:",args.timingType)
-    print("[Timing] Selected spell:",args.selectedSpell)
+    --[[ print("[Timing] Selected type:",args.timingType)
+    print("[Timing] Selected spell:",args.selectedSpell) ]]
+    local timingType = args.timingType or "item_cyclone"
+    local selectedSpells = args.selectedSpell or {}
+    print("[Timing] Selected type:",timingType)
+    DeepPrintTable(args.selectedSpell)
+    local enemyHero = self.unitTable[timingType]
+    local playerHero
+    for k,v in pairs(args.selectedSpell) do
+        playerHero=v.hero_name
+    end
+    
+    print("[Timing] Player hero:",playerHero)
+    print("[Timing] Enemy hero:",enemyHero)
+    precache:PrecacheAddPlayerUnitToList({playerHero})
+    precache:PrecacheAddUnitToList({enemyHero})
+    precache:doPrecache(function()
+        timing:StartGame(args)
+    end)
 end
 function timing:StartGame(args)
-
+    local playerHero
+    for k,v in pairs(args.selectedSpell) do
+        playerHero=v.hero_name
+    end
+    local enemyHero = self.unitTable[timingType]
 end
 
 function timing:SendSpellTable()
