@@ -85,13 +85,13 @@ function timing:Init()
     local cycloneDuration=parseQuadroValue(cycloneKV['AbilityValues']['cyclone_duration'])
     local disruptionKV=DotaDB:GetAbilityKV("shadow_demon_disruption")
     local disruptionCastpoint=parseQuadroValue(disruptionKV['AbilityCastPoint'])
-    local disruptionDuration=parseQuadroValue(disruptionKV['disruption_duration']['value'])
+    local disruptionDuration=parseQuadroValue(disruptionKV['AbilityValues']['disruption_duration']['value'])
     --[[ local astralKV=DotaDB:GetAbilityKV("obsidian_destroyer_astral_imprisonment")
     local astralCastpoint=parseQuadroValue(astralKV["AbilityCastPoint"])
     local astralDuration=parseQuadroValue(astralKV["AbilityValues"]["prison_duration"]) ]]
     local aegisKV=DotaDB:GetItemKV("item_aegis")
     local aegisDuration=parseQuadroValue(aegisKV["AbilityValues"]["reincarnate_time"])
-    local wkResKV=DotaDB:GetItemKV("skeleton_king_reincarnation")
+    local wkResKV=DotaDB:GetAbilityKV("skeleton_king_reincarnation")
     local wkResKVDuration=parseQuadroValue(wkResKV['AbilityValues']['reincarnate_time'])
     self.delayTable={
         item_cyclone = cycloneCastpoint+cycloneDuration,
