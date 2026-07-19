@@ -358,30 +358,7 @@ function casterAbilityNotarget(hero,abilityName,caster,respawnPlace,castTime,cas
     end)
 end
 
-function randomCirclePosition(range,hero)
-	local x=RandomInt(-range,range)
-	local znak=0;
-	while znak==0 do
-		local hui=RandomInt(-100,100)
-		if hui<0 then
-			znak=-1
-		end
-		if hui>0 then
-			znak=1
-		end
-	end
-	--print("znak:")
-	--print(znak)
-	local y=(math.sqrt((range-x)*(range+x)))*znak
-	--print("x:")
-	--print(x)
-	--print("y:")*
-	--print(y)
-	local respawn_place = hero:GetAbsOrigin() + Vector(x, y, 0)
-	--print("vector:")
-	--print(respawn_place)
-	return respawn_place
-end
+
 function randomRingPosition(range1,range2,hero)
 	local R=RandomInt(range1,range2)
 	local x=RandomInt(-R,R)
@@ -2454,30 +2431,7 @@ function isPointInSquare(minVec,maxVec,point)
 	return bResult
 end
 
-function randomCirclePositionVector(range,vector)
-	local x=RandomInt(-range,range)
-	local znak=0;
-	while znak==0 do
-		local hui=RandomInt(-100,100)
-		if hui<0 then
-			znak=-1
-		end
-		if hui>0 then
-			znak=1
-		end
-	end
-	--print("znak:")
-	--print(znak)
-	local y=(math.sqrt((range-x)*(range+x)))*znak
-	--print("x:")
-	--print(x)
-	--print("y:")
-	--print(y)
-	local respawn_place = vector + Vector(x, y, 0)
-	--print("vector:")
-	--print(respawn_place)
-	return respawn_place
-end
+
 
 function RemakeTargetsRadius()
 	for k,v in pairs(SS_TARGET_MOVE_RADIUS) do

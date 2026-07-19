@@ -80,3 +80,53 @@ function parseQuadroValue(data,level)
 		return res_table[value_count]
 	end
 end
+
+function randomCirclePositionVector(range,vector)
+	local x=RandomInt(-range,range)
+	local znak=0;
+	while znak==0 do
+		local hui=RandomInt(-100,100)
+		if hui<0 then
+			znak=-1
+		end
+		if hui>0 then
+			znak=1
+		end
+	end
+	--print("znak:")
+	--print(znak)
+	local y=(math.sqrt((range-x)*(range+x)))*znak
+	--print("x:")
+	--print(x)
+	--print("y:")
+	--print(y)
+	local respawn_place = vector + Vector(x, y, 0)
+	--print("vector:")
+	--print(respawn_place)
+	return respawn_place
+end
+
+function randomCirclePosition(range,hero)
+	local x=RandomInt(-range,range)
+	local znak=0;
+	while znak==0 do
+		local hui=RandomInt(-100,100)
+		if hui<0 then
+			znak=-1
+		end
+		if hui>0 then
+			znak=1
+		end
+	end
+	--print("znak:")
+	--print(znak)
+	local y=(math.sqrt((range-x)*(range+x)))*znak
+	--print("x:")
+	--print(x)
+	--print("y:")*
+	--print(y)
+	local respawn_place = hero:GetAbsOrigin() + Vector(x, y, 0)
+	--print("vector:")
+	--print(respawn_place)
+	return respawn_place
+end

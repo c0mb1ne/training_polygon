@@ -1,13 +1,13 @@
 <root>
     <styles>
-        <include src="file://{resources}/styles/custom_game/gamemode_hud/dodge/timing.css" />
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/timing/timing.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/gamemode_hud/dodge/timing.js" />
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/timing/timing.js" />
     </scripts>
     <Panel hittest="false" class="timingMain">
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
-            <Label class="menu_button_label" text="#trainingEnd"/>
-        </Button>
+            <Label class="menu_button_label" text="#trainingEnd"/> 
+        </Button> 
     </Panel>
 </root>

@@ -130,7 +130,10 @@ function startGame() {
 	if ($('#helperMode').checked){
 		helperMode=true
 	}
-	
+	var destroyTrees=false
+	if ($('#treesToggle').checked){
+		destroyTrees=true
+	}
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 		{
 			gameModeName: "timing",
@@ -138,7 +141,39 @@ function startGame() {
 			selectedSpell: selected,
 			rubickMode: rubickMode,
 			helperMode: helperMode,
+			respawnPos: respawnPos,
+			destroyTrees: destroyTrees
 	 	});
 }
+GameEvents.SendCustomGameEventToServer ("get_timing_respawn_pos",{});
+let wait_for_place=false
+let respawnPos
+function placePickerStart(){
+	wait_for_place=true
+	GameEvents.SendCustomGameEventToServer (
+	"place_picker_start",
+		{
+		}
+	);
+}
+function placePicked(data){
+	if (wait_for_place){
+		$.Msg('picked place:',data)
+		$('#respawnPosSetting').text=data.pos[0].toFixed(0)+","+data.pos[1].toFixed(0)+","+data.pos[2].toFixed(0)
+		respawnPos=[data.pos[0],data.pos[1],data.pos[2]]
+		wait_for_place=false
+	}
+}
+function resetRespawnPlace(data){
+	GameEvents.SendCustomGameEventToServer("dodge_reset_respawn_pos",{});
+}
+function setRespawn(data){
+	$.Msg('default respawn:',data)
+	$('#respawnPosSetting').text=data.pos[1].toFixed(0)+","+data.pos[2].toFixed(0)+","+data.pos[3].toFixed(0)
+	respawnPos=[data.pos[1],data.pos[2],data.pos[3]]
+}
 
+$('#treesToggle').checked=true
+GameEvents.Subscribe("timing_respawn_pos", setRespawn);
 GameEvents.Subscribe("timing_spell_table", saveData);
+GameEvents.Subscribe("place_picker_result", placePicked);

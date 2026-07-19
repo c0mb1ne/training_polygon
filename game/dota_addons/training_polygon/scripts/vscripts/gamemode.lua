@@ -4,7 +4,7 @@ CMB_SERVER="https://combine.isgood.host/"
 DEVBUG_SERVER="http://tpsite/"
 PLAYER_CONFIG=nil --should be moved to separate class like player config manager or whatever
 ACTIVE_GAMEMODE=nil
-LEGACY_SWITCH=1 -- when this 1, everything old
+LEGACY_SWITCH=0 -- when this 1, everything old
 
 -- Set this to true if you want to see a complete debug output of all events/processes done by barebones
 -- You can also change the cvar 'barebones_spew' at any time to 1 or 0 for output/no output
@@ -21,7 +21,7 @@ require('libraries/timers')
 
 -- These internal libraries set up barebones's events and processes.  Feel free to inspect them/change them if you need to.
 require('internal/gamemode')
-
+require('utils')-- useful methods for anything
 require('internal/events')
 require('casting')
 --require('nai')
@@ -41,7 +41,7 @@ require('libraries/precache') --class for precaching resources before gamemode s
 require('libraries/timebar') --class for controlling timebar useful for timing stuff
 require('libraries/notifications') --class for notification display
 require('libraries/place_picker') --class for picking place for training
-require('utils')-- useful methods for anything
+
 
 
 

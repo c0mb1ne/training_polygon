@@ -164,7 +164,6 @@ function dodge:Init()
     CustomGameEventManager:RegisterListener("dodge_training_end", function(_, event)
         dodge:PrepareDeactivate()
     end)
-    print('dodge inited')
     self.mantaEnt=nil
     self.dodgeAbilityEnt=nil
     self.dodgeModifier=""
@@ -187,6 +186,8 @@ function dodge:Init()
     self.respawnOffset=50
     self.blinkRange=1000
     self.currentAbilityLevel=0
+    self.treeCutTimer=nil
+    print('dodge inited')
 end
 
 function dodge:SendRespawnPos()
@@ -605,7 +606,7 @@ function dodge:tidehunter_anchor_smash(entry)
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
     local damageDelay=0
-    local additionalRange=parseQuadroValue(abilityKV["AbilityValues"]["radius"]["value"])
+    local additionalRange=parseQuadroValue(abilityKV["AbilityValues"]["additional_range"]["value"])
     local range=parseQuadroValue(heroKV["AttackRange"])+additionalRange
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -874,7 +875,7 @@ function dodge:alchemist_unstable_concoction(entry)
     local preCastDelay=self.castDelay
     local afterCastDelay=self.afterCastDelay+castPoint
     local spawnRange=range
-    local maxHoldTime=parseQuadroValue(abilityKV["AbilityValues"]["brew_time"])
+    local maxHoldTime=parseQuadroValue(abilityKV["AbilityValues"]["brew_time"]["value"])
     local holdTime=RandomFloat(0.5,maxHoldTime-0.2)
     local damageDelay=holdTime+(range-self.respawnOffset-50)/projectileSpeed--50 is hull sizes i guess
     castPoint=castPoint+damageDelay
@@ -1725,7 +1726,7 @@ end
 
 function dodge:StartGame(args)
     print("[Dodge] Starting game after precache")
-    DeepPrintTable(args)
+    --[[ DeepPrintTable(args) ]]
     self.activated = true
     self.yashaKaya=false
     if args['yashaKaya']==1 then
@@ -1767,9 +1768,13 @@ function dodge:StartGame(args)
         tonumber(pos["2"])
     )
     --[[ print(self.trainingPlace) ]]
-    if args['destroyTrees']==1 then
-        GridNav:DestroyTreesAroundPoint(self.trainingPlace, 1500, true)
-    end
+    self.treeCutTimer=Timers:CreateTimer(0, function()
+        if args['destroyTrees']==1 then
+            GridNav:DestroyTreesAroundPoint(self.trainingPlace, 1500, true)
+        end
+        return 4
+    end)
+    
     self.playerHero:SetAbsOrigin(self.trainingPlace)
     if self.hardcoreMode then
         self.playerHero:SetDayTimeVisionRange(675)
@@ -1830,7 +1835,7 @@ function dodge:cycleEnemies()
     if self.firstCycle==false then
         self:checkResult()
     end
-    DeepPrintTable(self.selectedSpells)
+    --[[ DeepPrintTable(self.selectedSpells) ]]
     local currentSpellIndex=self.selectedSpells[self.spellIndex]
 
     local entry = self.spellTable[self.currentDodgeType][currentSpellIndex]
@@ -1847,12 +1852,10 @@ function dodge:cycleEnemies()
     if manaMod then
         manaMod:SetStackCount(1000)
     end
+    print("[Dodge] Trying to cast:",entry.spell_name)
     if entry.cast_func then
         self[entry.cast_func](self, entry)
         --[[ DeepPrintTable(entry) ]]
-        
-        
-        
     end
     self.firstCycle=false
 end
@@ -2064,6 +2067,7 @@ function dodge:Deactivate()
     Timebar:Hide()
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
     GridNav:RegrowAllTrees()
+    Timers:RemoveTimer(self.treeCutTimer)
     --[[ self.currentEnemy:RemoveSelf() ]] --do not do this, if we remove unit in middle of a cast, game would crash
 end
 
