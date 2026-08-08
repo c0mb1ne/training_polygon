@@ -575,6 +575,7 @@ VerticalScrollBar .ScrollThumb{
 	color: #7d8688;
 	letter-spacing: 1px;
 	font-weight: thin;
+	vertical-align: center;
 }
 .customCheckbox .TickBox{
 	width: 18px;

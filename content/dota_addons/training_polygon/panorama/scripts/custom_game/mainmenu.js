@@ -1475,7 +1475,7 @@ function drawEulPrimarySkill(id) {
 		function() {
 			SkillCheck.checked=true
 			unmarkAllPrimarySkills(id)
-			getTimingInfo()
+			/* getTimingInfo() */
 		}
 	)
 }
@@ -1540,7 +1540,7 @@ function drawEulSkill(parentPanel, skill, id) {
 	SkillCheck.SetPanelEvent (
 	"onactivate", 
 		function() {
-			getTimingInfo()
+			/* getTimingInfo() */
 		}
 	)
 }

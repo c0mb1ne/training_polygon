@@ -30,6 +30,12 @@
             <Panel class="ColNoFill padding5">
                 <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
             </Panel>
+            <Panel class="ColNoFill padding5">
+                <Panel id="levelSetting" class="levelSetting RowNoFill">
+                    <Label class="settingLabel" text="#levelSetting"/>
+                    <Panel id="levelSettingSwitcher"/>
+                </Panel>
+            </Panel>
         </Panel>
         <Label class="embeedingContentLabel" text="#timingType"/>
         <Panel id="timingTypes" class="RowNoFill">

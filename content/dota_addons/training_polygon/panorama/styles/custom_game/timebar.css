@@ -109,7 +109,7 @@
 	
 }
 .GreenZone{
-	width: 20px;
+	/* width: 20px; */
 	height: 100%;
 	background-color: #21b6034d;
 	z-index: 3;
@@ -126,3 +126,23 @@
 	background-color: #0300bb;
 	z-index: 2;
 }
+.SingleMarkLine{
+	width: 2px;
+	height: 100%;
+	background-color: #fff;
+	z-index: 2;
+}
+.testButton{
+	width: 20px;
+	height: 20px;
+	background-color: #bb0000;
+	vertical-align: bottom;
+}
+.SingleMarkIcon{
+	background-color: #fff;
+	vertical-align: top;
+	z-index: 2;
+	width: 18px;
+	height: 18px;
+}
+

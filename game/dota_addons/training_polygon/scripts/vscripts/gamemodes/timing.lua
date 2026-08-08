@@ -67,7 +67,6 @@ function timing:Init()
     self.spellTable.obsidian_destroyer_astral_imprisonment = self.spellTable.item_cyclone
     self.spellTable.item_aegis = self.spellTable.item_cyclone
     self.spellTable.skeleton_king_reincarnation = self.spellTable.item_cyclone
-    self.spellTable.item_travel_boots = self.spellTable.item_cyclone
     --declaring spells this way, so we can declare different lists of spells to different types of timings
     --for now let them be the same
     --bot npcs for types:
@@ -77,7 +76,7 @@ function timing:Init()
         obsidian_destroyer_astral_imprisonment = "npc_dota_hero_obsidian_destroyer",
         item_aegis = "npc_dota_hero_ursa",
         skeleton_king_reincarnation = "npc_dota_hero_skeleton_king",
-        item_travel_boots = "npc_dota_hero_storm_spirit"
+        
     }
     --delays calculations
     local cycloneKV=DotaDB:GetItemKV("item_cyclone")
@@ -98,8 +97,8 @@ function timing:Init()
         shadow_demon_disruption = disruptionCastpoint+disruptionDuration,
         obsidian_destroyer_astral_imprisonment = 0, --has different duration depends on level, need exception approach
         item_aegis = aegisDuration,
-        skeleton_king_reincarnation = "skeleton_king_reincarnation_cycle",
-        item_travel_boots = "item_travel_boots_cycle"
+        skeleton_king_reincarnation = wkResKVDuration,
+        
     }
     self.actionsTable={
         item_cyclone = "item_cyclone_cycle",
@@ -107,7 +106,16 @@ function timing:Init()
         obsidian_destroyer_astral_imprisonment = "obsidian_destroyer_astral_imprisonment_cycle",
         item_aegis = "item_aegis_cycle",
         skeleton_king_reincarnation = "skeleton_king_reincarnation_cycle",
-        item_travel_boots = "item_travel_boots_cycle"
+        
+    }
+    self.hurtModifiers={
+        "modifier_axe_berserkers_call",
+        "modifier_item_meteor_hammer_burn",
+    }
+    self.invulModifiers={
+        "modifier_eul_cyclone",
+        "modifier_shadow_demon_disruption",
+        "modifier_obsidian_destroyer_astral_imprisonment_prison"
     }
     --register listeners here
     CustomGameEventManager:RegisterListener("get_timing_spell_table", function(_, event)
@@ -120,7 +128,7 @@ function timing:Init()
         timing:PrepareDeactivate()
     end)
     self.currentTimingType=nil
-    self.selectedSpells=nil
+    self.selectedSpell=nil
     self.playerHero=nil
     self.enemyHeroName=nil
     self.enemyHero=nil
@@ -131,10 +139,17 @@ function timing:Init()
     self.eulBotCast=nil
     self.enemyActionTimer=nil
     self.timebarExtraTime=1
-    self.castDelay=2
+    self.castDelay=1
     self.yashaKaya=false
     self.yashaKayaModifier=0.75
     self.cycleCastDuration=0
+    self.timebarGreenZone=0.1
+    self.enemyGotHurt=false
+    self.enemyHurtTime=0
+    self.invulOutTime=0
+    self.deactivateCalled=false
+    self.firstCycle=true
+    self.manualEul=nil
 end
 function timing:Prepare(args)
     print("[Timing] Preparing gamemode")
@@ -165,17 +180,21 @@ function timing:StartGame(args)
     local playerHero
     for k,v in pairs(args.selectedSpell) do
         playerHero=v.hero_name
-        self.selectedSpells=v
+        self.selectedSpell=v
     end
-    
+    self.deactivateCalled=false
     CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
     Timebar:Show()
     self.Player=PlayerResource:GetPlayer(0)
     self.currentTimingType=args.timingType or "item_cyclone"
     self.cycleCastDuration=self.delayTable[self.currentTimingType]
     --exception for durations depending on skill level
+    self.cycleSpellLevel=tonumber(args['abilityLevel'])
     if self.currentTimingType=="obsidian_destroyer_astral_imprisonment" then
-    
+        local astralKV=DotaDB:GetAbilityKV("obsidian_destroyer_astral_imprisonment")
+        local astralCastpoint=parseQuadroValue(astralKV["AbilityCastPoint"])
+        local astralDuration=parseQuadroValue(astralKV["AbilityValues"]["prison_duration"]["value"],self.cycleSpellLevel)
+        self.cycleCastDuration=astralCastpoint+astralDuration
     end
     if args.helperMode==1 then
         self.eulBotCast=true
@@ -198,6 +217,7 @@ function timing:StartGame(args)
         end
         return 4
     end)
+    self.firstCycle=true
     self.playerHero:SetAbsOrigin(self.trainingPlace)
     local enemyRespawnPlace=randomCirclePosition(400,self.playerHero)
     local enemyCaster=CreateUnitByNameAsync(self.enemyHeroName,enemyRespawnPlace,true,nil,nil,DOTA_TEAM_BADGUYS,function(unit)
@@ -206,24 +226,60 @@ function timing:StartGame(args)
         unit:SetBaseHealthRegen(100)
         self[self.actionsTable[self.currentTimingType]](self,unit)
         self.enemyHero=unit
+        self['timebar_'..self.selectedSpell.spell_name](self)--preparing timebar here
         return unit
     end)
-    if self.selectedSpells.is_ability==false then
-        self.trainingItem=CreateItem(self.selectedSpells.spell_name,self.playerHero,self.playerHero)
+    --[[ print('self.selectedSpell.is_ability',self.selectedSpell.is_ability) ]]
+    if self.selectedSpell.is_ability==0 then
+        self.trainingItem=CreateItem(self.selectedSpell.spell_name,self.playerHero,self.playerHero)
         self.playerHero:AddItem(self.trainingItem)
     else
-        self.trainingSpell=self.playerHero:FindAbilityByName(self.selectedSpells.spell_name)
-        self.trainingSpell:SetLevel(self.selectedSpells.level)
-        --add aghanim and shard here
-        
+        self.trainingSpell=self.playerHero:FindAbilityByName(self.selectedSpell.spell_name)
+        self.trainingSpell:SetLevel(self.selectedSpell.level)
+        --add aghanim and shard here  
     end
+    self.playerHero:SetBaseHealthRegen(300)
+    self.playerHero:SetBaseManaRegen(300)
+    
+end
+
+function timing:OnStartOfCycle()
+    --can do result check here
+    if self.deactivateCalled then
+        self:Deactivate()
+        return true
+    end
+    
+    if self.firstCycle==false then
+        if self.enemyGotHurt then
+            print('enemyHurtTime',self.enemyHurtTime)
+            print('invulOutTime',self.invulOutTime)
+            local delay=self.enemyHurtTime-self.invulOutTime
+            delay=math.floor(delay*1000)/1000
+            Notifications:Show('green','good, delay:'..delay,self.selectedSpell.spell_name)
+        else
+            Notifications:Show('red','bad',self.selectedSpell.spell_name)
+        end
+        if self.trainingItem~=nil then
+            self.trainingItem:EndCooldown()
+        end
+        if self.trainingSpell~=nil then
+            self.trainingSpell:EndCooldown()
+        end
+        if self.manualEul~=nil then
+            self.manualEul:EndCooldown()
+        end
+        self.enemyGotHurt=false
+    end
+    self.firstCycle=false
 end
 
 function timing:item_cyclone_cycle(unit)
     if self.eulBotCast then
         local eul=CreateItem("item_cyclone",unit,unit)
         unit:AddItem(eul)
-        self.enemyActionTimer=Timers:CreateTimer(2,function()
+        self.enemyActionTimer=Timers:CreateTimer(self.castDelay,function()
+            self:OnStartOfCycle()
             if IsValidEntity(unit) then
                 eul:EndCooldown()
                 unit:SetContextThink(DoUniqueString("cast_ability"), function()
@@ -235,18 +291,22 @@ function timing:item_cyclone_cycle(unit)
                         Queue = 1
                     })
                 end,0)
-                return 4 --maybe take duration of eul from kv and add some delay
+                return self.castDelay+self.cycleCastDuration
             else
                 return nil
             end
         end)
+    else
+        self.manualEul=CreateItem("item_cyclone",self.playerHero,self.playerHero)
+        self.playerHero:AddItem(self.manualEul)
     end
     print('item cyclone cycle called')
 end
 function timing:shadow_demon_disruption_cycle(unit)
     local disruption=unit:FindAbilityByName(self.currentTimingType)
     disruption:SetLevel(1)
-    self.enemyActionTimer=Timers:CreateTimer(2,function()
+    self.enemyActionTimer=Timers:CreateTimer(self.castDelay,function()
+        self:OnStartOfCycle()
         if IsValidEntity(unit) then
             disruption:EndCooldown()
             unit:SetContextThink(DoUniqueString("cast_ability"), function()
@@ -258,7 +318,7 @@ function timing:shadow_demon_disruption_cycle(unit)
                     Queue = 1
                 })
             end,0)
-            return 4 --maybe take duration of disruption from kv and add some delay
+            return self.castDelay+self.cycleCastDuration
         else
             return nil
         end
@@ -267,8 +327,9 @@ function timing:shadow_demon_disruption_cycle(unit)
 end
 function timing:obsidian_destroyer_astral_imprisonment_cycle(unit)
     local prison=unit:FindAbilityByName(self.currentTimingType)
-    prison:SetLevel(1)
-    self.enemyActionTimer=Timers:CreateTimer(2,function()
+    prison:SetLevel(self.cycleSpellLevel)
+    self.enemyActionTimer=Timers:CreateTimer(self.castDelay,function()
+        self:OnStartOfCycle()
         if IsValidEntity(unit) then
             prison:EndCooldown()
             unit:SetContextThink(DoUniqueString("cast_ability"), function()
@@ -280,7 +341,7 @@ function timing:obsidian_destroyer_astral_imprisonment_cycle(unit)
                     Queue = 1
                 })
             end,0)
-            return 4 --maybe take duration of disruption from kv and add some delay
+            return self.castDelay+self.cycleCastDuration
         else
             return nil
         end
@@ -317,7 +378,156 @@ function timing:timebar_axe_berserkers_call()
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(0.4,0,self.timebarExtraTime,castPoint)
+    Timebar:Prepare(self.cycleCastDuration-castPoint+self.timebarGreenZone,self.timebarGreenZone,self.castDelay+castPoint-self.timebarGreenZone,0)
+end
+function timing:timebar_centaur_hoof_stomp()
+    local abilityName="centaur_hoof_stomp"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityValues"]["windup_time"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:Prepare(self.cycleCastDuration-castPoint+self.timebarGreenZone,self.timebarGreenZone,self.castDelay+castPoint-self.timebarGreenZone,0)
+end
+function timing:timebar_item_meteor_hammer()
+    local abilityName="item_meteor_hammer"
+    local abilityKV = DotaDB:GetItemKV(abilityName)
+    local castPoint=0
+    local channelTime=parseQuadroValue(abilityKV["AbilityChannelTime"])
+    local landTime=parseQuadroValue(abilityKV["AbilityValues"]["land_time"])
+    local damageDelay=channelTime+landTime
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:Prepare(self.cycleCastDuration-castPoint+self.timebarGreenZone,self.timebarGreenZone,self.castDelay+castPoint-self.timebarGreenZone,0)
+end
+function timing:timebar_pudge_meat_hook()
+    local abilityName="pudge_meat_hook"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["hook_speed"]["value"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=parseQuadroValue(abilityKV["AbilityValues"]["hook_width"])
+    local distanceOffset=projectileWidth+50
+    print("distanceOffset",distanceOffset)
+    Timebar:PrepareDynamic(self.cycleCastDuration-castPoint+self.timebarGreenZone, self.timebarGreenZone, self.castDelay+castPoint-self.timebarGreenZone, 0, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+    --[[ Timebar:Prepare(self.cycleCastDuration-castPoint+self.timebarGreenZone,self.timebarGreenZone,self.castDelay+castPoint-self.timebarGreenZone,0) ]]
+end
+function timing:timebar_mirana_arrow()
+    local abilityName="mirana_arrow"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["arrow_speed"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=parseQuadroValue(abilityKV["AbilityValues"]["arrow_width"]["value"])
+    local distanceOffset=projectileWidth+50
+    print("distanceOffset",distanceOffset)
+    Timebar:PrepareDynamic(self.cycleCastDuration-castPoint+self.timebarGreenZone, self.timebarGreenZone, self.castDelay+castPoint-self.timebarGreenZone, 0, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+    --[[ Timebar:Prepare(self.cycleCastDuration-castPoint+self.timebarGreenZone,self.timebarGreenZone,self.castDelay+castPoint-self.timebarGreenZone,0) ]]
+end
+function timing:OrderFilter(event)
+    if event['issuer_player_id_const']==-1 then
+        --bot order
+        if event['entindex_ability']~=0 then
+            local ability=EntIndexToHScript(event['entindex_ability'])
+            if ability~=nil then
+                Timebar:Start()
+            end
+        end
+    else
+        --player order
+        local ability=EntIndexToHScript(event['entindex_ability'])
+        if ability~=nil then
+            if ability==self.trainingSpell or ability==self.trainingItem then
+                Timebar:PlayerAction()
+            end
+        end
+    end
+    return true
+end
+
+function timing:ModifierGained(event)
+    --[[ DeepPrintTable(event) ]]
+    if string_in_array(event.name_const,self.hurtModifiers) then
+        event.duration=0.2
+        if self.enemyGotHurt==false then
+            self.enemyGotHurt=true
+            print('[Timing] player hurt by modifier',event.name_const)
+            self.enemyHurtTime=Time()
+            Timebar:BlueLine()
+        end
+        
+        return true
+    end
+    --catching frame where enemy became able to get hit
+    if string_in_array(event.name_const,self.invulModifiers) then
+        
+        Timers:CreateTimer(FrameTime(),function()
+            if IsValidEntity(self.enemyHero) then
+                if self.enemyHero:HasModifier(event.name_const) then
+                    return FrameTime()
+                else
+                    --print('modifier expired')
+                    if self.eulBotCast==false then
+                        self.firstCycle=false
+                        if event.name_const=="modifier_eul_cyclone" then
+                            Timers:CreateTimer(self.castDelay,function()
+                                self:OnStartOfCycle()
+                            end)
+                        end
+                        
+                    end
+                    
+                    self.invulOutTime=Time()
+                    return nil
+                end
+            else
+                return nil
+            end
+        end)
+        
+        return true
+    end
+    return true
+end
+function timing:OnEntityHurt(keys)
+    --[[ DeepPrintTable(keys) ]]
+    local entCause=nil
+    local entVictim=nil
+    if keys.entindex_attacker ~= nil and keys.entindex_killed ~= nil then
+        entCause = EntIndexToHScript(keys.entindex_attacker)
+        entVictim = EntIndexToHScript(keys.entindex_killed)
+    end
+    if entVictim~=nil then
+        if keys.damage~=0 and entVictim==self.playerHero then
+            if self.enemyGotHurt==false then
+                self.enemyGotHurt=true
+                print('[Timing] player hurt by damage')
+                self.enemyHurtTime=Time()
+                Timebar:BlueLine()
+            end
+        end
+    end
+end
+
+function timing:OnAbilityUsed(keys)
+    local player = PlayerResource:GetPlayer(keys.PlayerID)
+    local abilityname = keys.abilityname
+    --[[ print("abilityname",abilityname) ]]
+    if abilityname=="item_cyclone" and self.eulBotCast==false then
+        Timebar:Start()
+    end
 end
 
 function timing:SendSpellTable()
@@ -328,9 +538,12 @@ function timing:SendRespawnPos()
 end
 
 function timing:PrepareDeactivate()
-    --[[ self.deactivateCalled=true
-    CustomGameEventManager:Send_ServerToAllClients("clear_hud",{}) ]]
-    self:Deactivate()
+    self.activated=false
+    self.deactivateCalled=true
+    CustomGameEventManager:Send_ServerToAllClients("clear_hud",{})
+    if self.eulBotCast==false and self.currentTimingType=="item_cyclone" then
+        self:Deactivate()
+    end
 end
 
 function timing:Deactivate()

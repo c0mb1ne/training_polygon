@@ -3,10 +3,12 @@
 
 
 function refreshItems(hero)
+	print('refresh items called')
 	for i=0, 10, 1 do
 		local current_item = hero:GetItemInSlot(i)
 		if current_item ~= nil then
 			current_item:EndCooldown()
+			print('refreshing:',current_item:GetAbilityName())
 		end
 	end
 

@@ -134,6 +134,8 @@ function startGame() {
 	if ($('#treesToggle').checked){
 		destroyTrees=true
 	}
+	var abilityLevel=""
+	abilityLevel=numberSwitcher.GetAttributeString("value", "")
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 		{
 			gameModeName: "timing",
@@ -142,7 +144,8 @@ function startGame() {
 			rubickMode: rubickMode,
 			helperMode: helperMode,
 			respawnPos: respawnPos,
-			destroyTrees: destroyTrees
+			destroyTrees: destroyTrees,
+			abilityLevel: abilityLevel,
 	 	});
 }
 GameEvents.SendCustomGameEventToServer ("get_timing_respawn_pos",{});
@@ -172,6 +175,14 @@ function setRespawn(data){
 	$('#respawnPosSetting').text=data.pos[1].toFixed(0)+","+data.pos[2].toFixed(0)+","+data.pos[3].toFixed(0)
 	respawnPos=[data.pos[1],data.pos[2],data.pos[3]]
 }
+
+//making number field for level changer
+let numberSwitcher=$.CreatePanel('Panel',$('#levelSettingSwitcher'),"level_switcher")
+numberSwitcher.SetAttributeString("min","1")
+numberSwitcher.SetAttributeString("max","4")
+numberSwitcher.SetAttributeString("step","1")
+numberSwitcher.SetAttributeString("placeholder","1")
+numberSwitcher.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/number_switcher.xml", false, false) 
 
 $('#treesToggle').checked=true
 GameEvents.Subscribe("timing_respawn_pos", setRespawn);

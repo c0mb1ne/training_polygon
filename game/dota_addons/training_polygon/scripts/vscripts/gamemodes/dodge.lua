@@ -173,7 +173,7 @@ function dodge:Init()
     self.yashaKaya=false
     self.selectedSpells={}
     self.dodgeMoveSpeedModifier=-99
-    self.timebarTiming=0
+    self.dodgeDuration=0
     self.timebarExtraTime=1
     self.yashaKayaModifier=0.75
     self.yashaKayaPlayer=false
@@ -187,6 +187,7 @@ function dodge:Init()
     self.blinkRange=1000
     self.currentAbilityLevel=0
     self.treeCutTimer=nil
+    self.helperForEmber=nil
     print('dodge inited')
 end
 
@@ -243,14 +244,6 @@ function dodge:Prepare(args)
                 end
             end
         end
-        -- Log the full spell info for debugging
-        -- key can be used to address self.spellTable[dodgeName][key]
-        print("[Dodge] Key: " .. tostring(key) ..
-              ", Spell: " .. (spellInfo.spell_name or "nil") ..
-              ", hero: " .. (spellInfo.hero_name or "nil") ..
-              ", level: " .. (spellInfo.level or "nil") ..
-              ", aghs: " .. tostring(spellInfo.aghs) ..
-              ", shard: " .. tostring(spellInfo.shard))
     end
 
     -- Add units to precache list
@@ -286,7 +279,8 @@ function dodge:lina_light_strike_array(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    --[[ Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration) ]]
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:rattletrap_hookshot(entry)
@@ -301,7 +295,7 @@ function dodge:rattletrap_hookshot(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:obsidian_destroyer_sanity_eclipse(entry)
@@ -314,7 +308,7 @@ function dodge:obsidian_destroyer_sanity_eclipse(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:undying_decay(entry)
@@ -327,7 +321,7 @@ function dodge:undying_decay(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:windrunner_powershot(entry)
@@ -343,7 +337,7 @@ function dodge:windrunner_powershot(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:techies_suicide(entry)
@@ -357,7 +351,7 @@ function dodge:techies_suicide(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:rattletrap_rocket_flare(entry)
@@ -371,7 +365,7 @@ function dodge:rattletrap_rocket_flare(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:earthshaker_fissure(entry)
@@ -384,7 +378,7 @@ function dodge:earthshaker_fissure(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range-700)
 end
 function dodge:bloodseeker_blood_bath(entry)
@@ -397,7 +391,7 @@ function dodge:bloodseeker_blood_bath(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:kunkka_torrent(entry)
@@ -410,7 +404,7 @@ function dodge:kunkka_torrent(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:elder_titan_earth_splitter(entry)
@@ -423,7 +417,7 @@ function dodge:elder_titan_earth_splitter(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:warlock_rain_of_chaos(entry)
@@ -436,7 +430,7 @@ function dodge:warlock_rain_of_chaos(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:leshrac_split_earth(entry)
@@ -449,7 +443,7 @@ function dodge:leshrac_split_earth(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:pugna_nether_blast(entry)
@@ -462,7 +456,7 @@ function dodge:pugna_nether_blast(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:dark_willow_terrorize(entry)
@@ -479,7 +473,7 @@ function dodge:dark_willow_terrorize(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:meepo_poof(entry)
@@ -492,7 +486,7 @@ function dodge:meepo_poof(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:omniknight_purification(entry)
@@ -505,7 +499,7 @@ function dodge:omniknight_purification(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doSelfCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:obsidian_destroyer_astral_imprisonment(entry)
@@ -518,7 +512,7 @@ function dodge:obsidian_destroyer_astral_imprisonment(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doSelfCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:zuus_lightning_bolt(entry)
@@ -531,7 +525,7 @@ function dodge:zuus_lightning_bolt(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:zuus_thundergods_wrath(entry)
@@ -544,7 +538,7 @@ function dodge:zuus_thundergods_wrath(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:ursa_earthshock(entry)
@@ -557,7 +551,7 @@ function dodge:ursa_earthshock(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:visage_summon_familiars_stone_form(entry)
@@ -570,7 +564,7 @@ function dodge:visage_summon_familiars_stone_form(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:elder_titan_echo_stomp(entry)
@@ -583,7 +577,7 @@ function dodge:elder_titan_echo_stomp(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:earthshaker_enchant_totem(entry)
@@ -597,7 +591,7 @@ function dodge:earthshaker_enchant_totem(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:tidehunter_anchor_smash(entry)
@@ -612,7 +606,7 @@ function dodge:tidehunter_anchor_smash(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:necrolyte_death_pulse(entry)
@@ -626,7 +620,7 @@ function dodge:necrolyte_death_pulse(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:queenofpain_scream_of_pain(entry)
@@ -640,7 +634,7 @@ function dodge:queenofpain_scream_of_pain(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:phoenix_supernova(entry)
@@ -653,7 +647,7 @@ function dodge:phoenix_supernova(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:legion_commander_overwhelming_odds(entry)
@@ -666,7 +660,7 @@ function dodge:legion_commander_overwhelming_odds(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:magnataur_reverse_polarity(entry)
@@ -679,7 +673,7 @@ function dodge:magnataur_reverse_polarity(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:slardar_slithereen_crush(entry)
@@ -692,7 +686,7 @@ function dodge:slardar_slithereen_crush(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:axe_berserkers_call(entry)
@@ -705,7 +699,7 @@ function dodge:axe_berserkers_call(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:brewmaster_thunder_clap(entry)
@@ -718,7 +712,7 @@ function dodge:brewmaster_thunder_clap(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:roshan_slam(entry)
@@ -731,7 +725,7 @@ function dodge:roshan_slam(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:pangolier_shield_crash(entry)
@@ -744,7 +738,7 @@ function dodge:pangolier_shield_crash(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:centaur_hoof_stomp(entry)
@@ -757,7 +751,7 @@ function dodge:centaur_hoof_stomp(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:polar_furbolg_ursa_warrior_thunder_clap(entry)
@@ -770,7 +764,7 @@ function dodge:polar_furbolg_ursa_warrior_thunder_clap(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:centaur_khan_war_stomp(entry)
@@ -783,7 +777,7 @@ function dodge:centaur_khan_war_stomp(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:item_meteor_hammer(entry)
@@ -798,7 +792,7 @@ function dodge:item_meteor_hammer(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     local enemyName=entry.hero_name
     local enemySpell=entry.spell_name
     local preCastDelay=self.castDelay
@@ -879,7 +873,7 @@ function dodge:alchemist_unstable_concoction(entry)
     local holdTime=RandomFloat(0.5,maxHoldTime-0.2)
     local damageDelay=holdTime+(range-self.respawnOffset-50)/projectileSpeed--50 is hull sizes i guess
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     if self.hardcoreMode then
         spawnRange=spawnRange+self.blinkRange
     end
@@ -971,7 +965,7 @@ function dodge:nevermore_shadowraze2(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:lina_laguna_blade(entry)
@@ -984,7 +978,7 @@ function dodge:lina_laguna_blade(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:lion_finger_of_death(entry)
@@ -997,7 +991,7 @@ function dodge:lion_finger_of_death(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:huskar_life_break(entry)
@@ -1011,7 +1005,7 @@ function dodge:huskar_life_break(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:shadow_demon_demonic_purge(entry)
@@ -1024,7 +1018,7 @@ function dodge:shadow_demon_demonic_purge(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:skywrath_mage_arcane_bolt(entry)
@@ -1038,7 +1032,7 @@ function dodge:skywrath_mage_arcane_bolt(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:gyrocopter_homing_missile(entry)
@@ -1069,7 +1063,8 @@ function dodge:gyrocopter_homing_missile(entry)
         castPoint = castPoint * self.yashaKayaModifier
     end
     castPoint = castPoint + damageDelay
-    Timebar:Prepare(castPoint, self.timebarTiming, self.timebarExtraTime, self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
+    --[[ Timebar:Prepare(castPoint, self.dodgeDuration, self.timebarExtraTime, self.dodgeCastPoint) ]]
     self:doTargetCast(entry.hero_name, entry.spell_name, self.castDelay, self.afterCastDelay + castPoint, range)
 end
 
@@ -1084,7 +1079,7 @@ function dodge:medusa_mystic_snake(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:mirana_starfall(entry)
@@ -1097,7 +1092,7 @@ function dodge:mirana_starfall(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doNoTargetCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:invoker_emp(entry)
@@ -1110,7 +1105,7 @@ function dodge:invoker_emp(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     local enemyName=entry.hero_name
     local enemySpell=entry.spell_name
     local preCastDelay=self.castDelay
@@ -1186,7 +1181,7 @@ function dodge:invoker_sun_strike(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     local enemyName=entry.hero_name
     local enemySpell=entry.spell_name
     local preCastDelay=self.castDelay
@@ -1262,7 +1257,7 @@ function dodge:tiny_toss(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     local enemyName=entry.hero_name
     local enemySpell=entry.spell_name
     local preCastDelay=self.castDelay
@@ -1335,7 +1330,7 @@ function dodge:medusa_stone_gaze(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     local enemyName=entry.hero_name
     local enemySpell=entry.spell_name
     local preCastDelay=self.castDelay
@@ -1404,7 +1399,7 @@ function dodge:kunkka_ghostship(entry)
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:Prepare(castPoint,self.timebarTiming,self.timebarExtraTime,self.dodgeCastPoint)
+    Timebar:PrepareZone(castPoint+self.timebarExtraTime,castPoint-self.dodgeDuration-self.dodgeCastPoint,self.dodgeDuration)
     self:doPointCast(entry.hero_name,entry.spell_name,self.castDelay,self.afterCastDelay+castPoint,range)
 end
 function dodge:doTargetCast(enemyName,enemySpell,preCastDelay,afterCastDelay,spawnRange)
@@ -1813,15 +1808,20 @@ function dodge:StartGame(args)
     self.dodgePressed=false
     self.playerDodgeTime=0
     self.playerGotHurt=false
-    self.timebarTiming=self.dodgeWindowTime[self.currentDodgeType]
+    self.dodgeDuration=self.dodgeWindowTime[self.currentDodgeType]
     self.dodgeCastPoint=self.dodgeCastPointTable[self.currentDodgeType]
     if self.yashaKayaPlayer then
         self.dodgeCastPoint=self.dodgeCastPoint*self.yashaKayaModifier
     end
     if self.currentDodgeType=="storm_spirit_ball_lightning" then
-        self.timebarTiming=self.stormFlyTime
+        self.dodgeDuration=self.stormFlyTime
     end
-    
+    if self.currentDodgeType=="ember_spirit_sleight_of_fist" then
+        self.helperForEmber=CreateUnitByName("npc_dota_neutral_centaur_khan_custom",self.trainingPlace+Vector(100,0,0),true,self.playerHero,self.playerHero,DOTA_TEAM_BADGUYS)
+        self.helperForEmber:SetIdleAcquire(false)
+        self.helperForEmber:Stop()
+        self.helperForEmber:SetControllableByAllPlayers(true)
+    end
     self:cycleEnemies()
 end
 
@@ -1911,14 +1911,17 @@ function dodge:OrderFilter(event)
     --[[ DeepPrintTable(event) ]]
     if event['issuer_player_id_const']==-1 then
         --bot order
-        if event['entindex_ability']~=0 then
-            local ability=EntIndexToHScript(event['entindex_ability'])
-            if ability~=nil then
-                print(ability)
-                if ability:GetAbilityName()=="alchemist_unstable_concoction_throw" then
-                    --do nothing
-                else
-                    Timebar:Start()
+        if event['order_type']~=1 then
+            if event['entindex_ability']~=0 then
+                local ability=EntIndexToHScript(event['entindex_ability'])
+                if ability~=nil then
+                    print(ability)
+                    if ability:GetAbilityName()=="alchemist_unstable_concoction_throw" then
+                        --do nothing
+                    else
+                        Timebar:Start()
+                        --[[ print('starting timebar') ]]
+                    end
                 end
             end
         end
@@ -2068,6 +2071,10 @@ function dodge:Deactivate()
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
     GridNav:RegrowAllTrees()
     Timers:RemoveTimer(self.treeCutTimer)
+    if self.helperForEmber~=nil then
+        self.helperForEmber:RemoveSelf()
+        self.helperForEmber=nil
+    end
     --[[ self.currentEnemy:RemoveSelf() ]] --do not do this, if we remove unit in middle of a cast, game would crash
 end
 

@@ -18,7 +18,7 @@
 					</Panel>
 				</Panel>
 				<Panel class="MiddleSpace" id="MiddleSpace">
-					<Panel class="GreenZone" id="GreenZone"/>
+					<!-- <Panel class="GreenZone" id="GreenZone"/> -->
 					<Panel class="RedLine" id="RedLine"/>
 					<Panel class="BlueLine" id="BlueLine"/>
 					<Panel class="DynamicBarContainer" id="DynamicBarContainer">
@@ -26,6 +26,7 @@
 					</Panel>
 				</Panel>
 				<Panel class="BottomSpace" id="BottomSpace">
+					<!-- <Button class="testButton" id="testButton"/> -->
 					<Panel class="ResizeAnchor" id="ResizeAnchor"/>
 					
 				</Panel>

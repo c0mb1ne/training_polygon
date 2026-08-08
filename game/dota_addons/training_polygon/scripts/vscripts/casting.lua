@@ -33,44 +33,7 @@ function generateRandomString(length)
     return randomString
 end
 
-function refreshItems(hero)
-	if DODGE_TYPE==1 then
-		for i=0, 5, 1 do
-			local current_item = hero:GetItemInSlot(i)
-			if current_item ~= nil then
-				current_item:EndCooldown()
-			end
-		end
-	end
-	if DODGE_TYPE==2 then
-		local fist=hero:FindAbilityByName("ember_spirit_sleight_of_fist")
-		fist:EndCooldown()
-	end
-	if DODGE_TYPE==3 then
-		local shift=hero:FindAbilityByName("puck_phase_shift")
-		shift:EndCooldown()
-	end
-	if DODGE_TYPE==5 then
-		local shift=hero:FindAbilityByName("bane_nightmare")
-		shift:EndCooldown()
-	end
-	if DODGE_TYPE==6 then
-		local shift=hero:FindAbilityByName("naga_siren_mirror_image")
-		shift:EndCooldown()
-	end
-	if DODGE_TYPE==7 then
-		local shift=hero:FindAbilityByName("monkey_king_mischief")
-		shift:EndCooldown()
-	end
-	if DODGE_TYPE==8 then
-		local shift=hero:FindAbilityByName("nyx_assassin_spiked_carapace")
-		shift:EndCooldown()
-	end
-	if DODGE_TYPE==9 then
-		local shift=hero:FindAbilityByName("void_spirit_dissimilate")
-		shift:EndCooldown()
-	end
-end
+
 
 
 function refreshItems2(hero)
@@ -83,7 +46,7 @@ function refreshItems2(hero)
 
 end
 
-function refreshSkills(hero)
+--[[ function refreshSkills(hero)
 	for i=0, 5, 1 do
 		local current_item = hero:GetAbilityByIndex(i)
 		if current_item ~= nil then
@@ -92,7 +55,7 @@ function refreshSkills(hero)
 		end
 	end
 
-end
+end ]]
 function healHero(hero)
 	local maxMana=hero:GetMaxMana()
 	local maxHp=hero:GetMaxHealth()

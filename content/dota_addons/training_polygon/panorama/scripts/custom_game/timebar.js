@@ -49,6 +49,9 @@ var animationStartTime = 0;
 var animationDuration = 0;
 var greenZoneStart = 0;
 var greenZoneWidth = 0;
+var marksTrashCan=[];
+var error=0.079;
+/* var error=0.075 */
 //debug
 /* var debugMouse=$.CreatePanel('Panel', rootPanel, 'debugMouse');
 debugMouse.style.width="10px"
@@ -230,98 +233,240 @@ function showTimebar(){
     timebarContainer.style.visibility="visible"
 }
 hideTimebar()
-var error=0.075//some magical offset
-// Prepare the timebar with cast time and green zone parameters
-function PrepareTimebar(data) {
-    var castTime=data.castTime
-    var greenZoneTime=data.greenZoneTime
-    var extraTime=data.extraTime
-    var castPoint=data.castPoint
-    extraTime = extraTime || 0;
-    
-    // Stop any ongoing animation
-    StopAnimation();
-    
-    // Calculate total duration and green zone position
-    animationDuration = castTime + extraTime;
-    var damageTime = castTime+error; // Damage happens at the end of cast time
-    
-    // Green zone is centered around damage time
-    /* greenZoneStart = damageTime - (greenZoneTime / 2); */
-    greenZoneStart = damageTime-castPoint-greenZoneTime;
-    greenZoneWidth = greenZoneTime;
-    
-    // Reset dynamic bar to start position
-    dynamicBar.style['width'] = "0%";
-    
-    // Position green zone
-    var greenZoneStartPercent = (greenZoneStart / animationDuration) * 100;
-    var greenZoneWidthPercent = (greenZoneWidth / animationDuration) * 100;
-    
-    greenZone.style['horizontal-align'] = "left";
-    greenZone.style['margin-left'] = greenZoneStartPercent + "%"; 
-    greenZone.style['width'] = greenZoneWidthPercent + "%";
-    
-    // Update time label
-    TimeLabel.text = animationDuration.toFixed(3);
-    
-    $.Msg('Timebar prepared: Duration=' + animationDuration + 's, GreenZone=' + greenZoneStart + 's to ' + (greenZoneStart + greenZoneWidth) + 's');
+
+var timebarController={
+    marksContainer: null,
+    marksArray:[],
+    timebarTotalTime:1,
+
+    Init: function(){
+        this.marksContainer=$('#MiddleSpace')
+    },
+    CreateMark: function(markId,markType,initPos){
+
+    }
+}
+var marksContainer=$('#MiddleSpace')
+//class for zone type marks:
+class timebarZone{
+    constructor(totalTime){
+        this.barTotalTime=totalTime;
+        this.parentPanel=$('#MiddleSpace')
+        this.isDynamic=false;
+        this.panel=$.CreatePanel('Panel',marksContainer,"zone_mark");
+        this.panel.style['horizontal-align'] = "left";
+        this.panel.AddClass("GreenZone")
+    }
+    SetWidth(time){
+        var width=(time/this.barTotalTime)*100;
+        /* $.Msg('calculated width:',width); */
+        this.panel.style['width']=width+"%";
+    }
+    SetOffset(time){
+        var offset=((time+error)/this.barTotalTime)*100;
+        this.panel.style['margin-left']=offset+"%";
+    }
+    RemoveSelf(){
+        this.panel.DeleteAsync(0);
+    }
+    //todo: add dynamic zone
+}
+//class for single tick marks:
+class timebarSingleMark{
+    //add single mark
+    //add dynamic single mark
+    //marks have colors, 
+    constructor(totalTime,color,iconAbilityName){
+        this.offsetTime=0
+        this.barTotalTime=totalTime;
+        this.parentPanel=$('#MiddleSpace');
+        this.iconParentPanel=$('#BottomSpace')
+        this.isDynamic=false;
+        this.markPanel=$.CreatePanel('Panel',this.parentPanel,"single_mark");
+        this.markPanel.AddClass('SingleMarkLine');
+        this.markPanel.style['background-color']=color+";"
+        this.iconPanel=$.CreatePanel('DOTAAbilityImage',this.iconParentPanel,"single_mark_icon");
+        this.iconPanel.abilityname=iconAbilityName;
+        this.iconPanel.AddClass('SingleMarkIcon');
+    }
+    SetOffset(time){
+        this.offsetTime=time
+        var offset=((time+error)/this.barTotalTime)*100;
+        this.markPanel.style['margin-left']=offset+"%";
+        var iconW=this.iconPanel
+        this.iconPanel.style['margin-left']=offset+"%";
+        //todo: make icon to be centered relative to mark (need some calcualtions with screen scale etc.)
+    }
+}
+//class for controlling text timer:
+class timebarTimer {
+    constructor() {
+        this.timerLabel = $('#TimeLabel');
+        this.isCountdown = false;
+        this.fps = 180;
+        this.totalTime = 0;
+        this.timerScheduler = null;
+        this.timerStartTime = 0;
+        this.isAnimating = false;
+    }
+    SetCountdownMode(value) {
+        this.isCountdown = value;
+    }
+    SetTotalTime(time) {
+        this.totalTime = time;
+    }
+    StartTimer() {
+        this.timerStartTime = Game.GetGameTime();
+
+        if (this.isCountdown === true) {
+            this.timerLabel.text = this.totalTime.toFixed(3);
+        } else {
+            this.timerLabel.text = "0.000";
+        }
+
+        this.isAnimating = true;
+        this.DrawTime();
+    }
+    DrawTime() {
+        if (!this.isAnimating) {
+            return;
+        }
+
+        var currentTime = Game.GetGameTime();
+        var elapsed = currentTime - this.timerStartTime;
+        var progress = this.totalTime > 0 ? Math.min(elapsed / this.totalTime, 1.0) : 1.0;
+
+        var displayTime;
+        if (this.isCountdown === false) {
+            // Counting up: show elapsed time, capped at totalTime
+            displayTime = Math.min(elapsed, this.totalTime);
+        } else {
+            // Counting down: show time remaining
+            displayTime = Math.max(0, this.totalTime - elapsed);
+        }
+
+        this.timerLabel.text = displayTime.toFixed(3);
+
+        if (progress >= 1.0) {
+            this.StopAnimation();
+            return;
+        }
+
+        this.timerScheduler = $.Schedule(1.0 / this.fps, this.DrawTime.bind(this));
+    }
+    StopAnimation() {
+        if (this.timerScheduler !== null) {
+            $.CancelScheduled(this.timerScheduler);
+            this.timerScheduler = null;
+        }
+
+        this.isAnimating = false;
+        // Final value depends on mode: countdown ends at 0, count-up ends at totalTime
+        this.timerLabel.text = this.isCountdown ? "0.000" : this.totalTime.toFixed(3);
+    }
+}
+//class for controlling bar:
+class timebarDynamicBar{
+    constructor(){
+        this.timeMode=false;//if dynamic bar represents time
+        this.distanceMode=false;//if dynamic bar represents distance
+        this.totalTime=0;//how much time bar represents, offsets will depend on this
+        this.barPanel=$('#DynamicBar');
+        this.isAnimating=false;
+        this.animationScheduler=null;
+        this.animationStartTime=0;
+        this.fps=180;
+        this.soundTrigger=false;
+        this.soundTriggerTime=0;
+    }
+    SetMode(mode){
+        if (mode === "time"){
+            this.timeMode = true;
+            this.distanceMode = false;
+        } else if (mode === "distance"){
+            this.timeMode = false;
+            this.distanceMode = true;
+        } else {
+            $.Msg('Unknown mode:', mode);
+        }
+    }
+    SetTotalTime(time){
+        this.totalTime=time;
+    }
+    StartAnimation(){
+        //todo: add condition to handle distance mode
+        this.barPanel.style['width'] = "0%";
+        this.animationStartTime=Game.GetGameTime();
+        this.isAnimating=true;
+        this.DrawFrame();
+    }
+    StopAnimation(){
+        if (this.animationScheduler !== null) {
+            $.CancelScheduled(this.animationScheduler);
+            this.animationScheduler=null;
+        }
+        this.isAnimating=false;
+        /* this.barPanel.style['width'] = "0%"; */
+    }
+    DrawFrame(){
+        if (!this.isAnimating) {
+            return;
+        }
+        var currentTime=Game.GetGameTime();
+        var elapsed = currentTime - this.animationStartTime;
+        if (this.soundTrigger===true){
+            if (elapsed>=this.soundTriggerTime){
+                Game.EmitSound('dark_carnival.lockpicking.pick_success');
+                this.soundTrigger=false;
+            }
+        }
+        var progress = Math.min(elapsed / this.totalTime, 1.0);
+        this.barPanel.style['width'] = (progress * 100) + "%";
+
+        if (progress >= 1.0) {
+            this.StopAnimation();
+            /* $.Msg('Timebar animation completed'); */
+            return;
+        }
+        this.animationScheduler = $.Schedule(1.0 / this.fps, this.DrawFrame.bind(this));
+    }
+    TriggerSoundOnTime(time){
+        this.soundTrigger=true;
+        this.soundTriggerTime=time;
+    }
+    //Game.EmitSound('soundboard.frog')
+}
+var dynamicBarController=new timebarDynamicBar();
+var textTimerController=new timebarTimer();
+/* var testMark=new timebarSingleMark(2.0,"#a100e0","invoker_emp");
+testMark.SetOffset(0.5) */
+
+
+function TimebarPrepareZone(data){
+    dynamicBarController.StopAnimation();
+    marksTrashCan.forEach((item,index) => {
+        item.RemoveSelf();
+    });
+    marksTrashCan=[];
+    var totalBarTime=data.totalBarTime;
+    var zoneOffset=data.zoneOffset;
+    var zoneWidth=data.zoneWidth;
+    textTimerController.SetTotalTime(totalBarTime);
+    dynamicBarController.SetMode("time");
+    dynamicBarController.SetTotalTime(totalBarTime);
+    /* dynamicBarController.TriggerSoundOnTime(zoneOffset); */
+    var greenZone=new timebarZone(totalBarTime);
+    marksTrashCan.push(greenZone);
+    greenZone.SetWidth(zoneWidth);
+    greenZone.SetOffset(zoneOffset);
 }
 
-// Start the timebar animation
-function StartTimebar() {
-    // Stop any ongoing animation first
-    StopAnimation();
-    
-    if (animationDuration <= 0) {
-        $.Msg('Error: Call PrepareTimebar first!');
-        return;
-    }
-    
-    isAnimating = true;
-    animationStartTime = Game.GetGameTime();
-    
-    $.Msg('Timebar animation started');
-    
-    // Start animation loop
-    AnimateBar();
+function StartTimebar(){
+    dynamicBarController.StartAnimation();
 }
 
-// Animation loop
-function AnimateBar() {
-    if (!isAnimating) {
-        return;
-    }
-    
-    var currentTime = Game.GetGameTime();
-    var elapsed = currentTime - animationStartTime;
-    var progress = Math.min(elapsed / animationDuration, 1.0);
-    
-    // Update dynamic bar width
-    dynamicBar.style['width'] = (progress * 100) + "%";
-    
-    // Update time label
-    var remainingTime = Math.max(0, animationDuration - elapsed);
-    TimeLabel.text = remainingTime.toFixed(3);
-    
-    // Check if animation is complete
-    if (progress >= 1.0) {
-        StopAnimation();
-        $.Msg('Timebar animation completed');
-        return;
-    }
-    
-    // Schedule next frame
-    animationSchedule = $.Schedule(1.0 / fps, AnimateBar);
-}
+function StopAnimation(){
 
-// Stop the animation
-function StopAnimation() {
-    if (animationSchedule !== null) {
-        $.CancelScheduled(animationSchedule);
-        animationSchedule = null;
-    }
-    isAnimating = false;
 }
 function PlayerAction(){
     RedLine.style['horizontal-align'] = "left";
@@ -339,11 +484,36 @@ function ResetLines(){
     RedLine.style['horizontal-align'] = "left";
     RedLine.style['margin-left'] = "-5px;";
 }
+
+function GetEntityDistance(sourceIndex, targetIndex, distanceOffset) {
+    var sourcePos = Entities.GetAbsOrigin(sourceIndex);
+    var targetPos = Entities.GetAbsOrigin(targetIndex);
+    if (!sourcePos || !targetPos) return null;
+
+    var dx = targetPos[0] - sourcePos[0];
+    var dy = targetPos[1] - sourcePos[1];
+    var dz = targetPos[2] - sourcePos[2];
+    var result=Math.sqrt(dx * dx + dy * dy + dz * dz)
+    /* $.Msg('result:',result)
+    $.Msg('distanceOffset:',distanceOffset) */
+    result=result-distanceOffset
+    if (result<0){
+        result=0
+    }
+    return result
+}
+
+
+
+/* GameEvents.Subscribe("timebar_prepare_dynamic", PrepareTimebarDynamic); */
 GameEvents.Subscribe("timebar_reset_lines", ResetLines);
 GameEvents.Subscribe("timebar_blue_line", SetBlueLine);
 GameEvents.Subscribe("timebar_player_action", PlayerAction);
-GameEvents.Subscribe("timebar_prepare", PrepareTimebar);
+/* GameEvents.Subscribe("timebar_prepare", PrepareTimebar);
+GameEvents.Subscribe("timebar_start", StartTimebar);
+GameEvents.Subscribe("timebar_stop", StopAnimation); */
 GameEvents.Subscribe("timebar_start", StartTimebar);
 GameEvents.Subscribe("timebar_stop", StopAnimation);
+GameEvents.Subscribe("timebar_prepare_zone", TimebarPrepareZone);
 GameEvents.Subscribe("timebar_hide", hideTimebar);
 GameEvents.Subscribe("timebar_show", showTimebar);
