@@ -85,50 +85,71 @@ end
 
 function randomCirclePositionVector(range,vector)
 	local x=RandomInt(-range,range)
-	local znak=0;
-	while znak==0 do
-		local hui=RandomInt(-100,100)
-		if hui<0 then
-			znak=-1
+	local sign=0;
+	while sign==0 do
+		local rnd=RandomInt(-100,100)
+		if rnd<0 then
+			sign=-1
 		end
-		if hui>0 then
-			znak=1
+		if rnd>0 then
+			sign=1
 		end
 	end
-	--print("znak:")
-	--print(znak)
-	local y=(math.sqrt((range-x)*(range+x)))*znak
-	--print("x:")
-	--print(x)
-	--print("y:")
-	--print(y)
+	local y=(math.sqrt((range-x)*(range+x)))*sign
 	local respawn_place = vector + Vector(x, y, 0)
-	--print("vector:")
-	--print(respawn_place)
 	return respawn_place
 end
 
 function randomCirclePosition(range,hero)
 	local x=RandomInt(-range,range)
-	local znak=0;
-	while znak==0 do
-		local hui=RandomInt(-100,100)
-		if hui<0 then
-			znak=-1
+	local sign=0;
+	while sign==0 do
+		local rnd=RandomInt(-100,100)
+		if rnd<0 then
+			sign=-1
 		end
-		if hui>0 then
-			znak=1
+		if rnd>0 then
+			sign=1
 		end
 	end
-	--print("znak:")
-	--print(znak)
-	local y=(math.sqrt((range-x)*(range+x)))*znak
-	--print("x:")
-	--print(x)
-	--print("y:")*
-	--print(y)
+	local y=(math.sqrt((range-x)*(range+x)))*sign
 	local respawn_place = hero:GetAbsOrigin() + Vector(x, y, 0)
-	--print("vector:")
-	--print(respawn_place)
 	return respawn_place
+end
+
+function createTempVision(radius,team,pos,obstruct)
+	local timer=Timers:CreateTimer(0,function()
+		--[[ print('making vision at:',pos) ]]
+		AddFOWViewer(team, pos, radius, 1.1, obstruct)
+		return 1
+	end)
+	return timer
+end
+
+function debugModifier(event)
+	local duration=0
+	if event['duration']~=nil then
+		duration=event['duration']
+	end
+	local ability=""
+	if event['entindex_ability_const']~=nil then
+		if EntIndexToHScript(event['entindex_ability_const']):GetAbilityName()~=nil then
+			ability=EntIndexToHScript(event['entindex_ability_const']):GetAbilityName()
+		else
+			ability="none"
+		end
+	end
+	local name=""
+	if event['name_const']~=nil then
+		name=event['name_const']
+	end
+	local caster=""
+	if event['entindex_caster_const']~=nil then
+		caster=EntIndexToHScript(event['entindex_caster_const']):GetUnitName()
+	end
+	local parent=""
+	if event['entindex_parent_const']~=nil then
+		parent=EntIndexToHScript(event['entindex_parent_const']):GetUnitName()
+	end
+	print('[ModifierGained] name_const: '..name..' duration: '..tostring(duration)..' entindex_ability_const: '..ability..' entindex_caster_const: '..caster..' entindex_parent_const: '..parent)
 end

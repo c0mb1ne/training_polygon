@@ -1,0 +1,15 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/announce_message.css" />
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/announce_message.js" />
+    </scripts>
+    <Panel class="AnnouncerContainer Hidden">
+		<Panel id="AnnouncerBox" class="AnnouncerBox">
+			<Label id="AnnouncerLabel" class="AnnouncerLabel" text="" />
+			<!-- <Panel id="AnnouncerUnderline" class="AnnouncerUnderline" /> -->
+		</Panel>
+	</Panel>
+</root>

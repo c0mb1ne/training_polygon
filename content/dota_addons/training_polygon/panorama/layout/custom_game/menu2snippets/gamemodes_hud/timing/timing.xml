@@ -26,14 +26,22 @@
             </Panel>
             <Panel class="ColNoFill padding5">
                 <ToggleButton checked="true" id="helperMode" class="customCheckbox" text="#helperMode" />
+                <ToggleButton checked="true" id="yashaKayaToggle" class="customCheckbox" text="#menuYashaKaya" />
+                <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
             </Panel>
             <Panel class="ColNoFill padding5">
-                <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
+                
             </Panel>
             <Panel class="ColNoFill padding5">
                 <Panel id="levelSetting" class="levelSetting RowNoFill">
                     <Label class="settingLabel" text="#levelSetting"/>
                     <Panel id="levelSettingSwitcher"/>
+                </Panel>
+            </Panel>
+            <Panel class="ColNoFill padding5">
+                <Panel id="delaySetting" class="levelSetting RowNoFill">
+                    <Label class="settingLabel" text="#timingCustomDelay"/>
+                    <Panel id="customDelaySwitcher"/>
                 </Panel>
             </Panel>
         </Panel>

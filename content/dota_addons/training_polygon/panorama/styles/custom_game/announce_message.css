@@ -1,0 +1,58 @@
+
+
+.AnnouncerContainer{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: top;
+	margin-top: 48px;
+	flow-children: down;
+	z-index: 200;
+
+	/* fade + slight drop-in animation, driven by AddClass("AnnouncerVisible") / RemoveClass in JS */
+	opacity: 0;
+	transform: translateY( -30px );
+	transition-property: opacity, transform;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-in-out;
+}
+.AnnouncerContainer.Hidden{
+	/* keep the base .Hidden behavior (visibility: collapse) from the shared stylesheet,
+	   this class just adds the opacity/transform starting state above */
+}
+.AnnouncerContainer.AnnouncerVisible{
+	opacity: 1;
+	transform: translateY( 0px );
+}
+
+.AnnouncerBox{
+	flow-children: down;
+	horizontal-align: center;
+	min-width: 420px;
+	max-width: 900px;
+	padding: 16px 42px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115dd ), color-stop( 0.00156, #101115dd), to( #0E0F11dd ) );
+	border: 1px solid #212121;
+	box-shadow: #000000bd 0px 0px 18px 4px;
+}
+
+.AnnouncerLabel{
+	width: 100%;
+	horizontal-align: center;
+	text-align: center;
+	font-family: defaultFont;
+	/* font-weight: semi-bold; */
+	font-size: 34px;
+	/* text-transform: uppercase; */
+	/* letter-spacing: 1px; */
+	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+	text-shadow: 0px 0px 8px 3.0 #333333b0;
+}
+
+.AnnouncerUnderline{
+	horizontal-align: center;
+	margin-top: 8px;
+	width: 60%;
+	height: 1px;
+	background-color: #ADD9E655;
+}

@@ -30,11 +30,13 @@ function drawType(parent,name){
 		function() {
 			drawSpellTable(name)
 			$.Msg(name)
-			//if there is castpoint type of dodge, draw yasha kaya toggle
-			
 		}
 	)
-
+	//let cyclone be default
+	if (name=="item_cyclone"){
+		modePanel.checked=true
+		drawSpellTable(name)
+	}
 }
 function clearSpellTable(){
 	$.Each($('#timingSpellContainer').Children(), function( oPanel )
@@ -134,8 +136,14 @@ function startGame() {
 	if ($('#treesToggle').checked){
 		destroyTrees=true
 	}
+	var yashaKaya=false
+	if ($('#yashaKayaToggle').checked){
+		yashaKaya=true
+	}
 	var abilityLevel=""
 	abilityLevel=numberSwitcher.GetAttributeString("value", "")
+	var customDelay=""
+	customDelay=castDelayOverride.GetAttributeString("value", "")
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 		{
 			gameModeName: "timing",
@@ -146,6 +154,8 @@ function startGame() {
 			respawnPos: respawnPos,
 			destroyTrees: destroyTrees,
 			abilityLevel: abilityLevel,
+			yashaKaya: yashaKaya,
+			customDelay: customDelay
 	 	});
 }
 GameEvents.SendCustomGameEventToServer ("get_timing_respawn_pos",{});
@@ -176,6 +186,8 @@ function setRespawn(data){
 	respawnPos=[data.pos[1],data.pos[2],data.pos[3]]
 }
 
+$('#helperMode').checked=true;
+
 //making number field for level changer
 let numberSwitcher=$.CreatePanel('Panel',$('#levelSettingSwitcher'),"level_switcher")
 numberSwitcher.SetAttributeString("min","1")
@@ -183,6 +195,13 @@ numberSwitcher.SetAttributeString("max","4")
 numberSwitcher.SetAttributeString("step","1")
 numberSwitcher.SetAttributeString("placeholder","1")
 numberSwitcher.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/number_switcher.xml", false, false) 
+
+let castDelayOverride=$.CreatePanel('Panel',$('#customDelaySwitcher'),"delay_switcher")
+castDelayOverride.SetAttributeString("min","1")
+castDelayOverride.SetAttributeString("max","5")
+castDelayOverride.SetAttributeString("step","1")
+castDelayOverride.SetAttributeString("placeholder","1")
+castDelayOverride.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/number_switcher.xml", false, false) 
 
 $('#treesToggle').checked=true
 GameEvents.Subscribe("timing_respawn_pos", setRespawn);

@@ -17,17 +17,25 @@ function Timebar:PrepareZone(totalBarTime,zoneOffset,zoneWidth)
         zoneWidth = zoneWidth
     })
 end
-function Timebar:PrepareDynamic(castTime, greenZoneTime, extraTime, castPoint, source, target, projectileSpeed, distanceOffset)
+function Timebar:PrepareSingleMark(totalBarTime,zoneOffset,color,abilityname)
+    CustomGameEventManager:Send_ServerToAllClients("timebar_prepare_single_mark", {
+        totalBarTime = totalBarTime,
+        zoneOffset = zoneOffset,
+        color = color,
+        abilityname = abilityname
+    })
+end
+function Timebar:PrepareDynamic(totalBarTime,zoneOffset,color,abilityname,ent1,ent2,speed,offset)
     --[[ print('timebar prepare dynamic') ]]
     CustomGameEventManager:Send_ServerToAllClients("timebar_prepare_dynamic", {
-        castTime = castTime,               -- time from timebar start to projectile launch
-        greenZoneTime = greenZoneTime,      -- time of greenzone
-        extraTime = extraTime,              -- optional, can omit or set to 0, pads bar after impact
-        castPoint = castPoint,              -- if greenzone needs time offset
-        sourceEntIndex = source:entindex(),
-        targetEntIndex = target:entindex(),
-        projectileSpeed = projectileSpeed,
-        distanceOffset = distanceOffset --offset from hull sizes and projectile width
+        totalBarTime = totalBarTime,               -- time from timebar start to projectile launch
+        zoneOffset = zoneOffset,      -- time of greenzone
+        color = color,              -- optional, can omit or set to 0, pads bar after impact
+        abilityname = abilityname,              -- if greenzone needs time offset
+        ent1 = ent1:entindex(),
+        ent2 = ent2:entindex(),
+        speed = speed,
+        offset = offset --offset from hull sizes and projectile width
     })
 end
 function Timebar:Show()

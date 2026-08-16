@@ -32,7 +32,7 @@ require('settings')
 require('events')
 require('libraries/gamemode_manager') --class for registering gamemodes, so main menu load list declared here
 require('libraries/dota_database') --dota kv parser
-
+require('libraries/announce_message')--to display some messages in center of screen
 require('libraries/networking') -- class for leaderboard sever communications
 require('libraries/action_logging') --class for action logging but not needed for now
 require('libraries/main_menu_communicator') --class for loading menu pages
@@ -5326,12 +5326,13 @@ function GameMode:TestCommand1()
   local cmdPlayer=PlayerResource:GetPlayer(0)
   --DeepPrintTable(cmdPlayer)
   active_hero = cmdPlayer:GetAssignedHero()
+  announcer:Show({message="Roshan has spawned!", duration=5})
   --[[ local newHero=replaceHero(active_hero,"npc_dota_hero_antimage") ]]
-  local steam=PlayerResource:GetSteamID(0)
+  --[[ local steam=PlayerResource:GetSteamID(0)
   local other={combo=67,avg=0.420}
   local log_result_id=generateRandomString(10)
   local ping=ping_reader:GetPing()
-  Networking:SendChallengeResult('aim',tostring(steam),12312312,other,log_result_id,ping)
+  Networking:SendChallengeResult('aim',tostring(steam),12312312,other,log_result_id,ping) ]]
   --PlayerResource:ReplaceHeroWith(cmdPlayer:GetPlayerID(),"npc_dota_hero_pudge",0,1)
   --[[ for playerId = 0, DOTA_MAX_TEAM_PLAYERS-1 do
       if PlayerResource:IsValidPlayerID(playerId) then

@@ -234,18 +234,6 @@ function showTimebar(){
 }
 hideTimebar()
 
-var timebarController={
-    marksContainer: null,
-    marksArray:[],
-    timebarTotalTime:1,
-
-    Init: function(){
-        this.marksContainer=$('#MiddleSpace')
-    },
-    CreateMark: function(markId,markType,initPos){
-
-    }
-}
 var marksContainer=$('#MiddleSpace')
 //class for zone type marks:
 class timebarZone{
@@ -277,25 +265,68 @@ class timebarSingleMark{
     //add dynamic single mark
     //marks have colors, 
     constructor(totalTime,color,iconAbilityName){
-        this.offsetTime=0
+        this.offsetTime=0;
         this.barTotalTime=totalTime;
         this.parentPanel=$('#MiddleSpace');
-        this.iconParentPanel=$('#BottomSpace')
+        this.iconParentPanel=$('#BottomSpace');
         this.isDynamic=false;
+        this.markUpdater=null;
         this.markPanel=$.CreatePanel('Panel',this.parentPanel,"single_mark");
         this.markPanel.AddClass('SingleMarkLine');
-        this.markPanel.style['background-color']=color+";"
+        this.markPanel.style['background-color']=color+";";
         this.iconPanel=$.CreatePanel('DOTAAbilityImage',this.iconParentPanel,"single_mark_icon");
         this.iconPanel.abilityname=iconAbilityName;
         this.iconPanel.AddClass('SingleMarkIcon');
+        this.ent1=null;
+        this.ent2=null;
+        this.speed=null;
+        this.dynamicOffset=0;
+        this.fps=100;
     }
     SetOffset(time){
-        this.offsetTime=time
+        this.offsetTime=time;
         var offset=((time+error)/this.barTotalTime)*100;
         this.markPanel.style['margin-left']=offset+"%";
-        var iconW=this.iconPanel
+        var iconW=this.iconPanel;
         this.iconPanel.style['margin-left']=offset+"%";
         //todo: make icon to be centered relative to mark (need some calcualtions with screen scale etc.)
+    }
+    RemoveSelf(){
+        this.isDynamic=false;
+        $.CancelScheduled(this.markUpdater);
+        this.markPanel.DeleteAsync(0);
+        this.iconPanel.DeleteAsync(0);
+    }
+    SetDynamic(entity1,entity2,speed,offset){
+        this.isDynamic=true;
+        this.ent1=entity1;
+        this.ent2=entity2;
+        this.speed=speed;
+        this.dynamicOffset=offset;
+        this.UpdateDistance();
+    }
+    UpdateDistance(){
+        var pos1=Entities.GetAbsOrigin(this.ent1);
+        var pos2=Entities.GetAbsOrigin(this.ent2);
+        if (!pos1 || !pos2){
+            $.Msg('pos1 or pos2 error');
+            return null;
+        }
+        var dx = pos1[0] - pos2[0];
+        var dy = pos1[1] - pos2[1];
+        var dz = pos1[2] - pos2[2];
+        var distance=Math.sqrt(dx * dx + dy * dy + dz * dz)-this.dynamicOffset;
+        if (distance<0){
+            distance=0;
+        }
+        var time=distance/this.speed;
+        var offset=((this.offsetTime-time+error)/this.barTotalTime)*100;
+        this.markPanel.style['margin-left']=offset+"%";
+        this.iconPanel.style['margin-left']=offset+"%";
+        /* $.Msg('time:',time); */
+        if (this.isDynamic){
+            this.markUpdater=$.Schedule(1.0 / this.fps, this.UpdateDistance.bind(this));
+        }
     }
 }
 //class for controlling text timer:
@@ -441,6 +472,30 @@ var textTimerController=new timebarTimer();
 /* var testMark=new timebarSingleMark(2.0,"#a100e0","invoker_emp");
 testMark.SetOffset(0.5) */
 
+function PrepareTimebarDynamic(data){
+    $.Msg(JSON.stringify(data));
+    var totalBarTime=data.totalBarTime;
+    var zoneOffset=data.zoneOffset;
+    var color=data.color;
+    var abilityname=data.abilityname;
+    var ent1=data.ent1;
+    var ent2=data.ent2;
+    var speed=data.speed;
+    var offset=data.offset;
+    dynamicBarController.StopAnimation();
+    marksTrashCan.forEach((item,index) => {
+        item.RemoveSelf();
+    });
+    marksTrashCan=[];
+    textTimerController.SetTotalTime(totalBarTime);
+    dynamicBarController.SetMode("time");
+    dynamicBarController.SetTotalTime(totalBarTime);
+    /* dynamicBarController.TriggerSoundOnTime(zoneOffset); */
+    var singleMark=new timebarSingleMark(totalBarTime,color,abilityname);
+    marksTrashCan.push(singleMark);
+    singleMark.SetOffset(zoneOffset);
+    singleMark.SetDynamic(ent1,ent2,speed,offset);
+}
 
 function TimebarPrepareZone(data){
     dynamicBarController.StopAnimation();
@@ -461,6 +516,32 @@ function TimebarPrepareZone(data){
     greenZone.SetOffset(zoneOffset);
 }
 
+function TimebarPrepareSingleMark(data){
+    dynamicBarController.StopAnimation();
+    marksTrashCan.forEach((item,index) => {
+        item.RemoveSelf();
+    });
+    marksTrashCan=[];
+    var totalBarTime=data.totalBarTime;
+    var zoneOffset=data.zoneOffset;
+    var color=data.color;
+    var abilityname=data.abilityname;
+    $.Msg('[Timebar] TimebarPrepareSingleMark:');
+    $.Msg('totalBarTime',totalBarTime);
+    $.Msg('zoneOffset',zoneOffset);
+    if (zoneOffset<0){
+        GameEvents.SendCustomGameEventToServer("announcer_request_show", {message:"#unableToTime", duration:5})
+    }
+    $.Msg('color',color);
+    $.Msg('abilityname',abilityname);
+    textTimerController.SetTotalTime(totalBarTime);
+    dynamicBarController.SetMode("time");
+    dynamicBarController.SetTotalTime(totalBarTime);
+    /* dynamicBarController.TriggerSoundOnTime(zoneOffset); */
+    var singleMark=new timebarSingleMark(totalBarTime,color,abilityname);
+    marksTrashCan.push(singleMark);
+    singleMark.SetOffset(zoneOffset);
+}
 function StartTimebar(){
     dynamicBarController.StartAnimation();
 }
@@ -469,11 +550,17 @@ function StopAnimation(){
 
 }
 function PlayerAction(){
+    if (dynamicBar.style['width']===null){
+        return
+    }
     RedLine.style['horizontal-align'] = "left";
     RedLine.style['margin-left'] = dynamicBar.style['width']
     
 }
 function SetBlueLine(){
+    if (dynamicBar.style['width']===null){
+        return
+    }
     BlueLine.style['horizontal-align'] = "left";
     BlueLine.style['margin-left'] = dynamicBar.style['width']
     
@@ -503,9 +590,7 @@ function GetEntityDistance(sourceIndex, targetIndex, distanceOffset) {
     return result
 }
 
-
-
-/* GameEvents.Subscribe("timebar_prepare_dynamic", PrepareTimebarDynamic); */
+GameEvents.Subscribe("timebar_prepare_dynamic", PrepareTimebarDynamic);
 GameEvents.Subscribe("timebar_reset_lines", ResetLines);
 GameEvents.Subscribe("timebar_blue_line", SetBlueLine);
 GameEvents.Subscribe("timebar_player_action", PlayerAction);
@@ -515,5 +600,6 @@ GameEvents.Subscribe("timebar_stop", StopAnimation); */
 GameEvents.Subscribe("timebar_start", StartTimebar);
 GameEvents.Subscribe("timebar_stop", StopAnimation);
 GameEvents.Subscribe("timebar_prepare_zone", TimebarPrepareZone);
+GameEvents.Subscribe("timebar_prepare_single_mark", TimebarPrepareSingleMark);
 GameEvents.Subscribe("timebar_hide", hideTimebar);
 GameEvents.Subscribe("timebar_show", showTimebar);
