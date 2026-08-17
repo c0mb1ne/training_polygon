@@ -205,6 +205,7 @@ function GameMode:InitGameMode()
   GameRules:GetGameModeEntity():SetModifyExperienceFilter(Dynamic_Wrap(GameMode, "ExpFilter"), self)
   GameRules:GetGameModeEntity():SetModifyGoldFilter(Dynamic_Wrap(GameMode, "GoldFilter"), self)
   GameRules:GetGameModeEntity():SetDamageFilter(Dynamic_Wrap(GameMode, "DamageFilter"), self)
+  LinkLuaModifier("modifier_custom_speed_boost_flat", "libraries/modifiers/modifier_custom_speed_boost_flat.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_custom_speed_boost", "libraries/modifiers/modifier_custom_speed_boost.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_set_max_mana.lua", LUA_MODIFIER_MOTION_NONE)
 end

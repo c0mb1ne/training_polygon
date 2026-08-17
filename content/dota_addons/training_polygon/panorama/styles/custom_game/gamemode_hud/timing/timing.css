@@ -62,3 +62,39 @@
     width: 150px;
     height: 50px;
 }
+.additionalSettings{
+	padding: 15px;
+	visibility: collapse;
+	flow-children: down;
+	margin-top: 250px;
+	margin-left: 5px;
+	width: 300px;
+	/* height: 250px; */
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	box-shadow: #000000 0px 0px 12px;
+}
+.settingSKillIcon{
+	horizontal-align:center;
+	width: 32px;
+	height: 32px;
+}
+.settingLabel{
+	text-align: center;
+	width: 100%;
+	margin-top: 20px;
+	color: white;
+	font-size: 16px;
+}
+.Control{
+	vertical-align: center;
+	horizontal-align: center;
+}
+.padding{
+	margin-top: 15px;
+}
+.col{
+	width: 100%;
+	flow-children: down;
+}

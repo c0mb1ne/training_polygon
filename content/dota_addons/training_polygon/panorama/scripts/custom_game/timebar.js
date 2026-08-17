@@ -498,6 +498,7 @@ function PrepareTimebarDynamic(data){
 }
 
 function TimebarPrepareZone(data){
+    $.Msg(JSON.stringify(data));
     dynamicBarController.StopAnimation();
     marksTrashCan.forEach((item,index) => {
         item.RemoveSelf();
@@ -505,6 +506,9 @@ function TimebarPrepareZone(data){
     marksTrashCan=[];
     var totalBarTime=data.totalBarTime;
     var zoneOffset=data.zoneOffset;
+    if (zoneOffset<0){
+        GameEvents.SendCustomGameEventToServer("announcer_request_show", {message:"#unableToTime", duration:5})
+    }
     var zoneWidth=data.zoneWidth;
     textTimerController.SetTotalTime(totalBarTime);
     dynamicBarController.SetMode("time");

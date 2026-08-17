@@ -49,10 +49,14 @@ function createNotification(color,text,icon){
 	}
 }
 function hideNotification(panel){
-	panel.AddClass('NotificationCollapse')
+	if (panel && panel.IsValid()){
+		panel.AddClass('NotificationCollapse')
+	}
 }
 function showNotification(panel){
-	panel.RemoveClass('NotificationCollapse')
+	if (panel && panel.IsValid()){
+		panel.AddClass('NotificationCollapse')
+	}
 }
 function showNotify(data){
 	createNotification(data.color,data.text,data.icon)

@@ -42,7 +42,7 @@
 	text-align: center;
 	font-family: defaultFont;
 	/* font-weight: semi-bold; */
-	font-size: 34px;
+	font-size: 24px;
 	/* text-transform: uppercase; */
 	/* letter-spacing: 1px; */
 	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );

@@ -214,3 +214,107 @@ function timing:timebar_magnataur_skewer()
     local distanceOffset=projectileWidth/2
     Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#006cb4",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
 end
+function timing:timebar_sandking_burrowstrike()
+    local abilityName="sandking_burrowstrike"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["burrow_speed"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=parseQuadroValue(abilityKV["AbilityValues"]["burrow_width"]["value"])
+    local distanceOffset=projectileWidth/2
+    Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#8b4f00",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+end
+function timing:timebar_slardar_slithereen_crush()
+    local abilityName="slardar_slithereen_crush"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#2500ca",abilityName)
+end
+function timing:timebar_spirit_breaker_charge_of_darkness()
+    --requires some calculation for timebar beacause of weird speed increase formula, dont wanna do it right now
+    --for now let it be pure speculative
+    announcer:Show({message="#spiritBreakerTimebar",duration=5})
+    if self.spiritBreakerHelper==nil then
+        self.spiritBreakerHelper=CreateUnitByName("npc_dota_neutral_centaur_khan_custom",self.trainingPlace+Vector(100,0,0),true,self.playerHero,self.playerHero,DOTA_TEAM_BADGUYS)
+        self.spiritBreakerHelper:SetIdleAcquire(false)
+        self.spiritBreakerHelper:Stop()
+        self.spiritBreakerHelper:SetControllableByAllPlayers(true)
+        self.spiritBreakerHelper:SetBaseHealthRegen(100)
+    end
+    if self.spiritBreakerSpeedModifier==nil then
+        self.spiritBreakerSpeedModifier = self.playerHero:AddNewModifier(
+            self.playerHero, 
+            nil, 
+            "modifier_custom_speed_boost_flat", 
+            {}
+        )
+    else
+        print('failer to add speed modifier')
+    end
+    CustomGameEventManager:Send_ServerToAllClients("show_spirit_braker_settings",{})
+    local bash=self.playerHero:FindAbilityByName("spirit_breaker_greater_bash")
+    bash:SetLevel(1)
+    self.spiritBreakerSkill1=self.playerHero:FindAbilityByName("spirit_breaker_charge_of_darkness")
+    self.spiritBreakerSkill2=self.playerHero:FindAbilityByName("spirit_breaker_bulldoze")
+    self.spiritBreakerSkill2:SetLevel(1)
+    local abilityName="spirit_breaker_charge_of_darkness"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["movement_speed"]["value"])+100
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=parseQuadroValue(abilityKV["AbilityValues"]["bash_radius"]["value"])
+    local distanceOffset=projectileWidth/2
+    Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"rgb(0, 150, 187)",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+end
+function timing:timebar_tidehunter_ravage()
+    local abilityName="tidehunter_ravage"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["speed"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=250--havent found any value in kv, lets trust liquipedia
+    local distanceOffset=projectileWidth/2
+    Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#00aa63",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+end
+function timing:timebar_tusk_snowball(recalculate)
+    if recalculate~=true then
+        CustomGameEventManager:Send_ServerToAllClients("show_tuskar_settings",{})
+        if self.spiritBreakerHelper==nil then
+            self.spiritBreakerHelper=CreateUnitByName("npc_dota_neutral_centaur_khan_custom",self.trainingPlace+Vector(100,0,0),true,self.playerHero,self.playerHero,DOTA_TEAM_BADGUYS)
+            self.spiritBreakerHelper:SetIdleAcquire(false)
+            self.spiritBreakerHelper:Stop()
+            self.spiritBreakerHelper:SetControllableByAllPlayers(true)
+            self.spiritBreakerHelper:SetBaseHealthRegen(100)
+        end
+    end
+    local abilityName="tusk_snowball"
+    local level=self.playerHero:FindAbilityByName(abilityName):GetLevel()
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["snowball_speed"],level)
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=parseQuadroValue(abilityKV["AbilityValues"]["snowball_windup_radius"]["value"])
+    local distanceOffset=projectileWidth/2
+    Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#9bd7ff",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+end

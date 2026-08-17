@@ -716,3 +716,10 @@ VerticalScrollBar .ScrollThumb{
 .padding5{
 	padding: 5px;
 }
+/* for number switcher */
+.x100{
+	width: 40px;
+}
+.x10{
+	width: 35px;
+}

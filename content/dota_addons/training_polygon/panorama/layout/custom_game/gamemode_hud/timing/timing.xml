@@ -9,5 +9,21 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/> 
         </Button> 
+        <Panel class="additionalSettings" id="additionalSettings">
+            <Panel id="spiritBrakerSettings" class="col">
+                <Label class="settingLabel" text="#moveSpeed"/>
+                <Panel class="Control" id="msControl"/>
+                <Panel class="padding"/>
+                <DOTAAbilityImage class="settingSKillIcon" abilityname="spirit_breaker_charge_of_darkness" />
+                <Panel class="Control" id="spell1Control"/>
+                <Panel class="padding"/>
+                <DOTAAbilityImage class="settingSKillIcon" abilityname="spirit_breaker_bulldoze" />
+                <Panel class="Control" id="spell2Control"/>
+            </Panel>
+            <Panel id="tuskarSettings" class="col">
+                <DOTAAbilityImage class="settingSKillIcon" abilityname="tusk_snowball" />
+                <Panel class="Control" id="snowballControl"/>
+            </Panel>
+        </Panel>
     </Panel>
-</root>
+</root> 

@@ -1,2 +1,3 @@
 # training_polygon
-dota 2 custom game
+im cookin
+-todo:ringmaster funhouse mirror in dodge

@@ -30,7 +30,7 @@ function timing:Init()
             [15]={spell_name="magnataur_skewer",hero_name="npc_dota_hero_magnataur",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [16]={spell_name="magnataur_reverse_polarity",hero_name="npc_dota_hero_magnataur",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [17]={spell_name="pudge_meat_hook",hero_name="npc_dota_hero_pudge",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-            [18]={spell_name="sandking_burrowstrike",hero_name="npc_dota_hero_sandking",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+            [18]={spell_name="sandking_burrowstrike",hero_name="npc_dota_hero_sand_king",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [19]={spell_name="slardar_slithereen_crush",hero_name="npc_dota_hero_slardar",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [20]={spell_name="spirit_breaker_charge_of_darkness",hero_name="npc_dota_hero_spirit_breaker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [21]={spell_name="tidehunter_ravage",hero_name="npc_dota_hero_tidehunter",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
@@ -127,7 +127,6 @@ function timing:Init()
         obsidian_destroyer_astral_imprisonment = "npc_dota_hero_obsidian_destroyer",
         item_aegis = "npc_dota_hero_ursa",
         skeleton_king_reincarnation = "npc_dota_hero_skeleton_king",
-        
     }
     --delays calculations
     local cycloneKV=DotaDB:GetItemKV("item_cyclone")
@@ -147,7 +146,6 @@ function timing:Init()
         obsidian_destroyer_astral_imprisonment = 0, --has different duration depends on level, need exception approach
         item_aegis = aegisDuration,
         skeleton_king_reincarnation = wkResKVDuration,
-        
     }
     self.actionsTable={
         item_cyclone = "item_cyclone_cycle",
@@ -155,7 +153,6 @@ function timing:Init()
         obsidian_destroyer_astral_imprisonment = "obsidian_destroyer_astral_imprisonment_cycle",
         item_aegis = "item_aegis_cycle",
         skeleton_king_reincarnation = "skeleton_king_reincarnation_cycle",
-        
     }
     self.hurtModifiers={
         "modifier_axe_berserkers_call",
@@ -168,7 +165,10 @@ function timing:Init()
         "modifier_ember_spirit_searing_chains",
         "modifier_gyrocopter_call_down_slow",
         "modifier_kunkka_torrent",
-        "modifier_magnataur_skewer_impact"
+        "modifier_magnataur_skewer_impact",
+        "modifier_sandking_impale",
+        "modifier_spiritbreaker_greater_bash_knockback",
+        "modifier_tidehunter_ravage"
     }
     self.invulModifiers={
         "modifier_eul_cyclone",
@@ -184,6 +184,18 @@ function timing:Init()
     end)
     CustomGameEventManager:RegisterListener("timing_training_end", function(_, event)
         timing:PrepareDeactivate()
+    end)
+    CustomGameEventManager:RegisterListener("timing_ms_change", function(eventSourceIndex, args)
+        timing:MoveSpeedChange(args)
+    end)
+    CustomGameEventManager:RegisterListener("timing_sb_charge_change", function(eventSourceIndex, args)
+        timing:spiritBreakerCharge(args)
+    end)
+    CustomGameEventManager:RegisterListener("timing_sb_bulldoze_change", function(eventSourceIndex, args)
+        timing:spiritBreakerBulldoze(args)
+    end)
+    CustomGameEventManager:RegisterListener("timing_snowball_change", function(eventSourceIndex, args)
+        timing:tuskSnowballChange(args)
     end)
     self.currentTimingType=nil
     self.selectedSpell=nil
@@ -211,6 +223,10 @@ function timing:Init()
     self.tempVision=nil
     self.esStoneTrashCan={}--put earth spirit stones here, so they wont stay after deactivate
     self.yashaKayaEnt=nil
+    self.spiritBreakerHelper=nil
+    self.spiritBreakerSpeedModifier=nil
+    self.spiritBreakerSkill1=nil
+    self.spiritBreakerSkill2=nil
 end
 function timing:Prepare(args)
     print("[Timing] Preparing gamemode")
@@ -540,7 +556,7 @@ function timing:ModifierGained(event)
             end
         end)
     end
-    if string_in_array(event.name_const,self.hurtModifiers) then
+    if string_in_array(event.name_const,self.hurtModifiers) and  EntIndexToHScript(event.entindex_parent_const)==self.enemyHero then
         event.duration=0.2 --for some reason doesnt work for elder titan stomp
         if self.enemyGotHurt==false then
             self.enemyGotHurt=true
@@ -559,7 +575,8 @@ function timing:ModifierGained(event)
     end
     --catching frame where enemy became able to get hit
     if string_in_array(event.name_const,self.invulModifiers) then
-        
+        self.enemyGotHurt=false
+        self.enemyHurtTime=0
         Timers:CreateTimer(FrameTime(),function()
             if IsValidEntity(self.enemyHero) then
                 if self.enemyHero:HasModifier(event.name_const) then
@@ -573,9 +590,7 @@ function timing:ModifierGained(event)
                                 self:OnStartOfCycle()
                             end)
                         end
-                        
                     end
-                    
                     self.invulOutTime=Time()
                     return nil
                 end
@@ -634,6 +649,31 @@ function timing:PrepareDeactivate()
     end
 end
 
+function timing:MoveSpeedChange(args)
+    --[[ print(args.value) ]]
+    if self.spiritBreakerSpeedModifier then
+        self.spiritBreakerSpeedModifier:SetStackCount(tonumber(args.value))
+        --[[ self:timebar_spirit_breaker_charge_of_darkness() ]]
+    end
+end
+function timing:spiritBreakerCharge(args)
+    if self.spiritBreakerSkill1 then
+        self.spiritBreakerSkill1:SetLevel(tonumber(args.value))
+    end
+end
+function timing:spiritBreakerBulldoze(args)
+    if self.spiritBreakerSkill2 then
+        self.spiritBreakerSkill2:SetLevel(tonumber(args.value))
+    end
+end
+function timing:tuskSnowballChange(args)
+    local ability=self.playerHero:FindAbilityByName("tusk_snowball")
+    if ability then
+        ability:SetLevel(tonumber(args.value))
+        --recalculate timebar
+        self:timebar_tusk_snowball(true)
+    end
+end
 function timing:Deactivate()
     announcer:Hide()
     if self.enemyActionTimer~=nil then
@@ -647,6 +687,13 @@ function timing:Deactivate()
     if self.yashaKaya then
         self.yashaKayaEnt:RemoveSelf()
     end
+    if IsValidEntity(self.spiritBreakerHelper) then
+        self.spiritBreakerHelper:RemoveSelf()
+    end
+    self.spiritBreakerSkill1=nil
+    self.spiritBreakerSkill2=nil
+    self.spiritBreakerSpeedModifier=nil
+    self.spiritBreakerHelper=nil
     self.yashaKaya=false
     self.esStoneTrashCan={}
     --[[ Timers:RemoveTimer(self.tempVision) ]]

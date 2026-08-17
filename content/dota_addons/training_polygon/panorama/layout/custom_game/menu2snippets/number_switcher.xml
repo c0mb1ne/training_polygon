@@ -6,14 +6,26 @@
         <include src="file://{resources}/scripts/custom_game/menu2snippets/number_switcher.js" />
     </scripts>
     <Panel class="NumberSwitcherContainer">
+        <Button class="numberSwitcherButton x100" id="minusButtonx100" style="visibility:collapse;">
+            <Label id="minus100label" text="-"/>
+        </Button>
+        <Button class="numberSwitcherButton x10" id="minusButtonx10" style="visibility:collapse;">
+            <Label id="minus10label" text="-"/>
+        </Button>
         <Button class="numberSwitcherButton" id="minusButton">
             <Label text="-"/>
         </Button>
         <Panel class="numberSwitcherField" id="numberSwitcherField">
             <Label class="numberSwitcherFieldValue" id="numberSwitcherFieldValue"/>
         </Panel>
-        <Button class="numberSwitcherButton" id="plusButton">
+        <Button class="numberSwitcherButton" id="plusButton" >
             <Label text="+"/>
+        </Button>
+        <Button class="numberSwitcherButton x10" id="plusButtonx10" style="visibility:collapse;">
+            <Label id="plus10label" text="+"/>
+        </Button>
+        <Button class="numberSwitcherButton x100" id="plusButtonx100" style="visibility:collapse;">
+            <Label id="plus100label" text="+"/>
         </Button>
     </Panel>
 </root>

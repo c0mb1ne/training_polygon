@@ -1,1 +1,0 @@
-$.Msg('timing menu loaded')
