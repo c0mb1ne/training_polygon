@@ -622,6 +622,11 @@ function dodge:StartGame(args)
     CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
     
     self.currentDodgeType=args['dodgeName']
+    if self.currentDodgeType=="kez_raptor_dance" then
+        self.afterCastDelay=3
+    else
+        self.afterCastDelay=1
+    end
     self.Player=PlayerResource:GetPlayer(0)
     local old_hero=self.Player:GetAssignedHero()
     local new_hero=self.unitTable[self.currentDodgeType]
@@ -876,7 +881,7 @@ function dodge:ModifierGained(event)
         }) ]]
         
     end
-    
+    return true
 end
 
 function dodge:OnIllusionsCreated(keys)

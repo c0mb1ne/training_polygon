@@ -4,8 +4,10 @@ CMB_SERVER="https://combine.isgood.host/"
 DEVBUG_SERVER="http://tpsite/"
 PLAYER_CONFIG=nil --should be moved to separate class like player config manager or whatever
 ACTIVE_GAMEMODE=nil
-LEGACY_SWITCH=0 -- when this 1, everything old
-
+LEGACY_SWITCH=1 -- when this 1, everything old
+if GetMapName() == "dota" then
+  LEGACY_SWITCH=0
+end
 -- Set this to true if you want to see a complete debug output of all events/processes done by barebones
 -- You can also change the cvar 'barebones_spew' at any time to 1 or 0 for output/no output
 BAREBONES_DEBUG_SPEW = false
@@ -5818,12 +5820,11 @@ function GameMode:AbilityTuning(event)
         end
       end
     end
-
     return true
 end
 function GameMode:ModifierGained(event)
   if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.ModifierGained then
-    GamemodeManager.activeGameMode:ModifierGained(event)
+    return GamemodeManager.activeGameMode:ModifierGained(event)
   end
     --[[print("------------ModCreated:",Time(),event['name_const'])
     DeepPrintTable( event )--]]

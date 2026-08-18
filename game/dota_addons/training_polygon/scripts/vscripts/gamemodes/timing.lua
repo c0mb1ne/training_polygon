@@ -46,7 +46,6 @@ function timing:Init()
             [31]={spell_name="nevermore_shadowraze2",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [32]={spell_name="nevermore_shadowraze3",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [33]={spell_name="nevermore_requiem",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-            [34]={spell_name="ancient_apparition_cold_feet",hero_name="npc_dota_hero_ancient_apparition",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [35]={spell_name="ancient_apparition_ice_blast",hero_name="npc_dota_hero_ancient_apparition",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [36]={spell_name="dark_seer_vacuum",hero_name="npc_dota_hero_dark_seer",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [37]={spell_name="dark_willow_cursed_crown",hero_name="npc_dota_hero_dark_willow",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
@@ -100,7 +99,6 @@ function timing:Init()
         [31]={spell_name="nevermore_shadowraze2",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [32]={spell_name="nevermore_shadowraze3",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [33]={spell_name="nevermore_requiem",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-        [34]={spell_name="ancient_apparition_cold_feet",hero_name="npc_dota_hero_ancient_apparition",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [35]={spell_name="ancient_apparition_ice_blast",hero_name="npc_dota_hero_ancient_apparition",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [36]={spell_name="dark_seer_vacuum",hero_name="npc_dota_hero_dark_seer",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [37]={spell_name="dark_willow_cursed_crown",hero_name="npc_dota_hero_dark_willow",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
@@ -168,7 +166,12 @@ function timing:Init()
         "modifier_magnataur_skewer_impact",
         "modifier_sandking_impale",
         "modifier_spiritbreaker_greater_bash_knockback",
-        "modifier_tidehunter_ravage"
+        "modifier_tidehunter_ravage",
+        "modifier_silence",
+        "modifier_lone_druid_savage_roar",
+        "modifier_nevermore_requiem_fear",
+        "modifier_nevermore_requiem_slow",
+        --"modifier_ice_blast" lets block this from applying and count damage as success, cuz iceblast debuff works through eul
     }
     self.invulModifiers={
         "modifier_eul_cyclone",
@@ -311,7 +314,8 @@ function timing:StartGame(args)
         unit:SetBaseHealthRegen(100)
         self[self.actionsTable[self.currentTimingType]](self,unit)
         self.enemyHero=unit
-        self['timebar_'..self.selectedSpell.spell_name](self)--preparing timebar here
+        --preparing timebar here
+        self['timebar_'..self.selectedSpell.spell_name](self)
         return unit
     end)
     --[[ print('self.selectedSpell.is_ability',self.selectedSpell.is_ability) ]]
@@ -333,9 +337,6 @@ function timing:OnStartOfCycle()
     if self.deactivateCalled then
         self:Deactivate()
         return true
-    end
-    if self.enemyHero:IsMuted() then
-        print('cycle started with enemy muted')
     end
     if self.firstCycle==false then
         if self.enemyGotHurt then
@@ -359,6 +360,11 @@ function timing:OnStartOfCycle()
         self.enemyGotHurt=false
     end
     self.firstCycle=false
+    --sf ult want souls
+    if self.selectedSpell.spell_name=="nevermore_requiem" then
+        local necromastery=self.playerHero:FindModifierByName("modifier_nevermore_necromastery")
+        necromastery:SetStackCount(20)
+    end
 end
 
 function timing:item_cyclone_cycle(unit)
@@ -501,8 +507,6 @@ function timing:OnNPCSpawned(keys)
         self.invulOutTime=Time()
     end
 end
-
-
 function timing:OrderFilter(event)
     if event['issuer_player_id_const']==-1 then
         --bot order
@@ -525,7 +529,7 @@ function timing:OrderFilter(event)
 end
 
 function timing:ModifierGained(event)
-    debugModifier(event)
+    
     --[[ if event.name_const=="modifier_earth_spirit_stone_caller_innate" then
         local owner=EntIndexToHScript(event.entindex_parent_const)
         local startingCount=0
@@ -538,6 +542,9 @@ function timing:ModifierGained(event)
             end
         end)
     end ]]
+    if event.name_const=="modifier_ancient_apparition_bone_chill_debuff" or event.name_const=="modifier_ice_blast" then
+        return false
+    end
     if event.name_const=="modifier_earth_spirit_stone_thinker" then
         local npc=EntIndexToHScript(event.entindex_parent_const)
         Timers:CreateTimer(0,function()
@@ -556,22 +563,23 @@ function timing:ModifierGained(event)
             end
         end)
     end
-    if string_in_array(event.name_const,self.hurtModifiers) and  EntIndexToHScript(event.entindex_parent_const)==self.enemyHero then
+    if string_in_array(event.name_const,self.hurtModifiers) and EntIndexToHScript(event.entindex_parent_const)==self.enemyHero then
         event.duration=0.2 --for some reason doesnt work for elder titan stomp
+        Timers:CreateTimer(0.2,function()--thank you elder titan
+            local npc=EntIndexToHScript(event.entindex_parent_const)
+            if IsValidEntity(npc) then
+                --[[ print("[Timing] Removing modifier:",event.name_const) ]]
+                npc:RemoveModifierByName(event.name_const)
+            end
+        end)
         if self.enemyGotHurt==false then
             self.enemyGotHurt=true
             print('[Timing] enemy hurt by modifier',event.name_const)
             self.enemyHurtTime=Time()
             Timebar:BlueLine()
-            Timers:CreateTimer(0.2,function()--thank you elder titan
-                local npc=EntIndexToHScript(event.entindex_parent_const)
-                if IsValidEntity(npc) then
-                    npc:RemoveModifierByName(event.name_const)
-                end
-            end)
         end
         
-        return true
+        --[[ return true ]]
     end
     --catching frame where enemy became able to get hit
     if string_in_array(event.name_const,self.invulModifiers) then
@@ -599,8 +607,9 @@ function timing:ModifierGained(event)
             end
         end)
         
-        return true
+        --[[ return true ]]
     end
+    debugModifier(event)
     return true
 end
 function timing:OnEntityHurt(keys)
@@ -612,7 +621,7 @@ function timing:OnEntityHurt(keys)
         entVictim = EntIndexToHScript(keys.entindex_killed)
     end
     if entVictim~=nil then
-        if keys.damage~=0 and entVictim==self.playerHero then
+        if keys.damage~=0 and entVictim==self.enemyHero then
             if self.enemyGotHurt==false then
                 self.enemyGotHurt=true
                 print('[Timing] player hurt by damage')
@@ -646,6 +655,7 @@ function timing:PrepareDeactivate()
     announcer:Show({message="#waitingForCastEnd"})
     if self.eulBotCast==false and self.currentTimingType=="item_cyclone" then
         self:Deactivate()
+        announcer:Hide()
     end
 end
 

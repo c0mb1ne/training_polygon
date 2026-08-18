@@ -3,9 +3,13 @@
   "PenaltiesEnabled"    "0"
   "CheckAFKPlayers"     "0"
   "TeamCount" "10"
-  "maps"      "template_map"
+  "maps"      "template_map dota"
   "IsPlayable"  "1"
   "template_map"
+  {
+          "MaxPlayers"                    "1"
+  }
+  "dota"
   {
           "MaxPlayers"                    "1"
   }
