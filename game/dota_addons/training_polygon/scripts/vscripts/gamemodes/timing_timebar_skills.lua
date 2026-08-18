@@ -435,6 +435,7 @@ function timing:timebar_nevermore_requiem()
     Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#7c0000",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
 end
 function timing:timebar_ancient_apparition_ice_blast()
+    --requires messing with timebar
     --dont wanna make a formulas for this right now, maybe later
     announcer:Show({message="#warningTimebar",duration=5})
     local abilityName="ancient_apparition_ice_blast"
@@ -460,4 +461,63 @@ function timing:timebar_dark_seer_vacuum()
     end
     castPoint=castPoint+damageDelay
     Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#360099",abilityName)
+end
+function timing:timebar_death_prophet_silence()
+    local abilityName="death_prophet_silence"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#00962d",abilityName)
+end
+function timing:timebar_invoker_emp()
+    local wex=self.playerHero:FindAbilityByName("invoker_wex")
+    wex:SetLevel(1)
+    local abilityName="invoker_emp"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"]["value"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#96005c",abilityName)
+end
+function timing:timebar_invoker_sun_strike()
+    local exort=self.playerHero:FindAbilityByName("invoker_exort")
+    exort:SetLevel(1)
+    local abilityName="invoker_sun_strike"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#c59700",abilityName)
+end
+function timing:timebar_leshrac_split_earth()
+    local abilityName="leshrac_split_earth"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#00a396",abilityName)
+end
+function timing:timebar_lina_light_strike_array()
+    local abilityName="lina_light_strike_array"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["light_strike_array_delay_time"]["value"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#c57600",abilityName)
 end

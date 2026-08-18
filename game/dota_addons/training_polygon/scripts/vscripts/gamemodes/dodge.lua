@@ -908,6 +908,10 @@ function dodge:DamageFilter(event)
             --checking for dodging stun only
             return false
         end
+        if damager==self.playerHero then
+            --preventing from accidentally kill enemy (kez hits hard)
+            return false
+        end
     end
     return true
 end

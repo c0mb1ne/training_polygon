@@ -1,3 +1,6 @@
+--TODO: add feature for skills that kinda cool to cast before eul, like dark_willow_cursed_crown
+--should be easy but right know not sure how much important it is
+--when i 80% done i start thinking that this whole thing need to be redone, with timings being calculated before even drawn on ui, so it would be easier to filter them idk
 if timing == nil then
   timing = class({})
 end
@@ -48,10 +51,10 @@ function timing:Init()
             [33]={spell_name="nevermore_requiem",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [35]={spell_name="ancient_apparition_ice_blast",hero_name="npc_dota_hero_ancient_apparition",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [36]={spell_name="dark_seer_vacuum",hero_name="npc_dota_hero_dark_seer",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-            [37]={spell_name="dark_willow_cursed_crown",hero_name="npc_dota_hero_dark_willow",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+            --[[ [37]={spell_name="dark_willow_cursed_crown",hero_name="npc_dota_hero_dark_willow",level=1,aghs=false,shard=false,is_ability=true,need_helper=false}, later]]
             [38]={spell_name="death_prophet_silence",hero_name="npc_dota_hero_death_prophet",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [39]={spell_name="invoker_emp",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-            [40]={spell_name="invoker_chaos_meteor",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+            --[[ [40]={spell_name="invoker_chaos_meteor",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},--idk why is it here tbh ]]
             [41]={spell_name="invoker_sun_strike",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [42]={spell_name="leshrac_split_earth",hero_name="npc_dota_hero_leshrac",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [43]={spell_name="lina_light_strike_array",hero_name="npc_dota_hero_lina",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
@@ -101,10 +104,10 @@ function timing:Init()
         [33]={spell_name="nevermore_requiem",hero_name="npc_dota_hero_nevermore",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [35]={spell_name="ancient_apparition_ice_blast",hero_name="npc_dota_hero_ancient_apparition",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [36]={spell_name="dark_seer_vacuum",hero_name="npc_dota_hero_dark_seer",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-        [37]={spell_name="dark_willow_cursed_crown",hero_name="npc_dota_hero_dark_willow",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+        --[[ [37]={spell_name="dark_willow_cursed_crown",hero_name="npc_dota_hero_dark_willow",level=1,aghs=false,shard=false,is_ability=true,need_helper=false}, ]]
         [38]={spell_name="death_prophet_silence",hero_name="npc_dota_hero_death_prophet",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [39]={spell_name="invoker_emp",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-        [40]={spell_name="invoker_chaos_meteor",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+        --[[ [40]={spell_name="invoker_chaos_meteor",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false}, ]]
         [41]={spell_name="invoker_sun_strike",hero_name="npc_dota_hero_invoker",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [42]={spell_name="leshrac_split_earth",hero_name="npc_dota_hero_leshrac",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [43]={spell_name="lina_light_strike_array",hero_name="npc_dota_hero_lina",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
@@ -141,7 +144,7 @@ function timing:Init()
     self.delayTable={
         item_cyclone = cycloneCastpoint+cycloneDuration,
         shadow_demon_disruption = disruptionCastpoint+disruptionDuration,
-        obsidian_destroyer_astral_imprisonment = 0, --has different duration depends on level, need exception approach
+        obsidian_destroyer_astral_imprisonment = 0, --has different duration depends on level, need exceptional approach
         item_aegis = aegisDuration,
         skeleton_king_reincarnation = wkResKVDuration,
     }
@@ -171,12 +174,17 @@ function timing:Init()
         "modifier_lone_druid_savage_roar",
         "modifier_nevermore_requiem_fear",
         "modifier_nevermore_requiem_slow",
+        "modifier_dark_seer_vacuum",
+        "modifier_death_prophet_silence"
         --"modifier_ice_blast" lets block this from applying and count damage as success, cuz iceblast debuff works through eul
     }
     self.invulModifiers={
         "modifier_eul_cyclone",
         "modifier_shadow_demon_disruption",
         "modifier_obsidian_destroyer_astral_imprisonment_prison"
+    }
+    self.invertedCast={--table for spells, that should be casted before eul
+        "dark_willow_cursed_crown",
     }
     --register listeners here
     CustomGameEventManager:RegisterListener("get_timing_spell_table", function(_, event)
@@ -329,6 +337,7 @@ function timing:StartGame(args)
     end
     self.playerHero:SetBaseHealthRegen(300)
     self.playerHero:SetBaseManaRegen(300)
+    self.playerHero:SetAttackCapability(0)
     --[[ self.tempVision = createTempVision(500,DOTA_TEAM_GOODGUYS,self.trainingPlace,true) ]]
 end
 
@@ -640,7 +649,24 @@ function timing:OnAbilityUsed(keys)
         Timebar:Start()
     end
 end
-
+function timing:DamageFilter(event)
+    --[[ DeepPrintTable(event) ]]
+    local damager=nil
+    if event.entindex_attacker_const then
+        damager=EntIndexToHScript(event.entindex_attacker_const)
+    end
+    local ability=nil
+    if event.entindex_inflictor_const then
+        ability=EntIndexToHScript(event.entindex_inflictor_const)
+        if ability~=nil then
+            if ability:GetAbilityName()=="item_cyclone" then
+                return false
+            end
+        end
+    end
+    
+    return true
+end
 function timing:SendSpellTable()
     CustomGameEventManager:Send_ServerToAllClients("timing_spell_table",{data=self.spellTable})
 end
@@ -652,10 +678,11 @@ function timing:PrepareDeactivate()
     self.activated=false
     self.deactivateCalled=true
     CustomGameEventManager:Send_ServerToAllClients("clear_hud",{})
-    announcer:Show({message="#waitingForCastEnd"})
     if self.eulBotCast==false and self.currentTimingType=="item_cyclone" then
         self:Deactivate()
         announcer:Hide()
+    else
+        announcer:Show({message="#waitingForCastEnd"})
     end
 end
 

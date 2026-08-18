@@ -105,6 +105,15 @@ function oldHudMode(){
 	menu.style['opacity']='0'
 	menu.style['visibility']='collapse'
 }
+$('#quit_button').SetPanelEvent (
+"onactivate", 
+	function() {
+		QuitGame()
+	}
+)
+function QuitGame() {
+	GameEvents.SendCustomGameEventToServer( "training_polygon_end", {} );
+}
 GameEvents.Subscribe("old_hud_mode", oldHudMode);
 GameEvents.Subscribe("new_hud_mode", newHudMode);
 GameEvents.Subscribe("debug_output", debugOutput);

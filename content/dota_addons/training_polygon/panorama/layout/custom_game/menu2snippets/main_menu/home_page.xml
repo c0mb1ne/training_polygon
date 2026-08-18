@@ -10,13 +10,25 @@
             <Panel class="ColWFill">
                 <Panel class="embeedingContainer">
                     <Panel class="embeedingHeader">
-                        <Label class="menu_button_label" text="something"/>
+                        <Label class="menu_button_label" text="welcome"/>
                     </Panel>
                         
 
-                    <Panel class="embeedingContent">
-                        <Label class="embeedingContentLabel" text="something"/>
+                    <Panel class="embeedingContent width100 ColNoFill">
+                        <Label class="embeedingContentLabel" text="Currently WIP, appreciate your support"/>
+                        <Panel class="RowWFill">
+                            <Button id="boosty" class="small_button">
+                                <Label class="mode_play_label " text="boosty"/>
+                            </Button>
+                            <Button id="patreon" class="small_button">
+                                <Label class="mode_play_label" text="patreon"/>
+                            </Button>
+                            <Button id="telegram" class="small_button">
+                                <Label class="mode_play_label" text="telegram"/>
+                            </Button>
+                        </Panel>
                     </Panel>
+                    
                 </Panel>
                 <Panel class="embeedingContainer">
                     <Panel class="embeedingHeader">
