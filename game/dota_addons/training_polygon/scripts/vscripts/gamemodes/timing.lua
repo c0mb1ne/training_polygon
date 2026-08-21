@@ -1,6 +1,6 @@
 --TODO: add feature for skills that kinda cool to cast before eul, like dark_willow_cursed_crown
 --should be easy but right know not sure how much important it is
---when i 80% done i start thinking that this whole thing need to be redone, with timings being calculated before even drawn on ui, so it would be easier to filter them idk
+--when i 80% done i start thinking that this whole thing need to be redone, with timings being calculated before even drawn on ui, so it would be easier to filter them
 if timing == nil then
   timing = class({})
 end
@@ -175,7 +175,9 @@ function timing:Init()
         "modifier_nevermore_requiem_fear",
         "modifier_nevermore_requiem_slow",
         "modifier_dark_seer_vacuum",
-        "modifier_death_prophet_silence"
+        "modifier_death_prophet_silence",
+        "modifier_lion_impale",
+        "modifier_windrunner_shackle_shot"
         --"modifier_ice_blast" lets block this from applying and count damage as success, cuz iceblast debuff works through eul
     }
     self.invulModifiers={
@@ -238,6 +240,9 @@ function timing:Init()
     self.spiritBreakerSpeedModifier=nil
     self.spiritBreakerSkill1=nil
     self.spiritBreakerSkill2=nil
+    self.visageBirds={}--store birds to refresh cd on them, and remove them on deactivate
+    self.rubickMode=false
+    self.rubickStealTarget=nil
 end
 function timing:Prepare(args)
     print("[Timing] Preparing gamemode")
@@ -253,7 +258,10 @@ function timing:Prepare(args)
     for k,v in pairs(args.selectedSpell) do
         playerHero=v.hero_name
     end
-    
+    if args.rubickMode==1 then
+        precache:PrecacheAddPlayerUnitToList({playerHero})
+        playerHero="npc_dota_hero_rubick"
+    end
     print("[Timing] Player hero:",playerHero)
     print("[Timing] Enemy hero:",enemyHero)
     precache:PrecacheAddPlayerUnitToList({playerHero})
@@ -265,10 +273,18 @@ end
 function timing:StartGame(args)
     print("[Timing] Starting game after precache")
     self.activated = true
+    if args.rubickMode==1 then
+        self.rubickMode=true
+    else
+        self.rubickMode=false
+    end
     local playerHero
     for k,v in pairs(args.selectedSpell) do
         playerHero=v.hero_name
         self.selectedSpell=v
+    end
+    if self.rubickMode then
+        playerHero="npc_dota_hero_rubick"
     end
     self.deactivateCalled=false
     CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
@@ -289,6 +305,7 @@ function timing:StartGame(args)
     else
         self.eulBotCast=false
     end
+    
     self.castDelay=tonumber(args['customDelay'])
     self.enemyHeroName = self.unitTable[self.currentTimingType]
     local old_hero=self.Player:GetAssignedHero()
@@ -331,9 +348,17 @@ function timing:StartGame(args)
         self.trainingItem=CreateItem(self.selectedSpell.spell_name,self.playerHero,self.playerHero)
         self.playerHero:AddItem(self.trainingItem)
     else
+        --[[ if self.rubickMode then
+            self:RubickPrepareSteal()
+        else
+            self.trainingSpell=self.playerHero:FindAbilityByName(self.selectedSpell.spell_name)
+            self.trainingSpell:SetLevel(self.selectedSpell.level)
+        end ]]
+        if self.rubickMode then
+            self:SpellSteal(self.playerHero,self.selectedSpell.spell_name)
+        end
         self.trainingSpell=self.playerHero:FindAbilityByName(self.selectedSpell.spell_name)
         self.trainingSpell:SetLevel(self.selectedSpell.level)
-        --add aghanim and shard here  
     end
     self.playerHero:SetBaseHealthRegen(300)
     self.playerHero:SetBaseManaRegen(300)
@@ -365,6 +390,15 @@ function timing:OnStartOfCycle()
         end
         if self.manualEul~=nil then
             self.manualEul:EndCooldown()
+        end
+        if self.selectedSpell.spell_name=="visage_summon_familiars" then
+            for k,v in pairs(self.visageBirds) do
+                if IsValidEntity(v) then
+                    local spell=v:FindAbilityByName("visage_summon_familiars_stone_form")
+                    spell:EndCooldown()
+                    print("[Timing] Resetting bird cooldown")
+                end
+            end
         end
         self.enemyGotHurt=false
     end
@@ -497,6 +531,18 @@ end
 function timing:OnNPCSpawned(keys)
     local npc = EntIndexToHScript(keys.entindex)
     print("[Timing] NPC spawned:",npc:GetUnitName())
+    if npc:GetUnitName()=="npc_dota_visage_familiar1" then
+        npc:SetAttackCapability(0)
+        table.insert(self.visageBirds,npc)
+    end
+    if npc:GetUnitName()=="npc_dota_warlock_golem" then
+        Timers:CreateTimer({
+            endTime = FrameTime(), 
+            callback = function()
+                npc:RemoveSelf()
+            end
+        })
+    end
     if npc:IsIllusion() then
         Timers:CreateTimer({
             endTime = FrameTime(), 
@@ -517,12 +563,19 @@ function timing:OnNPCSpawned(keys)
     end
 end
 function timing:OrderFilter(event)
+    --[[ DeepPrintTable(event) ]]
     if event['issuer_player_id_const']==-1 then
         --bot order
         if event['entindex_ability']~=0 then
             local ability=EntIndexToHScript(event['entindex_ability'])
             if ability~=nil then
-                Timebar:Start()
+                local unitIndex=event.units["0"]
+                local unit=EntIndexToHScript(unitIndex)
+                if IsValidEntity(unit) then
+                    if unit:GetUnitName()~="npc_dota_visage_familiar1" then
+                        Timebar:Start()
+                    end
+                end
             end
         end
     else
@@ -551,6 +604,9 @@ function timing:ModifierGained(event)
             end
         end)
     end ]]
+    if event.name_const=="modifier_visage_summon_familiars_stone_form_buff" or event.name_const=="modifier_visage_summonfamiliars_timer" then
+        event.duration=1
+    end
     if event.name_const=="modifier_ancient_apparition_bone_chill_debuff" or event.name_const=="modifier_ice_blast" then
         return false
     end
@@ -721,6 +777,13 @@ function timing:Deactivate()
             v:RemoveSelf()
         end
     end
+    self.esStoneTrashCan={}
+    for k,v in pairs(self.visageBirds) do
+        if IsValidEntity(v) then
+            v:RemoveSelf()
+        end
+    end
+    self.visageBirds={}
     if self.yashaKaya then
         self.yashaKayaEnt:RemoveSelf()
     end
@@ -732,7 +795,8 @@ function timing:Deactivate()
     self.spiritBreakerSpeedModifier=nil
     self.spiritBreakerHelper=nil
     self.yashaKaya=false
-    self.esStoneTrashCan={}
+    self.trainingItem=nil
+    self.trainingSpell=nil
     --[[ Timers:RemoveTimer(self.tempVision) ]]
     self.enemyHero:RemoveSelf()
     self.manualEul=nil
@@ -740,6 +804,35 @@ function timing:Deactivate()
     Timebar:Hide()
     CustomGameEventManager:Send_ServerToAllClients("clear_hud",{})
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
+end
+
+function timing:RubickPrepareSteal()
+    local dummyRespawnPlace=self.trainingPlace+Vector(-200,0,0)
+    local spellStealDummy=CreateUnitByNameAsync(self.selectedSpell.hero_name,dummyRespawnPlace,true,nil,nil,DOTA_TEAM_BADGUYS,function(unit)
+        local abilityName=self.selectedSpell.spell_name
+        local hAbility=unit:FindAbilityByName(abilityname)
+        hAbility:SetLevel(1)
+        
+        self.rubickStealTarget=unit
+        return unit
+    end)
+
+end
+
+function timing:SpellSteal(hRubick,abilityname)
+    local old = hRubick:FindAbilityByName("rubick_empty1") 
+    if old then
+        hRubick:RemoveAbility(old:GetAbilityName())
+    end
+    local newAbility = hRubick:AddAbility(abilityname)
+    newAbility:SetLevel(1)
+    local castpoint=newAbility:GetCastPoint()
+    print('[Timing] newAbility old castpoint:',castpoint)
+    if castpoint>0.15 then
+        newAbility:SetOverrideCastPoint(0.15)
+    end
+    print('[Timing] newAbility new castpoint:',newAbility:GetCastPoint())
+    --[[ hRubick:SwapAbilities(abilityname, "empty1", true, true) ]]
 end
 
 timing:Init()

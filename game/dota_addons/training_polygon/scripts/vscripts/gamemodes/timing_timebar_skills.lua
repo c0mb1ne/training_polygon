@@ -3,12 +3,29 @@ function timing:timebar_axe_berserkers_call()
     local abilityName="axe_berserkers_call"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
     Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#9e2727",abilityName)
+end
+function timing:timebar_magnataur_reverse_polarity()
+    local abilityName="magnataur_reverse_polarity"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#274d9e",abilityName)
 end
 function timing:timebar_centaur_hoof_stomp()
     local abilityName="centaur_hoof_stomp"
@@ -38,6 +55,9 @@ function timing:timebar_pudge_meat_hook()
     local abilityName="pudge_meat_hook"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["hook_speed"]["value"])
     local damageDelay=0
     if self.yashaKaya then
@@ -54,6 +74,9 @@ function timing:timebar_mirana_arrow()
     local abilityName="mirana_arrow"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["arrow_speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -69,6 +92,9 @@ function timing:timebar_earth_spirit_boulder_smash()
     local abilityName="earth_spirit_boulder_smash"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -84,6 +110,9 @@ function timing:timebar_earth_spirit_rolling_boulder()
     local abilityName="earth_spirit_rolling_boulder"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["speed"])
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
     if self.yashaKaya then
@@ -112,6 +141,9 @@ function timing:timebar_earthshaker_fissure()
     local abilityName="earthshaker_fissure"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -125,6 +157,9 @@ function timing:timebar_earthshaker_enchant_totem()
     local abilityName="earthshaker_enchant_totem"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -138,6 +173,9 @@ function timing:timebar_earthshaker_echo_slam()
     local abilityName="earthshaker_echo_slam"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -149,6 +187,9 @@ function timing:timebar_elder_titan_echo_stomp()
     local abilityName="elder_titan_echo_stomp"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityChannelTime"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -171,6 +212,9 @@ function timing:timebar_gyrocopter_call_down()
     local abilityName="gyrocopter_call_down"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["missile_delay_tooltip"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -182,6 +226,9 @@ function timing:timebar_kunkka_torrent()
     local abilityName="kunkka_torrent"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -193,6 +240,9 @@ function timing:timebar_kunkka_ghostship()
     local abilityName="kunkka_ghostship"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["tooltip_delay"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -204,6 +254,9 @@ function timing:timebar_magnataur_skewer()
     local abilityName="magnataur_skewer"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["skewer_speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -218,6 +271,9 @@ function timing:timebar_sandking_burrowstrike()
     local abilityName="sandking_burrowstrike"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["burrow_speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -232,6 +288,9 @@ function timing:timebar_slardar_slithereen_crush()
     local abilityName="slardar_slithereen_crush"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -261,14 +320,24 @@ function timing:timebar_spirit_breaker_charge_of_darkness()
         print('failer to add speed modifier')
     end
     CustomGameEventManager:Send_ServerToAllClients("show_spirit_braker_settings",{})
-    local bash=self.playerHero:FindAbilityByName("spirit_breaker_greater_bash")
+    local bash=nil
+    if self.rubickMode then
+        bash=self.playerHero:AddAbility("spirit_breaker_greater_bash")
+    else
+        bash=self.playerHero:FindAbilityByName("spirit_breaker_greater_bash")
+    end
     bash:SetLevel(1)
     self.spiritBreakerSkill1=self.playerHero:FindAbilityByName("spirit_breaker_charge_of_darkness")
     self.spiritBreakerSkill2=self.playerHero:FindAbilityByName("spirit_breaker_bulldoze")
-    self.spiritBreakerSkill2:SetLevel(1)
+    if self.spiritBreakerSkill2~=nil then
+        self.spiritBreakerSkill2:SetLevel(1)
+    end
     local abilityName="spirit_breaker_charge_of_darkness"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["movement_speed"]["value"])+100
     local damageDelay=0
     if self.yashaKaya then
@@ -283,6 +352,9 @@ function timing:timebar_tidehunter_ravage()
     local abilityName="tidehunter_ravage"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -308,6 +380,9 @@ function timing:timebar_tusk_snowball(recalculate)
     local level=self.playerHero:FindAbilityByName(abilityName):GetLevel()
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["snowball_speed"],level)
     local damageDelay=0
     if self.yashaKaya then
@@ -322,6 +397,9 @@ function timing:timebar_bloodseeker_blood_bath()
     local abilityName="bloodseeker_blood_bath"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -333,6 +411,9 @@ function timing:timebar_lone_druid_savage_roar()
     local abilityName="lone_druid_savage_roar"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -344,6 +425,9 @@ function timing:timebar_meepo_poof()
     local abilityName="meepo_poof"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -355,6 +439,9 @@ function timing:timebar_monkey_king_boundless_strike()
     local abilityName="monkey_king_boundless_strike"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -366,6 +453,9 @@ function timing:timebar_nyx_assassin_impale()
     local abilityName="nyx_assassin_impale"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -380,6 +470,9 @@ function timing:timebar_pangolier_shield_crash()
     local abilityName="pangolier_shield_crash"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["jump_duration"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -391,6 +484,9 @@ function timing:timebar_nevermore_shadowraze1()
     local abilityName="nevermore_shadowraze1"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -402,6 +498,9 @@ function timing:timebar_nevermore_shadowraze2()
     local abilityName="nevermore_shadowraze2"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -413,6 +512,9 @@ function timing:timebar_nevermore_shadowraze3()
     local abilityName="nevermore_shadowraze3"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -424,6 +526,9 @@ function timing:timebar_nevermore_requiem()
     local abilityName="nevermore_requiem"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["requiem_line_speed"])
     local damageDelay=0
     if self.yashaKaya then
@@ -455,6 +560,9 @@ function timing:timebar_dark_seer_vacuum()
     local abilityName="dark_seer_vacuum"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -466,6 +574,9 @@ function timing:timebar_death_prophet_silence()
     local abilityName="death_prophet_silence"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=0
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -503,6 +614,9 @@ function timing:timebar_leshrac_split_earth()
     local abilityName="leshrac_split_earth"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
@@ -514,10 +628,104 @@ function timing:timebar_lina_light_strike_array()
     local abilityName="lina_light_strike_array"
     local abilityKV = DotaDB:GetAbilityKV(abilityName)
     local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
     local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["light_strike_array_delay_time"]["value"])
     if self.yashaKaya then
         castPoint=castPoint*self.yashaKayaModifier
     end
     castPoint=castPoint+damageDelay
-    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#c57600",abilityName)
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#c55900",abilityName)
+end
+function timing:timebar_lion_impale()
+    local abilityName="lion_impale"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["speed"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=parseQuadroValue(abilityKV["AbilityValues"]["width"]["value"])
+    local distanceOffset=projectileWidth/2
+    Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#b87d00",abilityName, self.playerHero, self.enemyHero, projectileSpeed,distanceOffset)
+end
+function timing:timebar_puck_waning_rift()
+    local abilityName="puck_waning_rift"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#4c2ef8",abilityName)
+end
+function timing:timebar_pugna_nether_blast()
+    local abilityName="pugna_nether_blast"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["delay"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#034e00",abilityName)
+end
+function timing:timebar_visage_summon_familiars()
+    local abilityName="visage_summon_familiars_stone_form"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["stun_delay"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#002874",abilityName)
+end
+function timing:timebar_warlock_rain_of_chaos()
+    local abilityName="warlock_rain_of_chaos"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["stun_delay"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#691e00",abilityName)
+end
+function timing:timebar_windrunner_shackleshot()
+    if self.spiritBreakerHelper==nil then
+        self.spiritBreakerHelper=CreateUnitByName("npc_dota_neutral_centaur_khan_custom",self.trainingPlace+Vector(100,0,0),true,self.playerHero,self.playerHero,DOTA_TEAM_BADGUYS)
+        self.spiritBreakerHelper:SetIdleAcquire(false)
+        self.spiritBreakerHelper:Stop()
+        self.spiritBreakerHelper:SetControllableByAllPlayers(true)
+        self.spiritBreakerHelper:SetBaseHealthRegen(100)
+    end
+    local abilityName="windrunner_shackleshot"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
+    local projectileSpeed=parseQuadroValue(abilityKV["AbilityValues"]["arrow_speed"]["value"])
+    local damageDelay=0
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    local projectileWidth=2--idk
+    local distanceOffset=projectileWidth/2
+    Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#00750a",abilityName, self.playerHero, self.spiritBreakerHelper, projectileSpeed,distanceOffset)
 end
