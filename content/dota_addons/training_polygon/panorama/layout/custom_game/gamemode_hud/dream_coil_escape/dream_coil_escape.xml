@@ -1,0 +1,13 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/dream_coil_escape/dream_coil_escape.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/dream_coil_escape/dream_coil_escape.js" />
+    </scripts>
+    <Panel hittest="false" class="dream_coil_escape_Main">
+        <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+            <Label class="menu_button_label" text="#trainingEnd"/>
+        </Button>
+    </Panel>
+</root>

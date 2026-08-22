@@ -21,6 +21,8 @@ function drawTypes(){
 		drawType(typesPanel,type)
 	}
 }
+$('#helperMode').AddClass('Hidden')
+$('#levelSetting').AddClass('Hidden')
 function drawType(parent,name){
 	var modePanel=$.CreatePanel('RadioButton',parent,name)
 	modePanel.SetAttributeString("name",name)
@@ -30,6 +32,16 @@ function drawType(parent,name){
 		function() {
 			drawSpellTable(name)
 			$.Msg(name)
+			if (name=="item_cyclone"){
+				$('#helperMode').RemoveClass('Hidden')
+			}else{
+				$('#helperMode').AddClass('Hidden')
+			}
+			if (name=="obsidian_destroyer_astral_imprisonment"){
+				$('#levelSetting').RemoveClass('Hidden')
+			}else{
+				$('#levelSetting').AddClass('Hidden')
+			}
 		}
 	)
 	//let cyclone be default
