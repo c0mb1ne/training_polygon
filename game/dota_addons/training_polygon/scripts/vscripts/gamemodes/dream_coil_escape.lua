@@ -3,18 +3,18 @@ if dream_coil_escape == nil then
   dream_coil_escape = class({})
 end
 
-
 function dream_coil_escape:Init()
     self.type = "sandbox" -- Define the type of mode
     self.name = "dream_coil_escape" -- Name of the gamemode (must match the key used to register it)
     self.activated = false -- Whether the mode is activated
     self.Player = nil -- Reference to the player
     self.playerHero = nil -- Reference to the player's hero
-    self.trainingPlaceDefault = Vector(0, 0, 128) -- TODO: set real training location
+    self.trainingPlaceDefault = Vector(-2111.1826171875,-6378.5185546875,128) 
     self.trainingPlace = self.trainingPlaceDefault
-
-    -- TODO: define self.spellTable / self.unitTable / self.modifierTable etc. here,
-    -- following the pattern used in dodge.lua / timing.lua if this mode needs one
+    self.spellTable={
+        item_manta={hero_name="from_js"},
+        chaos_knight_phantasm={hero_name="npc_dota_hero_chaos_knight"}
+    }
 
     -- Register listeners here
     --[[ CustomGameEventManager:RegisterListener("get_dream_coil_escape_respawn_pos", function(_, event)
@@ -26,13 +26,22 @@ function dream_coil_escape:Init()
     CustomGameEventManager:RegisterListener("dream_coil_escape_training_end", function(_, event)
         dream_coil_escape:PrepareDeactivate()
     end)
-    -- TODO: add a listener for this mode's own spell table request, e.g.
-    -- CustomGameEventManager:RegisterListener("get_dream_coil_escape_spell_table", function(_, event)
-    --     dream_coil_escape:SendSpellTable()
-    -- end)
+
+    CustomGameEventManager:RegisterListener("get_dream_coil_escape_spell_table", function(_, event)
+        dream_coil_escape:SendSpellTable()
+    end)
 
     self.deactivateCalled = false
+    self.currentDodgeType=nil
+    self.selectedEntry=nil
+    self.playerHeroName=nil
+    self.dreamCoilRange=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityCastRange"])
+    self.breakRadius=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_break_radius"])
+    self.rangeDeviation=0--when puck spawns and cast, how far cast will be from center
+    
 
+    self.dodgeItem=nil
+    self.dodgeSpell=nil
     print('dream_coil_escape inited')
 end
 
@@ -48,15 +57,23 @@ end ]]
 function dream_coil_escape:Prepare(args)
     print("[TemplateMode] Preparing gamemode")
     precache:clearTable()
-
+    local timingType = args.timingType or "item_manta"
+    local defaultHero = args.defaultHero or "npc_dota_hero_antimage"
     -- TODO: build the list of units this mode needs precached, based on args,
     -- following the unitsToPrecache/unitsAdded pattern from dodge.lua:Prepare()
-    local unitsToPrecache = {}
-
+    local unitsToPrecache = {
+        "npc_dota_hero_puck"
+    }
+    
     if #unitsToPrecache > 0 then
         precache:PrecacheAddUnitToList(unitsToPrecache)
     end
-
+    local entry=self.spellTable[timingType]
+    if entry.hero_name=="from_js" then
+        precache:PrecacheAddPlayerUnitToList({defaultHero})
+    else
+        precache:PrecacheAddPlayerUnitToList({entry.hero_name})
+    end
     -- Store args for use after precaching
     self.pendingArgs = args
 
@@ -70,10 +87,93 @@ function dream_coil_escape:StartGame(args)
     -- TODO: spawn the player hero, position it at self.trainingPlace, set up the scenario
     CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
     self.activated = true
+    self.currentDodgeType=args['timingType']
+    self.selectedEntry=self.spellTable[self.currentDodgeType]
+    self.Player=PlayerResource:GetPlayer(0)
+    local old_hero=self.Player:GetAssignedHero()
+    if self.selectedEntry.hero_name=="from_js" then
+        self.playerHeroName=args['defaultHero']
+    else
+        self.playerHeroName=self.selectedEntry.hero_name
+    end
+    self.playerHero=replaceHero(old_hero,self.playerHeroName)
+    self.playerHero:SetBaseHealthRegen(300)
+    self.playerHero:SetBaseManaRegen(300)
+    if self.currentDodgeType=="item_manta" then
+        self.dodgeItem=CreateItem("item_manta",self.playerHero,self.playerHero)
+        self.playerHero:AddItem(self.dodgeItem)
+    else
+        self.dodgeSpell=self.playerHero:FindAbilityByName(self.currentDodgeType)
+        self.dodgeSpell:SetLevel(1)
+    end
+    self.playerHero:SetAbsOrigin(self.trainingPlace)
+    Timers:CreateTimer(2,function()
+        self:PuckAction()
+        if self.activated then
+            return 6
+        else
+            return nil
+        end
+    end)
+end
+
+
+
+function dream_coil_escape:PuckAction()
+    if self.dodgeSpell~=nil then
+        self.dodgeSpell:EndCooldown()
+    end
+    if self.dodgeItem~=nil then
+        self.dodgeItem:EndCooldown()
+    end
+    --[[ local pointForCast=randomRingPosition(self.rangeDeviation,self.breakRadius-50,self.playerHero) ]]
+    local pointForCast=randomRingPosition(0,0,self.playerHero)
+    local respawn_place = randomRingPositionVec(200,self.dreamCoilRange-100,pointForCast)
+    
+    local puck = CreateUnitByNameAsync("npc_dota_hero_puck", respawn_place, true, nil, nil, DOTA_TEAM_BADGUYS, function(unit)
+        unit:SetAttackCapability(0)
+        unit:SetBaseManaRegen(100)
+        unit:SetBaseHealthRegen(100)
+
+        local ability = unit:FindAbilityByName("puck_dream_coil")
+        ability:SetLevel(1)
+
+        unit:SetContextThink(DoUniqueString("cast_ability"), function()
+            if not ability:IsFullyCastable() then
+                return 0.1 -- retry shortly if mana/cast point not ready
+            end
+            ExecuteOrderFromTable({
+                UnitIndex = unit:entindex(),
+                OrderType = DOTA_UNIT_ORDER_CAST_POSITION,
+                AbilityIndex = ability:entindex(),
+                Position = pointForCast,
+                Queue = false
+            })
+            self.removeTimer=Timers:CreateTimer(1.5, function()
+                if IsValidEntity(unit) then
+                    unit:RemoveSelf()
+                end
+                return nil
+            end) 
+            return nil -- cast once, stop thinking
+        end, 0)
+
+        return unit
+    end)
+
+    return puck
 end
 
 function dream_coil_escape:OnNPCSpawned(keys)
-    -- TODO: react to units spawning (e.g. tag the player hero once it exists)
+    local npc = EntIndexToHScript(keys.entindex)
+    if npc:IsIllusion() then
+        Timers:CreateTimer({
+            endTime = FrameTime(), 
+            callback = function()
+                npc:RemoveSelf()
+            end
+        })
+    end
 end
 
 function dream_coil_escape:OrderFilter(event)
@@ -101,7 +201,7 @@ end
 
 function dream_coil_escape:SendSpellTable()
     -- TODO: send this mode's spell table to the client, if it has one, e.g.
-    -- CustomGameEventManager:Send_ServerToAllClients("dream_coil_escape_spell_table", self.spellTable)
+    CustomGameEventManager:Send_ServerToAllClients("dream_coil_escape_spell_table", {data=self.spellTable})
 end
 
 function dream_coil_escape:PrepareDeactivate()

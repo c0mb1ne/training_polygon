@@ -1,0 +1,91 @@
+.HeroPickerWidget{
+	horizontal-align: center;
+	vertical-align: center;
+}
+.HeroPicker{
+	width: 50px;
+	height: 50px;
+	horizontal-align: center;
+	vertical-align: center;
+}
+.HeroPickerChangeIcon{
+	width: 24px;
+	height: 24px;
+}
+.HeroPickerIconContainer{
+	border: 1px solid #212121;
+	width: 100%;
+	height: 100%;
+	horizontal-align: center;
+	vertical-align: center;
+	transition-property: border, background-color;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.HeroPickerIconContainer:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #ADD9E6;
+}
+.HeroPicker:hover .HeroPickerIconContainer{
+	/* border: 1px solid #ADD9E6; */
+}
+.heroPickerIcon{
+	vertical-align: center;
+	horizontal-align: center;
+}
+
+.BadgeCircle{
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/refresh.vsvg");
+	width: 24px;
+	height: 24px;
+	border-radius: 12px;
+	background-color: #7d8688;
+	horizontal-align: right;
+	vertical-align: top;
+	margin-top: -8px;
+	margin-right: -8px;
+	transition-property: background-color;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-in-out;
+}
+.HeroPicker:hover .BadgeCircle{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #e7f6f5 ), to( #a0d6d7 ) );
+}
+
+.HeroPickedIconAnimation{
+	animation-name: heroPickerRotate;
+	animation-duration: 1s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+/* @keyframes heroPickerRotate{
+	0%{ transform: rotateZ( 0deg ); }
+	100%{ transform: rotateZ( 360deg ); }
+} */
+
+/* popup, created/destroyed on demand by hero_picker.js */
+.hero_picker_overlay{
+	width: 100%;
+	height: 100%;
+	background-color: #212121d2;
+	horizontal-align: center;
+	vertical-align: center;
+}
+.heroPickerPopup{
+	width: 50%;
+	height: 40%;
+	vertical-align: center;
+	horizontal-align: center;
+	background-color: #474747;
+	flow-children: right-wrap;
+	overflow: squish scroll;
+}
+.heroPickerButton{
+	padding: 5px;
+}
+.heroPickerButton:hover{
+	background-color: #8EBDCB;
+}
+.heroPickerSelected{
+	background-color: #8ebdcb77;
+}

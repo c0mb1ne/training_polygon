@@ -125,7 +125,40 @@ function createTempVision(radius,team,pos,obstruct)
 	end)
 	return timer
 end
-
+function randomRingPosition(range1,range2,hero)
+	local R=RandomInt(range1,range2)
+	local x=RandomInt(-R,R)
+	local znakY=0;
+	while znakY==0 do
+		local rnd=RandomInt(-100,100)
+		if rnd<0 then
+			znakY=-1
+		end
+		if rnd>0 then
+			znakY=1
+		end
+	end
+	local y=math.floor(math.sqrt((R-x)*(R+x)))*znakY
+	local respawn_place = hero:GetAbsOrigin() + Vector(x, y, 0)
+	return respawn_place
+end
+function randomRingPositionVec(range1,range2,vec)
+	local R=RandomInt(range1,range2)
+	local x=RandomInt(-R,R)
+	local znakY=0;
+	while znakY==0 do
+		local rnd=RandomInt(-100,100)
+		if rnd<0 then
+			znakY=-1
+		end
+		if rnd>0 then
+			znakY=1
+		end
+	end
+	local y=math.floor(math.sqrt((R-x)*(R+x)))*znakY
+	local respawn_place = vec + Vector(x, y, 0)
+	return respawn_place
+end
 function debugModifier(event)
 	local duration=0
 	if event['duration']~=nil then

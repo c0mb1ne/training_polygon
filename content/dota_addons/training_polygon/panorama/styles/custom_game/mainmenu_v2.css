@@ -663,56 +663,7 @@ VerticalScrollBar .ScrollThumb{
 .lvlLabel{
 	text-shadow: 5px 5px 8px 8.0 #000000b0;
 }
-.HeroPicker{
-	width: 50px;
-	height: 50px;
-	/* border: 1px solid #212121; */
-}
-.HeroPickerChangeIcon{
-	
-	width: 24px;
-	height: 24px; 
-}
-.BadgeCircle {
-	opacity-mask: url("s2r://panorama/images/control_icons/24px/refresh.vsvg");
-    width: 24px;
-    height: 24px;
-    border-radius: 12px;
-    background-color: #7d8688;
-    /* border: 1px solid #4fc3f7ff; */
-    horizontal-align: right;
-    vertical-align: top;
-    margin-top: -8px;
-    margin-right: -8px;
-	transition-property: background-color;
-	transition-duration: 0.25s;
-	transition-timing-function: ease-in-out;
-}
-.HeroPicker:hover .BadgeCircle{
-	background-color: gradient( linear, 0% 0%, 0% 100%, from( #e7f6f5 ), to( #a0d6d7 ) );
-}
-.HeroPicker:hover .HeroPickerIconContainer{
-	/* border: 1px solid #ADD9E6;  */
-}
-.HeroPickerIconContainer:active{
-	sound: "ui_generic_button_click";
-	border: 1px solid #ADD9E6; 
-	
-}
-.HeroPickerIconContainer{
-	border: 1px solid #212121;
-	width: 100%;
-	height: 100%;
-	transition-property: border, background-color;
-	transition-duration: 0.20s;
-	transition-timing-function: ease-in-out;
-}
-.HeroPickedIconAnimation{
-	animation-name: heroPickerRotate;
-  	animation-duration: 1s;
-  	animation-timing-function: linear;
-  	animation-iteration-count: infinite;
-}
+
 .padding5{
 	padding: 5px;
 }

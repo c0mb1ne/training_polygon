@@ -2,17 +2,22 @@
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/dream_coil_escape/dream_coil_escape.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
     </styles>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dream_coil_escape/dream_coil_escape.js" />
-    </scripts>
+        
+    </scripts> 
     <Panel class="dream_coil_escape_Main">
-        <Panel class="Col">
+        <Panel class="Col width100">
             <Label class="menu_button_label" text="#dream_coil_escape"/>
-            <Label text="template gamemode for easy creation of file structures for future modes"/>
-            
+            <Label text="just chill and break dream coils"/>
+            <Panel id="coil_escape_Types" class="RowNoFill"/>
             <Panel class="RowNoFill">
-                
+                <Panel id="heroPickerContainer" class="ColNoFill padding5">
+                    
+                </Panel>
                 
             </Panel>
 
@@ -22,7 +27,7 @@
                 <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
                     <Label class="mode_play_label" id="menu_play_label" text="Play"/>
                 </Button>
-                <Label id="errorMsg"></Label>
+                <Label id="errorMsg"></Label> 
             </Panel>
         </Panel>
     </Panel>

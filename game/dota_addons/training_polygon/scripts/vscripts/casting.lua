@@ -322,23 +322,7 @@ function casterAbilityNotarget(hero,abilityName,caster,respawnPlace,castTime,cas
 end
 
 
-function randomRingPosition(range1,range2,hero)
-	local R=RandomInt(range1,range2)
-	local x=RandomInt(-R,R)
-	local znakY=0;
-	while znakY==0 do
-		local hui=RandomInt(-100,100)
-		if hui<0 then
-			znakY=-1
-		end
-		if hui>0 then
-			znakY=1
-		end
-	end
-	local y=math.floor(math.sqrt((R-x)*(R+x)))*znakY
-	local respawn_place = hero:GetAbsOrigin() + Vector(x, y, 0)
-	return respawn_place
-end
+
 function randomDisruptorPosition(range,hero)
 	local hero_place=hero:GetAbsOrigin()
 	local x=0
@@ -368,23 +352,7 @@ function randomDisruptorPosition(range,hero)
 	--print(respawn_place)
 	return respawn_place
 end
-function randomRingPositionVec(range1,range2,vec)
-	local R=RandomInt(range1,range2)
-	local x=RandomInt(-R,R)
-	local znakY=0;
-	while znakY==0 do
-		local hui=RandomInt(-100,100)
-		if hui<0 then
-			znakY=-1
-		end
-		if hui>0 then
-			znakY=1
-		end
-	end
-	local y=math.floor(math.sqrt((R-x)*(R+x)))*znakY
-	local respawn_place = vec + Vector(x, y, 0)
-	return respawn_place
-end
+
 function randomLinePosition(range1,range2,hero)
 	local direction=(hero:GetForwardVector()):Normalized()
 	local x=direction.x
