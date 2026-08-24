@@ -21,7 +21,7 @@ function drawTypes(){
 		drawType(typesPanel,type)
 	}
 }
-$('#helperMode').AddClass('Hidden')
+/* $('#helperMode').AddClass('Hidden') */
 $('#levelSetting').AddClass('Hidden')
 function drawType(parent,name){
 	var modePanel=$.CreatePanel('RadioButton',parent,name)

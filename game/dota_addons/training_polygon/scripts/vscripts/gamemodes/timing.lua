@@ -63,7 +63,8 @@ function timing:Init()
             [46]={spell_name="pugna_nether_blast",hero_name="npc_dota_hero_pugna",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [47]={spell_name="visage_summon_familiars",hero_name="npc_dota_hero_visage",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
             [48]={spell_name="warlock_rain_of_chaos",hero_name="npc_dota_hero_warlock",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-            [49]={spell_name="windrunner_shackleshot",hero_name="npc_dota_hero_windrunner",level=1,aghs=false,shard=false,is_ability=true,need_helper=false}
+            [49]={spell_name="windrunner_shackleshot",hero_name="npc_dota_hero_windrunner",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+            [50]={spell_name="snapfire_firesnap_cookie",hero_name="npc_dota_hero_snapfire",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},--just saw someone missed timing on TI
         }
     }
     self.spellTable.shadow_demon_disruption = self.spellTable.item_cyclone
@@ -116,7 +117,8 @@ function timing:Init()
         [46]={spell_name="pugna_nether_blast",hero_name="npc_dota_hero_pugna",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [47]={spell_name="visage_summon_familiars",hero_name="npc_dota_hero_visage",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
         [48]={spell_name="warlock_rain_of_chaos",hero_name="npc_dota_hero_warlock",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
-        [49]={spell_name="windrunner_shackleshot",hero_name="npc_dota_hero_windrunner",level=1,aghs=false,shard=false,is_ability=true,need_helper=false}
+        [49]={spell_name="windrunner_shackleshot",hero_name="npc_dota_hero_windrunner",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
+        [50]={spell_name="snapfire_firesnap_cookie",hero_name="npc_dota_hero_snapfire",level=1,aghs=false,shard=false,is_ability=true,need_helper=false},
     }
     self.spellTable.skeleton_king_reincarnation = self.spellTable.item_cyclone
     --declaring spells this way, so we can declare different lists of spells to different types of timings

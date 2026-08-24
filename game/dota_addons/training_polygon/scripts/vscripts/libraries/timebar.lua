@@ -22,9 +22,10 @@ function Timebar:PrepareSingleMark(totalBarTime,zoneOffset,color,abilityname)
         totalBarTime = totalBarTime,
         zoneOffset = zoneOffset,
         color = color,
-        abilityname = abilityname
+        abilityname = abilityname,
     })
 end
+
 function Timebar:PrepareDynamic(totalBarTime,zoneOffset,color,abilityname,ent1,ent2,speed,offset)
     --[[ print('timebar prepare dynamic') ]]
     CustomGameEventManager:Send_ServerToAllClients("timebar_prepare_dynamic", {
@@ -36,6 +37,22 @@ function Timebar:PrepareDynamic(totalBarTime,zoneOffset,color,abilityname,ent1,e
         ent2 = ent2:entindex(),
         speed = speed,
         offset = offset --offset from hull sizes and projectile width
+    })
+end
+function Timebar:PrepareDistance(totalBarDistance,ent1,ent2,zoneW,zoneOffset)
+    --[[ print('timebar prepare dynamic') ]]
+    CustomGameEventManager:Send_ServerToAllClients("timebar_prepare_distance", {
+        totalBarDistance = totalBarDistance,               -- distance represented by max lenght of timebar
+        ent1 = ent1:entindex(),      
+        ent2 = ent2:entindex(),      
+    })
+end
+function Timebar:AddSingleMark(totalBarTime,zoneOffset,color,abilityname)
+    CustomGameEventManager:Send_ServerToAllClients("timebar_add_single_mark", {
+        totalBarTime = totalBarTime,
+        zoneOffset = zoneOffset,
+        color = color,
+        abilityname = abilityname,
     })
 end
 function Timebar:Show()

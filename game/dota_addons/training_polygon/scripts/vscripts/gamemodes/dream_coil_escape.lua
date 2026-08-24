@@ -38,10 +38,11 @@ function dream_coil_escape:Init()
     self.dreamCoilRange=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityCastRange"])
     self.breakRadius=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_break_radius"])
     self.rangeDeviation=0--when puck spawns and cast, how far cast will be from center
-    
-
+    self.timebarExtraDistance=100
+    self.puckTimer=nil
     self.dodgeItem=nil
     self.dodgeSpell=nil
+    self.breakModifier="modifier_puck_coil_break_stun"
     print('dream_coil_escape inited')
 end
 
@@ -107,7 +108,7 @@ function dream_coil_escape:StartGame(args)
         self.dodgeSpell:SetLevel(1)
     end
     self.playerHero:SetAbsOrigin(self.trainingPlace)
-    Timers:CreateTimer(2,function()
+    self.puckTimer=Timers:CreateTimer(2,function()
         self:PuckAction()
         if self.activated then
             return 6
@@ -115,6 +116,7 @@ function dream_coil_escape:StartGame(args)
             return nil
         end
     end)
+    Timebar:Show()
 end
 
 
@@ -127,7 +129,7 @@ function dream_coil_escape:PuckAction()
         self.dodgeItem:EndCooldown()
     end
     --[[ local pointForCast=randomRingPosition(self.rangeDeviation,self.breakRadius-50,self.playerHero) ]]
-    local pointForCast=randomRingPosition(0,0,self.playerHero)
+    local pointForCast=randomRingPosition(0,0,self.playerHero)--TODO: add more variants of vectors generation
     local respawn_place = randomRingPositionVec(200,self.dreamCoilRange-100,pointForCast)
     
     local puck = CreateUnitByNameAsync("npc_dota_hero_puck", respawn_place, true, nil, nil, DOTA_TEAM_BADGUYS, function(unit)
@@ -166,6 +168,13 @@ end
 
 function dream_coil_escape:OnNPCSpawned(keys)
     local npc = EntIndexToHScript(keys.entindex)
+    --[[ print("[DreamCoilEscape] npc spawned:",npc:GetUnitName()) ]]
+    if npc:GetUnitName()=="npc_dota_thinker" then
+        --start timebar here
+        Timebar:PrepareDistance(self.breakRadius+self.timebarExtraDistance,npc,self.playerHero)
+        Timebar:AddSingleMark(self.breakRadius+self.timebarExtraDistance,self.breakRadius,"#2100da","puck_dream_coil")
+        Timebar:Start()
+    end
     if npc:IsIllusion() then
         Timers:CreateTimer({
             endTime = FrameTime(), 
@@ -178,10 +187,22 @@ end
 
 function dream_coil_escape:OrderFilter(event)
     -- TODO: return false to block specific player orders, true to allow
+    if event['issuer_player_id_const']==-1 then
+        --bot order
+    else
+        --player order
+        local ability=EntIndexToHScript(event['entindex_ability'])
+        if ability~=nil then
+            if ability==self.dodgeSpell or ability==self.dodgeItem then
+                Timebar:PlayerAction()
+            end
+        end
+    end
     return true
 end
 
 function dream_coil_escape:ModifierGained(event)
+    debugModifier(event)
     -- TODO: react to modifiers being applied (e.g. track dodge/invuln windows)
     return true
 end
@@ -192,6 +213,14 @@ function dream_coil_escape:DamageFilter(event)
 end
 
 function dream_coil_escape:OnAbilityUsed(keys)
+    --[[ DeepPrintTable(keys) ]]
+    -- TODO: react to abilities being cast
+end
+
+function dream_coil_escape:OnNonPlayerUsedAbility(keys)
+    --[[ if keys.abilityname=="puck_dream_coil" then
+    end ]]
+    --DeepPrintTable(keys)
     -- TODO: react to abilities being cast
 end
 
@@ -214,6 +243,7 @@ end
 function dream_coil_escape:Deactivate()
     self.activated = false
     self.deactivateCalled = false
+    Timers:RemoveTimer(self.puckTimer)
     Timebar:ResetLines()
     Timebar:Hide()
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu", {})

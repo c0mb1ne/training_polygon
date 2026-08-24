@@ -6379,6 +6379,9 @@ end
 
 
 function GameMode:OnNonPlayerUsedAbility(keys)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.OnNonPlayerUsedAbility then
+    GamemodeManager.activeGameMode:OnNonPlayerUsedAbility(keys)
+  end
   DebugPrint('[BAREBONES] OnNonPlayerUsedAbility')
   --print("OnNonPlayerUsedAbility time:",Time())
   DebugPrintTable(keys)
@@ -6388,7 +6391,7 @@ function GameMode:OnNonPlayerUsedAbility(keys)
     if abilityname==TIMING_BRATAN_ABILITY then
       print('trying to start timer')
       CustomGameEventManager:Send_ServerToAllClients("eul_casted",{})
-
+      
 
     end
 

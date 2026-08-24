@@ -729,3 +729,17 @@ function timing:timebar_windrunner_shackleshot()
     local distanceOffset=projectileWidth/2
     Timebar:PrepareDynamic(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#00750a",abilityName, self.playerHero, self.spiritBreakerHelper, projectileSpeed,distanceOffset)
 end
+function timing:timebar_snapfire_firesnap_cookie()
+    local abilityName="snapfire_firesnap_cookie"
+    local abilityKV = DotaDB:GetAbilityKV(abilityName)
+    local castPoint=parseQuadroValue(abilityKV["AbilityCastPoint"])
+    if self.rubickMode then
+        castPoint=self.playerHero:FindAbilityByName(abilityName):GetCastPoint()
+    end
+    local damageDelay=parseQuadroValue(abilityKV["AbilityValues"]["jump_duration"]["value"])
+    if self.yashaKaya then
+        castPoint=castPoint*self.yashaKayaModifier
+    end
+    castPoint=castPoint+damageDelay
+    Timebar:PrepareSingleMark(self.castDelay+self.cycleCastDuration,self.cycleCastDuration-castPoint,"#691e00",abilityName)
+end
