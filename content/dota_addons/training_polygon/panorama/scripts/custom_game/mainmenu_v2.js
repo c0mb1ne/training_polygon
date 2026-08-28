@@ -49,6 +49,16 @@ $('#menu_home').SetPanelEvent (
 		home_page.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml", false, false );
 	}
 )
+$('#menu_settings').SetPanelEvent (
+"onactivate", 
+	function() {
+		$.Msg('trying to load main menu')
+		clearMenuContent()
+		var home_page = $.CreatePanel( "Panel", menuContent, "settings_page" ); 
+		home_page.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/main_menu/settings_page.xml", false, false );
+	}
+)
+
 function showTestUI(){
 	$.Msg('showing new ui')
 	$.GetContextPanel().style['visibility']="visible"

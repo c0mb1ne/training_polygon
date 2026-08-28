@@ -6,7 +6,7 @@ function openBoosty(){
 	$.DispatchEvent("ExternalBrowserGoToURL", "https://boosty.to/combine")
 }
 function openTg(){
-	$.DispatchEvent("ExternalBrowserGoToURL", "https://t.me/c0mb1ne")
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://t.me/cumbine")
 }
 $('#boosty').SetPanelEvent(
 	"onactivate",

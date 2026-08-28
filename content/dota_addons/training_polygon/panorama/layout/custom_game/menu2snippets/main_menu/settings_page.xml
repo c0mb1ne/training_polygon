@@ -1,0 +1,41 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/main_menu/settings_page.js" />
+    </scripts>
+    <Panel class="Row">
+        <Panel id="welcomeScreen">
+            <Panel class="ColWFill">
+                <Panel class="embeedingContainer">
+                    <Panel class="embeedingHeader">
+                        <Label class="menu_button_label" text="notifications:"/>
+                    </Panel>
+                        
+                    
+                    <Panel class="embeedingContent width100 ColNoFill">
+                        <Panel class="Col width100">
+                            <!-- todo: make icons for sound entries -->
+                            <Label class="embeedingContentLabel" text="Good sound:"/>
+                            <Panel id="goodSounds" class="soundSettingsContainer">
+                                
+                            </Panel>
+                        </Panel>
+                        <Panel class="Col width100">
+                            <Label class="embeedingContentLabel" text="Bad sound:"/>
+                            <Panel id="badSounds" class="soundSettingsContainer">
+                                
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                    
+                </Panel>
+                
+            </Panel>
+            <Panel class="ColWFill" id="testPan">
+                
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

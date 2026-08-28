@@ -7,7 +7,7 @@
     </scripts>
     <Panel class="RowHFill">
         <Panel class="Col modFilterContainer">
-            <Panel class="embeedingContainer filterEmb">
+            <Panel class="embeedingContainer filterEmb heightFill">
                 <Panel class="embeedingHeader">
                     <Label class="menu_button_label" text="filter"/>
                 </Panel>
@@ -19,7 +19,7 @@
         <Panel class="Col">
             <Panel class="Row">
                 <Panel class="ColWFill">
-                    <Panel class="embeedingContainer competContainer">
+                    <Panel class="embeedingContainer competContainer heightFill">
                         <Panel class="embeedingHeader">
                             <Label class="menu_button_label" text="Competitive"/>
                         </Panel>
@@ -29,7 +29,7 @@
                     </Panel>
                 </Panel>
                 <Panel class="ColWFill">
-                    <Panel class="embeedingContainer sandboxContainer">
+                    <Panel class="embeedingContainer sandboxContainer heightFill">
                         <Panel class="embeedingHeader">
                             <Label class="menu_button_label testPlayItem" text="Sandbox"/>
                         </Panel>

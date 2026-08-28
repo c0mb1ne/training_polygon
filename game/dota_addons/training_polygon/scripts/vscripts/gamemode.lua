@@ -5810,18 +5810,21 @@ function GameMode:OrderFilter(event)
     return true
 end
 function GameMode:AbilityTuning(event)
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.AbilityTuning then
+    return GamemodeManager.activeGameMode:AbilityTuning(event)
+  end
     --Check if the order is the glyph type
     --[[print("------------AbilityTuning:",Time())
     DeepPrintTable( event )--]]
-    if SS_TRAINING==1 then
-      if SS_SKILL_ID==17 then
-        if event["value_name_const"]=="duration" then
-          event["value"]=0.5
-          --print('replaced!')
-        end
+  if SS_TRAINING==1 then
+    if SS_SKILL_ID==17 then
+      if event["value_name_const"]=="duration" then
+        event["value"]=0.5
+        --print('replaced!')
       end
     end
-    return true
+  end
+  return true
 end
 function GameMode:ModifierGained(event)
   if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.ModifierGained then

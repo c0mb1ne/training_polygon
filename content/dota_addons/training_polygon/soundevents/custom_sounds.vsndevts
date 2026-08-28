@@ -1,0 +1,262 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+
+{
+    sproing = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/misc/soundboard/sproing.vsnd"
+    }
+    dark_willow_sylph_pain_21 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/dark_willow/sylph_pain_21.vsnd"
+    }
+    bristleback_bristle_pain_01 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/bristleback/bristle_pain_01.vsnd"
+    }
+    arc_warden_arcwar_pain_18 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/arc_warden/arcwar_pain_18.vsnd"
+    }
+    wr_arc_pain_02 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/windrunner/wr_arc_pain_02.vsnd"
+    }
+    warl_pain_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/warlock/warl_pain_03.vsnd"
+    }
+    visa_pain_08 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/visage/visa_pain_08.vsnd"
+    }
+    tusk_pain_07 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/tusk/tusk_pain_07.vsnd"
+    }
+    vipe_pain_06 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/viper/vipe_pain_06.vsnd"
+    }
+    snapfire_pain_09 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/snapfire/snapfire_pain_09.vsnd"
+    }
+    slark_pain_07 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/slark/slark_pain_07.vsnd"
+    }
+    drag_pain_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/skywrath_mage/drag_pain_03.vsnd"
+    }
+    silen_pain_06 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/silencer/silen_pain_06.vsnd"
+    }
+    qop_arc_pain_05 = {
+        type = "dota_src1_2d"
+		volume = 5.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/queenofpain/qop_arc_pain_05.vsnd"
+    }
+    qop_arc_pain_04 = {
+        type = "dota_src1_2d"
+		volume = 5.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/queenofpain/qop_arc_pain_04.vsnd"
+    }
+    pain_pain_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/queenofpain/pain_pain_03.vsnd"
+    }
+    phass_pain_08 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/phantom_assassin/phass_pain_08.vsnd"
+    }
+    phass_pain_06 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/phantom_assassin/phass_pain_06.vsnd"
+    }
+    pa_asan_pain_09 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/phantom_assassin/pa_asan_pain_09.vsnd"
+    }
+    pangolin_pain_21 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/pangolin/pangolin_pain_21.vsnd"
+    }
+    omni_pain_07 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/omniknight/omni_pain_07.vsnd"
+    }
+    mir_pain_08 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/mirana/mir_pain_08.vsnd"
+    }
+    magn_pain_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/magnataur/magn_pain_03.vsnd"
+    }
+    lion_pain_04 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/lion/lion_pain_04.vsnd"
+    }
+    jug_pain_08 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/juggernaut/jug_pain_08.vsnd"
+    }
+    husk_pain_08 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/huskar/husk_pain_08.vsnd"
+    }
+    grimstroke_pain_25 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/grimstroke/grimstroke_pain_25.vsnd"
+    }
+    ench_pain_06 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/enchantress/ench_pain_06.vsnd"
+    }
+    ench_pain_01 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/enchantress/ench_pain_01.vsnd"
+    }
+    dro_pain_01 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/drowranger/dro_pain_01.vsnd"
+    }
+    dro_pain_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/drowranger/dro_pain_03.vsnd"
+    }
+    dro_pain_04 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/drowranger/dro_pain_04.vsnd"
+    }
+    dpro_pain_17 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/death_prophet/dpro_pain_17.vsnd"
+    }
+    dpro_pain_16 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/death_prophet/dpro_pain_16.vsnd"
+    }
+    winwyv_anger_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/winter_wyvern/winwyv_anger_03.vsnd"
+    }
+    pain_anger_01 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/queenofpain/pain_anger_01.vsnd"
+    }
+    naga_anger_03 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/naga_siren/naga_anger_03.vsnd"
+    }
+    naga_anger_04 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/naga_siren/naga_anger_04.vsnd"
+    }
+    cm_anger_11 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/crystalmaiden/cm_anger_11.vsnd"
+    }
+    cm_anger_12 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/crystalmaiden/cm_anger_12.vsnd"
+    }
+    cm_anger_13 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/crystalmaiden/cm_anger_13.vsnd"
+    }
+    luna_pain_05 = {
+        type = "dota_src1_2d"
+		volume = 6.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/luna/luna_pain_05.vsnd"
+    }
+    wind_pain_05 = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/vo/windrunner/wind_pain_05.vsnd"
+    }
+}

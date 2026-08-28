@@ -1,7 +1,7 @@
 notificationContainer=$('#pointer').GetParent()
 var id_counter=0
 
-function createNotification(color,text,icon){
+function createNotification(color,text,icon,sound){
 	var id=id_counter
 	id_counter+=1
 	var notification=$.CreatePanel('Panel', notificationContainer, 'notify_'+id)
@@ -12,11 +12,11 @@ function createNotification(color,text,icon){
 	eventLabel.AddClass('EventListLabel')
 	if (color=='red'){
 		notification.AddClass('EnemyEvent')
-		Game.EmitSound("badSnd")
+		Game.EmitSound(sound)
 	}
 	if (color=='green'){
 		notification.AddClass('AllyEvent')
-		Game.EmitSound("goodSnd")
+		Game.EmitSound(sound)
 	}
 	eventLabel.text=text
 	if (icon!='none'){
@@ -59,7 +59,7 @@ function showNotification(panel){
 	}
 }
 function showNotify(data){
-	createNotification(data.color,data.text,data.icon)
+	createNotification(data.color,data.text,data.icon,data.sound)
 }
 
  GameEvents.Subscribe("show_notification", showNotify);

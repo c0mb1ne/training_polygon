@@ -1,28 +1,38 @@
-"AddonInfo"
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
 {
-  "PenaltiesEnabled"    "0"
-  "CheckAFKPlayers"     "0"
-  "TeamCount" "10"
-  "maps"      "template_map dota"
-  "IsPlayable"  "1"
-  "template_map"
-  {
-          "MaxPlayers"                    "1"
-  }
-  "dota"
-  {
-          "MaxPlayers"                    "1"
-  }
-//  "dota"
-//  {
-//          "MaxPlayers"                    "2"
-//  }
-//  "desert_duo"
-//  {
-//          "MaxPlayers"                    "10"
-//  }
-//  "forest_solo"
-//  {
-//          "MaxPlayers"                    "10"
-//  }
+    HideInTools = false
+    IsPlayable = true
+    IsTemplate = false
+    maps = 
+    [
+        "template_map",
+        "dota",
+    ]
+    CheckAFKPlayers = false
+    DefaultMap = "template_map"
+    Default_Keys = []
+    DisableIK = false
+    EnablePickRules = false
+    EventGame = false
+    hero_picker = 
+    {
+    }
+    HeroGuidesSupported = false
+    ForceDefaultGuide = false
+    MinimalPrecache = false
+    MinPlayers = 1
+    MaxPlayers = 1
+    map_options = 
+    [
+        {
+            MaxPlayers = 1
+            map = "template_map"
+        },
+        {
+            MaxPlayers = 1
+            map = "dota"
+        },
+    ]
+    PenaltiesEnabled = false
+    TeamCount = -1
 }
