@@ -1,5 +1,6 @@
 <root>
     <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/gamemode_hud/dream_coil_escape/dream_coil_escape.css" />
     </styles>
     <scripts>
@@ -14,6 +15,77 @@
                 <Label class="settingLabel" text="#moveSpeed"/>
                 <Panel class="Control" id="msControl"/>
                 <Panel class="padding"/>
+                <Label class="settingLabel" text="#stunDuratuon"/>
+                <Panel class="radioRow">
+                    <RadioButton group="stunDispel" class="radioRowButton" id="stunDur1">
+                        <Label text="#noStun"/>
+                    </RadioButton>
+                    <RadioButton group="stunDispel" class="radioRowButton" id="stunDur2">
+                        <Label text="#halfDur"/>
+                    </RadioButton>
+                    <RadioButton group="stunDispel" class="radioRowButton" id="stunDur3">
+                        <Label text="#fullDur"/>
+                    </RadioButton>
+                </Panel>
+                <Panel class="padding"/>
+                <ToggleButton checked="false" id="rgbZone" class="customCheckbox" text="#rgbZone" />
+                <Panel class="padding"/>
+                <ToggleButton checked="false" id="zoneDisplay" class="customCheckbox" text="#zoneDisplay" />
+                <Panel class="padding"/>
+                <Label class="settingLabel" text="#minRangeFromCenter"/>
+                <Panel class="NumberSwitcherContainer"> 
+                    <Button class="numberSwitcherButton x100" onactivate="minRangeChange(-100);">
+                        <Label id="minus100label" text="-100"/>
+                    </Button>
+                    <Button class="numberSwitcherButton x10" onactivate="minRangeChange(-10);">
+                        <Label id="minus10label" text="-10"/>
+                    </Button>
+                    <Button class="numberSwitcherButton" onactivate="minRangeChange(-1);">
+                        <Label text="-"/>
+                    </Button>
+                    <Panel class="numberSwitcherField" id="numberSwitcherField">
+                        <Label class="numberSwitcherFieldValue" id="minRangeValue"/>
+                    </Panel>
+                    <Button class="numberSwitcherButton" onactivate="minRangeChange(1);" >
+                        <Label text="+"/>
+                    </Button>
+                    <Button class="numberSwitcherButton x10" onactivate="minRangeChange(10);">
+                        <Label id="plus10label" text="+10"/>
+                    </Button>
+                    <Button class="numberSwitcherButton x100" onactivate="minRangeChange(100);">
+                        <Label id="plus100label" text="+100"/>
+                    </Button>
+                </Panel>
+                <Label class="settingLabel" text="#maxRangeFromCenter"/>
+                <Panel class="NumberSwitcherContainer"> 
+                    <Button class="numberSwitcherButton x100" onactivate="maxRangeChange(-100);">
+                        <Label id="minus100label" text="-100"/>
+                    </Button>
+                    <Button class="numberSwitcherButton x10" onactivate="maxRangeChange(-10);">
+                        <Label id="minus10label" text="-10"/>
+                    </Button>
+                    <Button class="numberSwitcherButton" onactivate="maxRangeChange(-1);">
+                        <Label text="-"/>
+                    </Button>
+                    <Panel class="numberSwitcherField" id="numberSwitcherField">
+                        <Label class="numberSwitcherFieldValue" id="maxRangeValue"/>
+                    </Panel>
+                    <Button class="numberSwitcherButton" onactivate="maxRangeChange(1);" >
+                        <Label text="+"/>
+                    </Button>
+                    <Button class="numberSwitcherButton x10" onactivate="maxRangeChange(10);">
+                        <Label id="plus10label" text="+10"/>
+                    </Button>
+                    <Button class="numberSwitcherButton x100" onactivate="maxRangeChange(100);">
+                        <Label id="plus100label" text="+100"/>
+                    </Button>
+                </Panel>
+                <Panel class="padding"/>
+                <Panel id="RadiusContainer" class="RadiusContainer">
+                    <Panel id="BreakRadiusCircle" class="Circle BreakRadiusCircle" />
+                    <Panel id="MaxRangeCircle" class="Circle MaxRangeCircle" />
+                    <Panel id="MinRangeCircle" class="Circle MinRangeCircle" />
+                </Panel>
             </Panel>
         </Panel>
     </Panel>

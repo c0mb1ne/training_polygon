@@ -18,7 +18,8 @@ function dream_coil_escape:Init()
         --[[ chaos_knight_phantasm={hero_name="npc_dota_hero_chaos_knight"}, ]]
         --[[ kez_echo_slash={hero_name="npc_dota_hero_kez"}, ]]
         --[[ naga_siren_mirror_image={hero_name="npc_dota_hero_naga_siren"}, ]]
-        item_cyclone={hero_name="from_js",invulModifier="modifier_eul_cyclone"}
+        item_cyclone={hero_name="from_js",invulModifier="modifier_eul_cyclone"},
+        bane_nightmare={hero_name="npc_dota_hero_bane",invulModifier="modifier_bane_nightmare_invulnerable"}
     }
 
     -- Register listeners here
@@ -38,6 +39,21 @@ function dream_coil_escape:Init()
     CustomGameEventManager:RegisterListener("dream_coil_escape_ms_change", function(eventSourceIndex, args)
         dream_coil_escape:MoveSpeedChange(args)
     end)
+    CustomGameEventManager:RegisterListener("dream_coil_escape_stun_dispel_toggle", function(eventSourceIndex, args)
+        dream_coil_escape:StunDispelToggle(args)
+    end)
+    CustomGameEventManager:RegisterListener("dream_coil_escape_rgb", function(eventSourceIndex, args)
+        dream_coil_escape:RgbToggle(args)
+    end)
+    CustomGameEventManager:RegisterListener("dream_coil_escape_zone_display", function(eventSourceIndex, args)
+        dream_coil_escape:ZoneDisplayToggle(args)
+    end)
+    CustomGameEventManager:RegisterListener("dream_coil_escape_zone_min_range_changed", function(eventSourceIndex, args)
+        dream_coil_escape:CastMinRadiusChange(args)
+    end)
+    CustomGameEventManager:RegisterListener("dream_coil_escape_zone_max_range_changed", function(eventSourceIndex, args)
+        dream_coil_escape:CastMaxRadiusChange(args)
+    end)
     self.deactivateCalled = false
     self.currentDodgeType=nil
     self.selectedEntry=nil
@@ -45,6 +61,7 @@ function dream_coil_escape:Init()
     self.dreamCoilRange=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityCastRange"])
     self.dreamCoilDuration=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_duration"],3)
     self.breakRadius=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_break_radius"])
+    self.coilCastRadius=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_radius"]["value"])
     self.rangeDeviation=0--when puck spawns and cast, how far cast will be from center
     self.timebarExtraDistance=100
     self.puckTimer=nil
@@ -52,13 +69,19 @@ function dream_coil_escape:Init()
     self.dodgeSpell=nil
     self.breakModifier="modifier_puck_coil_break_stun" --applied when player break coil
     self.coilModifier="modifier_puck_coiled" --applied when player got root
-    self.coilRangeDisplay=true
     self.forceStaffEnabled=false
     self.forceStaffEnt=nil
     self.playerSpeedModifier=nil
-    self.coilDone={}
-    self.coilInvulPressed={}
     self.timeBetweenCoils=0
+    self.rgbZoneToggle=true
+    self.zoneDisplay=true
+    self.stunDispel="stunDur2"--should be manually changed in ui in js to sync default value
+    self.coilCastMinRange=0
+    self.coilCastMaxRange=0
+    self.coilFasterRemove=true
+    self.coilDone={} --lets put coils here, so we can remove coils that are broken
+    self.coilLastApply=nil
+    self.safeTimer=nil
     print('dream_coil_escape inited')
 end
 
@@ -146,14 +169,40 @@ function dream_coil_escape:StartGame(args)
     else
         print('failer to add speed modifier')
     end
+    self:CastMinRadiusChange({value=self.coilCastMinRange})
+    self:CastMaxRadiusChange({value=self.coilCastMaxRange})
+    --if logic breaks somehow, lets make a safe timer
+    self.coilLastApply=Time()
+    self.safeTimer=Timers:CreateTimer(0,function()
+        if self.activated then
+            
+            if Time()-self.coilLastApply>10 then
+                print('logic broken')
+                announce:Show({message="logic broke",duration=1})
+                self:PuckActionDelayed(1)
+            end
+            return 3
+        else
+            return nil
+        end
+    end)
 end
 
 function dream_coil_escape:PuckActionDelayed(delay)
-    if self.activated==false then
-        return
-    end
     Timers:CreateTimer(delay,function()
-        self:PuckAction()
+        if self.activated==false then
+            return nil
+        end
+        if self.deactivateCalled then
+            self:Deactivate()
+            return nil
+        end
+        if self.playerHero:HasModifier(self.selectedEntry.invulModifier) then
+            return FrameTime()
+        else
+            self:PuckAction()
+            return nil
+        end
     end)
 end
 
@@ -166,7 +215,7 @@ function dream_coil_escape:PuckAction()
         self.dodgeItem:EndCooldown()
     end
     --[[ local pointForCast=randomRingPosition(self.rangeDeviation,self.breakRadius-50,self.playerHero) ]]
-    local pointForCast=randomRingPosition(0,0,self.playerHero)--TODO: add more variants of vectors generation
+    local pointForCast=randomRingPosition(self.coilCastMinRange,self.coilCastMaxRange,self.playerHero)--TODO: add more variants of vectors generation
     local respawn_place = randomRingPositionVec(200,self.dreamCoilRange-100,pointForCast)
     
     local puck = CreateUnitByNameAsync("npc_dota_hero_puck", respawn_place, true, nil, nil, DOTA_TEAM_BADGUYS, function(unit)
@@ -179,7 +228,7 @@ function dream_coil_escape:PuckAction()
         unit:SetForwardVector((self.playerHero:GetAbsOrigin() - respawn_place):Normalized())
         local ability = unit:FindAbilityByName("puck_dream_coil")
         ability:SetLevel(3)
-
+        ability:SetOverrideCastPoint(0)
         unit:SetContextThink(DoUniqueString("cast_ability"), function()
             if not ability:IsFullyCastable() then
                 return 0.1 -- retry shortly if mana/cast point not ready
@@ -207,7 +256,10 @@ function dream_coil_escape:PuckAction()
 end
 
 function dream_coil_escape:OnNPCSpawned(keys)
+    
     local npc = EntIndexToHScript(keys.entindex)
+    --[[ print('[NPC Spawned:]',keys.entindex,npc:GetUnitName()) ]]
+    --[[ DeepPrintTable(keys) ]]
     if npc:IsIllusion() then
         Timers:CreateTimer({
             endTime = FrameTime(), 
@@ -235,37 +287,64 @@ function dream_coil_escape:OrderFilter(event)
 end
 
 function dream_coil_escape:ModifierGained(event)
-    --[[ debugModifier(event) ]]
+    --[[ DeepPrintTable(event) ]]
+    debugModifier(event)
     local victim=EntIndexToHScript(event.entindex_parent_const)
     --Player got hurt by breaking dream coil
     if event.name_const==self.breakModifier then
         Timebar:BlueLine()
+        if self.stunDispel=="stunDur1" then
+            return false
+        end
+        if self.stunDispel=="stunDur2" then
+            event.duration=event.duration/2
+            return true
+        end
     end
     --dream coil placed
     if event.name_const=="modifier_dream_coil_thinker" then
         print('coil placed')
+        self.coilLastApply=Time()
         local npc=EntIndexToHScript(event.entindex_parent_const)
-        self.coilDone[event.entindex_parent_const]=false
         --start timebar here
         Timebar:PrepareDistance(self.breakRadius+self.timebarExtraDistance,npc,self.playerHero)
         Timebar:AddSingleMark(self.breakRadius+self.timebarExtraDistance,self.breakRadius,"#b600da","puck_dream_coil")
         Timebar:Start()
         -- range display particles/ui_mouseactions/range_display.vpcf
-        if self.coilRangeDisplay==true then
+        if self.zoneDisplay==true then
             print('drawing circle')
             -- Create the particle effect
             local particleFX = ParticleManager:CreateParticle("particles/ui_mouseactions/range_display.vpcf", PATTACH_ABSORIGIN_FOLLOW, npc)
             ParticleManager:SetParticleControl(particleFX, 0, npc:GetAbsOrigin())
             ParticleManager:SetParticleControl(particleFX, 1, Vector(self.breakRadius,0,0))
+            
+                
+            
             Timers:CreateTimer(0,function()
                 if IsValidEntity(npc) then
-                    local vecDiff=self.playerHero:GetAbsOrigin()-npc:GetAbsOrigin()
-                    local distance=vecDiff:Length()
-                    local progress=distance/self.breakRadius
-                    if progress>1 then
-                        progress=1
+                    if self.rgbZoneToggle then
+                        local vecDiff=self.playerHero:GetAbsOrigin()-npc:GetAbsOrigin()
+                        local distance=vecDiff:Length()
+                        local progress=distance/self.breakRadius
+                        if progress>1 then
+                            progress=1
+                        end
+                        ParticleManager:SetParticleControl(particleFX, 2, Vector(progress,0,0))
                     end
-                    ParticleManager:SetParticleControl(particleFX, 2, Vector(progress,0,0))
+                    if self.coilDone[event.entindex_ability_const]~=nil then
+                        if self.coilDone[event.entindex_ability_const]==true then
+                            npc:RemoveSelf()
+                            self.coilDone[event.entindex_ability_const]=nil
+                            return nil
+                        end
+                    else
+                        --dodge of placement or puck missed
+                        print('probably dodge of placement')
+                        npc:RemoveSelf()
+                        --[[ Notifications:Show('red','coil placement dodged',"puck_dream_coil") ]]
+                        self:PuckActionDelayed(self.timeBetweenCoils+FrameTime())
+                        return nil
+                    end
                     return FrameTime()
                 else
                     return nil
@@ -275,23 +354,26 @@ function dream_coil_escape:ModifierGained(event)
             AddFOWViewer(DOTA_TEAM_GOODGUYS, npc:GetAbsOrigin(), 25, self.dreamCoilDuration, true)
         end
     end
+    --below kinda perfect logic, except cases where player pressed dodge at the moment of coil expiration
+    --it would be good idea to compare time, but since dota use ticks, time can be 6 or 6.03 randomly
     if event.name_const==self.coilModifier then
-        local placedTime=Time()
+        self.coilDone[event.entindex_ability_const]=false
         Timers:CreateTimer(0,function()
             if IsValidEntity(self.playerHero) then
                 if self.playerHero:HasModifier(self.coilModifier) then
                     return FrameTime()
                 else
                     if self.playerHero:HasModifier(self.selectedEntry.invulModifier) then
-                        --check time if it was fake
                         print('coil expired while in invul')
                         Notifications:Show('green','good',"puck_dream_coil")
+                        self.coilDone[event.entindex_ability_const]=true
+                        self:PuckActionDelayed(self.timeBetweenCoils+FrameTime())
                     else
-                        print('coil duration:',Time()-placedTime)
-                        print('coil just expired')
+                        
                         Notifications:Show('red','bad',"puck_dream_coil")
+                        self.coilDone[event.entindex_ability_const]=true
+                        self:PuckActionDelayed(self.timeBetweenCoils+FrameTime())
                     end
-                    self:PuckActionDelayed(self.timeBetweenCoils+FrameTime())
                     return nil
                 end
             else
@@ -300,6 +382,49 @@ function dream_coil_escape:ModifierGained(event)
         end)
     end
     return true
+end
+
+function dream_coil_escape:StunDispelToggle(args)
+    self.stunDispel=args.value
+end
+
+function dream_coil_escape:RgbToggle(args)
+    if args.value==1 then
+        self.rgbZoneToggle=true
+    else
+        self.rgbZoneToggle=false
+    end
+end
+
+function dream_coil_escape:ZoneDisplayToggle(args)
+    if args.value==1 then
+        self.zoneDisplay=true
+    else
+        self.zoneDisplay=false
+    end
+end
+function dream_coil_escape:CastMinRadiusChange(args)
+    self.coilCastMinRange = self.coilCastMinRange + args.value
+    self.coilCastMinRange = math.max(0, math.min(self.coilCastMinRange, self.coilCastRadius))
+
+    if self.coilCastMinRange > self.coilCastMaxRange then
+        self.coilCastMaxRange = self.coilCastMinRange
+        CustomGameEventManager:Send_ServerToAllClients("dream_coil_escape_max_range_update_values", {value = self.coilCastMaxRange})
+    end
+
+    CustomGameEventManager:Send_ServerToAllClients("dream_coil_escape_min_range_update_values", {value = self.coilCastMinRange})
+end
+
+function dream_coil_escape:CastMaxRadiusChange(args)
+    self.coilCastMaxRange = self.coilCastMaxRange + args.value
+    self.coilCastMaxRange = math.max(0, math.min(self.coilCastMaxRange, self.coilCastRadius))
+
+    if self.coilCastMaxRange < self.coilCastMinRange then
+        self.coilCastMinRange = self.coilCastMaxRange
+        CustomGameEventManager:Send_ServerToAllClients("dream_coil_escape_min_range_update_values", {value = self.coilCastMinRange})
+    end
+
+    CustomGameEventManager:Send_ServerToAllClients("dream_coil_escape_max_range_update_values", {value = self.coilCastMaxRange})
 end
 function dream_coil_escape:MoveSpeedChange(args)
     --[[ print(args.value) ]]
@@ -314,6 +439,11 @@ end
 end ]]
 function dream_coil_escape:DamageFilter(event)
     --[[ DeepPrintTable(event) ]]
+    if event.entindex_victim_const~=nil then
+        if EntIndexToHScript(event.entindex_victim_const)==self.playerHero then
+            return false
+        end
+    end
     -- TODO: return false to prevent specific damage instances, true to allow
     return true
 end
@@ -341,15 +471,19 @@ end
 
 function dream_coil_escape:PrepareDeactivate()
     self.deactivateCalled = true
-    --[[ announcer:Show({message = "#waitingForCastEnd"}) ]]
+    announcer:Show({message = "#waitingForCastEnd"})
     CustomGameEventManager:Send_ServerToAllClients("clear_hud", {})
-    self:Deactivate()
+    --[[ self:Deactivate() ]]
 end
 
 function dream_coil_escape:Deactivate()
+    Timers:RemoveTimer(self.safeTimer)
     self.activated = false
     self.deactivateCalled = false
     self.playerSpeedModifier=nil
+    self.rgbZoneToggle=true
+    self.zoneDisplay=true
+    self.stunDispel="stunDur2"
     if self.puckTimer~=nil then
         Timers:RemoveTimer(self.puckTimer)
     end
@@ -359,8 +493,7 @@ function dream_coil_escape:Deactivate()
     self.dodgeSpell=nil
     self.dodgeItem=nil
     self.forceStaffEnt=nil
-    -- TODO: clean up any spawned units/timers/helpers specific to this mode,
-    -- following the pattern in dodge.lua:Deactivate() / timing.lua:Deactivate()
+    announcer:Hide()
 end
 
 dream_coil_escape:Init()

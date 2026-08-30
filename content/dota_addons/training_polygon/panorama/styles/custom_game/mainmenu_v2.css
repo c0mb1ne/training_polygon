@@ -771,3 +771,35 @@ VerticalScrollBar .ScrollThumb{
 	width: 20px;
 	height: 20px;
 }
+
+.radioRowButton{
+	width: fit-children;
+	height: 30px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	
+}
+.radioRowButton:hover{
+	border: 1px solid #ADD9E6; 
+}
+.radioRowButton:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+.radioRowButton:selected{
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+.radioRowButton Label{
+	horizontal-align: center;
+	vertical-align: center;
+	font-family: titleFont;
+	font-weight: semi-bold; 
+}
+.radioRowButton:selected Label{
+	color: black;
+}

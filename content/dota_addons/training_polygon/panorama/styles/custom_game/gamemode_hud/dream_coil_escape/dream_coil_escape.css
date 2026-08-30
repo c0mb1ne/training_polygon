@@ -66,8 +66,8 @@
 	padding: 15px;
 	/* visibility: collapse; */
 	flow-children: down;
-	margin-top: 250px;
-	margin-left: 5px;
+	margin-top: 190px;
+	margin-left: 1%;
 	width: 300px;
 	/* height: 250px; */
 	background-image: url( "file://{images}/custom_game/noise.png");
@@ -83,7 +83,7 @@
 .settingLabel{
 	text-align: center;
 	width: 100%;
-	margin-top: 20px;
+	margin-top: 5px;
 	color: white;
 	font-size: 16px;
 }
@@ -97,4 +97,37 @@
 .col{
 	width: 100%;
 	flow-children: down;
+}
+.radioRow{
+	flow-children: right;
+	horizontal-align: center;
+	/* width: 100%; */
+}
+.RadiusContainer {
+    width: 100px;
+    height: 100px;
+    align: center center;
+}
+
+.Circle {
+    horizontal-align: center;
+    vertical-align: center;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.BreakRadiusCircle {
+    border: 3px solid #b34ac1;
+	width: 100%;
+	height: 100%;
+}
+
+.MaxRangeCircle {
+    border: 2px solid #ADD9E6;
+	background-color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+}
+
+.MinRangeCircle {
+    border: 2px solid #ADD9E6;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
 }
