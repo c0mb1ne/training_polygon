@@ -9,7 +9,7 @@
     }
     dark_willow_sylph_pain_21 = {
         type = "dota_src1_2d"
-		volume = 4.000000
+		volume = 6.000000
 		pitch = 1.000000
         vsnd_files = "sounds/vo/dark_willow/sylph_pain_21.vsnd"
     }
@@ -87,7 +87,7 @@
     }
     qop_arc_pain_04 = {
         type = "dota_src1_2d"
-		volume = 5.000000
+		volume = 6.000000
 		pitch = 1.000000
         vsnd_files = "sounds/vo/queenofpain/qop_arc_pain_04.vsnd"
     }
@@ -225,7 +225,7 @@
     }
     naga_anger_04 = {
         type = "dota_src1_2d"
-		volume = 4.000000
+		volume = 7.000000
 		pitch = 1.000000
         vsnd_files = "sounds/vo/naga_siren/naga_anger_04.vsnd"
     }
@@ -258,5 +258,11 @@
 		volume = 4.000000
 		pitch = 1.000000
         vsnd_files = "sounds/vo/windrunner/wind_pain_05.vsnd"
+    }
+    frog = {
+        type = "dota_src1_2d"
+		volume = 4.000000
+		pitch = 1.000000
+        vsnd_files = "sounds/misc/soundboard/frog.vsnd"
     }
 }

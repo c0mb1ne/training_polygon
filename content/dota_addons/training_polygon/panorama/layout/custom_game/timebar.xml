@@ -6,6 +6,9 @@
 		<include src="file://{resources}/scripts/custom_game/timebar.js" />
 	</scripts>
 	<Panel class="TimebarRoot" hittest="false">
+		<Button class="ShowTimebar" id="unHideTimebar" onactivate="tempShow()">
+			<Panel class="HideIcon"/>
+		</Button>
 		<Panel class="TimebarContainer" id="TimebarContainer">
 			<!-- <Panel class="LockButton" id="LockButton"/> -->
 			<!-- <Panel class="ResizeAnchor" id="ResizeAnchor"/> -->

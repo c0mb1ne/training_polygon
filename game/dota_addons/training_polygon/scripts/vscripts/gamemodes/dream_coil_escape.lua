@@ -178,7 +178,7 @@ function dream_coil_escape:StartGame(args)
             
             if Time()-self.coilLastApply>10 then
                 print('logic broken')
-                announce:Show({message="logic broke",duration=1})
+                announcer:Show({message="logic broke",duration=1})
                 self:PuckActionDelayed(1)
             end
             return 3

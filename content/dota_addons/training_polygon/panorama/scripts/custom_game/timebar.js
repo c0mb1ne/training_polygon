@@ -11,6 +11,7 @@ resizeAnchor.AddClass("ResizeAnchor") */
 var timebarContainer = $('#TimebarContainer')
 var resizeAnchor =$('#ResizeAnchor')
 var lockButton=$('#LockButton')
+var hideButton=$('#HideButton')
 var dynamicBar=$('#DynamicBar')
 var greenZone=$('#GreenZone')
 var TimeLabel=$('#TimeLabel')
@@ -118,6 +119,10 @@ lockButton.SetPanelEvent("onmouseactivate", function() {
         lockButton.RemoveClass('Locked')
         $.Msg('Timebar unlocked')
     }
+    
+});
+hideButton.SetPanelEvent("onmouseactivate", function() {
+    tempHide()
     
 });
 // Update resize and check mouse state
@@ -233,8 +238,21 @@ function hideTimebar(){
 }
 function showTimebar(){
     timebarContainer.style.visibility="visible"
+    $('#unHideTimebar').style.visibility="collapse"
 }
 hideTimebar()
+
+$('#unHideTimebar').style.visibility="collapse"
+function tempHide(){
+    $('#unHideTimebar').style.visibility="visible"
+    timebarContainer.style.visibility="collapse"
+    $('#unHideTimebar').AddClass('attentionAnimation')
+    $.Schedule(1.5, function(){$('#unHideTimebar').RemoveClass('attentionAnimation')})
+}
+function tempShow(){
+    $('#unHideTimebar').style.visibility="collapse"
+    timebarContainer.style.visibility="visible"
+}
 
 var marksContainer=$('#MiddleSpace')
 //class for zone type marks:
@@ -681,6 +699,10 @@ function GetEntityDistance(sourceIndex, targetIndex, distanceOffset) {
         result=0
     }
     return result
+}
+function animTest(){
+    $('#unHideTimebar').AddClass('attentionAnimation')
+    $.Schedule(1.5, function(){$('#unHideTimebar').RemoveClass('attentionAnimation')})
 }
 GameEvents.Subscribe("timebar_prepare_distance", PrepareTimebarDistance);
 GameEvents.Subscribe("timebar_prepare_dynamic", PrepareTimebarDynamic);

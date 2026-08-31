@@ -109,3 +109,4 @@ let break_radius=375//it would be nice to get it from lua but im lazy
 GameEvents.Subscribe("dream_coil_escape_max_range_update_values", maxRangeUpdateValue);
 
 GameEvents.Subscribe("dream_coil_escape_min_range_update_values", minRangeUpdateValue);
+
