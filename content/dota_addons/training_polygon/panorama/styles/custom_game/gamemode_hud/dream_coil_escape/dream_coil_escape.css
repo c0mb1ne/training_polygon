@@ -132,3 +132,103 @@
     border: 2px solid #ADD9E6;
 	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
 }
+.HideButton{
+	width: 20px;
+	height: 20px;
+	opacity-mask: url("s2r://panorama/images/control_icons/eye_png.vtex");
+	opacity-mask-scale: 110%;
+	vertical-align: top;
+	horizontal-align: right;
+	margin-right: 5px;
+	margin-top: 5px;
+	background-color: #5a5a5a;
+}
+.HideButton:hover{
+	background-color: #fff;
+}
+.ShowSettings{
+	flow-children: down;
+	/* horizontal-align: center;
+	vertical-align: center; */
+	margin: 2px;
+	width: 54px;
+	height: 54px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	box-shadow: #000000 0px 0px 12px;
+	transition-property: border, background-color, box-shadow;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.ShowSettings:enabled:hover{
+	border: 1px solid #ADD9E6; 
+}
+.ShowSettings:enabled:selected{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+.ShowSettings:active{
+	sound: "ui_generic_button_click";
+	border: 1px solid #212121;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+#unHideSettings{
+	horizontal-align: right;
+	margin-top: 5px;
+	margin-right: 360px;
+}
+.ShowIcon{
+	width: 60%;
+	height: 60%;
+	opacity-mask: url("file://{images}/custom_game/settings2.png");
+	opacity-mask-scale: 100%;
+	vertical-align: center;
+	horizontal-align: center;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #FFFFFF ), color-stop( 0.00156, #FFFFFF), to( #8EBDCB ) );
+}
+.ShowSettings:active .ShowIcon{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	
+}
+.attentionAnimation{
+	animation-name: attentionPlease;
+    animation-duration: 1.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+}
+@keyframes 'attentionPlease'
+{
+    0%
+    {
+        brightness: 1;
+        box-shadow: #000000 0px 0px 12px;
+    }
+
+
+    25%
+    {
+        brightness: 3;
+        box-shadow: #5FA5BA26 0px 0px 18px 0px;
+    }
+
+    50%
+    {
+        brightness: 1;
+        box-shadow: #000000 0px 0px 12px;
+    }
+	75%
+    {
+        brightness: 3;
+        box-shadow: #5FA5BA26 0px 0px 18px 0px;
+    }
+
+    100%
+    {
+        brightness: 1;
+        box-shadow: #000000 0px 0px 12px;
+    }
+}

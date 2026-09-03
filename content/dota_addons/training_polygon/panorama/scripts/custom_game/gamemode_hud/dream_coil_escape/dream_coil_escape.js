@@ -73,6 +73,12 @@ $('#zoneDisplay').SetPanelEvent(
     }
 )
 
+$('#HideButton').SetPanelEvent(
+    "onactivate",
+    function(){
+        tempHide();
+    }
+)
 function minRangeChange(value){
      GameEvents.SendCustomGameEventToServer (
         "dream_coil_escape_zone_min_range_changed",
@@ -102,6 +108,18 @@ function minRangeUpdateValue(data){
     $.Msg(radius)
     $('#MinRangeCircle').style['width']=radius+"%"
     $('#MinRangeCircle').style['height']=radius+"%"
+}
+
+$('#unHideSettings').style.visibility="collapse"
+function tempHide(){
+    $('#unHideSettings').style.visibility="visible"
+    $('#additionalSettings').style.visibility="collapse"
+    $('#unHideSettings').AddClass('attentionAnimation')
+    $.Schedule(1.5, function(){$('#unHideSettings').RemoveClass('attentionAnimation')})
+}
+function tempShow(){
+    $('#unHideSettings').style.visibility="collapse"
+    $('#additionalSettings').style.visibility="visible"
 }
 
 let break_radius=375//it would be nice to get it from lua but im lazy

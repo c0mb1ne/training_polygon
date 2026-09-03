@@ -53,6 +53,8 @@ require('gamemodes/dodge')
 require('gamemodes/timing')
 --[[ require('gamemodes/template_mode') ]]
 require('gamemodes/dream_coil_escape')
+require('gamemodes/lasthit_training')
+
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
   GamemodeManager.activeGameMode:Prepare(args)

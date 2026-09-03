@@ -10,7 +10,11 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
         </Button>
+        <Button class="ShowSettings" id="unHideSettings" onactivate="tempShow()">
+			<Panel class="ShowIcon"/>
+		</Button>
         <Panel class="additionalSettings" id="additionalSettings">
+            <Panel class="HideButton" id="HideButton"/>
             <Panel id="dreamCoilSettings" class="col">
                 <Label class="settingLabel" text="#moveSpeed"/>
                 <Panel class="Control" id="msControl"/>

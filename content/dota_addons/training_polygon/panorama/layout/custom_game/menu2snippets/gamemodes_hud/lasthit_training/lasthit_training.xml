@@ -1,0 +1,51 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/lasthit_training/lasthit_training.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/lasthit_training/lasthit_training.js" />
+    </scripts>
+    <Panel class="lasthit_training_Main">
+        <Panel class="Col">
+            <Label class="menu_button_label" text="#lasthit_training"/>
+            <Label text="#pickLane"/>
+            <Panel class="RowNoFill">
+                <Panel class="radioRow">
+                    <RadioButton group="lanePick" class="radioRowButton" id="topLane">
+                        <Label text="#topLane"/>
+                    </RadioButton>
+                    <RadioButton group="lanePick" class="radioRowButton" id="midLane">
+                        <Label text="#midLane"/>
+                    </RadioButton>
+                    <RadioButton group="lanePick" class="radioRowButton" id="botLane">
+                        <Label text="#botLane"/>
+                    </RadioButton>
+                </Panel>
+            </Panel>
+            <Label text="#pickSide"/>
+            <Panel class="RowNoFill">
+                <Panel class="radioRow">
+                    <RadioButton group="sidePick" class="radioRowButton" id="direside">
+                        <Label text="#dire"/>
+                    </RadioButton>
+                    <RadioButton group="sidePick" class="radioRowButton" id="radiantSide">
+                        <Label text="#radiant"/>
+                    </RadioButton>
+                </Panel>
+            </Panel>
+            <Label text="#pickHero"/>
+            <Panel id="heroPickerContainer" class="ColNoFill padding5">
+            </Panel>
+            <Label text="#startingItems"/>
+            <Panel class="RowNoFill">
+                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
+                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                </Button> 
+                <Label id="errorMsg"></Label>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

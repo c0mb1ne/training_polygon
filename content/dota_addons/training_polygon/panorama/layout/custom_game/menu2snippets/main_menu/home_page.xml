@@ -30,7 +30,7 @@
                     </Panel>
                     
                 </Panel>
-                <Panel class="embeedingContainer">
+                <Panel id="testing" class="embeedingContainer">
                     <Panel class="embeedingHeader">
                         <Label class="menu_button_label" text="something"/>
                     </Panel>

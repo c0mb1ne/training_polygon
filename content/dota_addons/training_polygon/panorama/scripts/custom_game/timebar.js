@@ -231,10 +231,11 @@ function CheckAndFixOffscreenPosition() {
         timebarContainer.style.position = newX + "px " + newY + "px 0px";
         $.Msg('Panel repositioned to stay onscreen: ' + newX + 'x' + newY);
     }
-}
+} 
 
 function hideTimebar(){
     timebarContainer.style.visibility="collapse"
+    $('#unHideTimebar').style.visibility="collapse"
 }
 function showTimebar(){
     timebarContainer.style.visibility="visible"
