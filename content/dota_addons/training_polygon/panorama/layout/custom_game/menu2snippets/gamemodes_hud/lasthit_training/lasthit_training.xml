@@ -9,19 +9,19 @@
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/lasthit_training/lasthit_training.js" />
     </scripts>
     <Panel class="lasthit_training_Main">
-        <Panel class="Col">
+        <Panel class="Col width100">
             <Label class="menu_button_label" text="#lasthit_training"/>
             <Label text="#pickLane"/>
             <Panel class="RowNoFill">
                 <Panel class="radioRow">
                     <RadioButton group="lanePick" class="radioRowButton" id="topLane">
-                        <Label text="#topLane"/>
+                        <Label text="#DOTA_LaneNameTop"/>
                     </RadioButton>
                     <RadioButton group="lanePick" class="radioRowButton" id="midLane">
-                        <Label text="#midLane"/>
+                        <Label text="#DOTA_LaneNameMiddle"/>
                     </RadioButton>
                     <RadioButton group="lanePick" class="radioRowButton" id="botLane">
-                        <Label text="#botLane"/>
+                        <Label text="#DOTA_LaneNameBottom"/>
                     </RadioButton>
                 </Panel>
             </Panel>
@@ -29,10 +29,10 @@
             <Panel class="RowNoFill">
                 <Panel class="radioRow">
                     <RadioButton group="sidePick" class="radioRowButton" id="direside">
-                        <Label text="#dire"/>
+                        <Label text="#DOTA_BadGuys"/>
                     </RadioButton>
                     <RadioButton group="sidePick" class="radioRowButton" id="radiantSide">
-                        <Label text="#radiant"/>
+                        <Label text="#DOTA_GoodGuys"/>
                     </RadioButton>
                 </Panel>
             </Panel>

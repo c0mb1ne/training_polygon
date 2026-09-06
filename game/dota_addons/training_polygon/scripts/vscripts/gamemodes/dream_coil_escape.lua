@@ -496,5 +496,6 @@ function dream_coil_escape:Deactivate()
     announcer:Hide()
 end
 
+    
 dream_coil_escape:Init()
 GamemodeManager:RegisterMode(dream_coil_escape.name, dream_coil_escape, dream_coil_escape.type)

@@ -30,10 +30,52 @@ function lasthit_training:Init()
     -- CustomGameEventManager:RegisterListener("get_lasthit_training_spell_table", function(_, event)
     --     lasthit_training:SendSpellTable()
     -- end)
-    self.startingItems={}
-    self.startingItems.consumables={""}
-    self.deactivateCalled = false
 
+    self.deactivateCalled = false
+    self.startingItems = {
+        consumables = {
+            "item_tango",
+            "item_flask", 
+            "item_faerie_fire",
+            "item_blood_grenade",
+            "item_clarity",
+            "item_enchanted_mango",
+            "item_magic_stick",
+            "item_ward_observer",
+            "item_ward_sentry",
+            "item_bottle",
+            "item_dust",
+            "item_smoke_of_deceit",
+        },
+        attributes = {
+            "item_branches",
+            "item_gauntlets",
+            "item_slippers",
+            "item_mantle",
+            "item_circlet",
+            "item_bracer",
+            "item_wraith_band",
+            "item_null_talisman",
+            "item_crown",
+            "item_belt_of_strength",
+            "item_boots_of_elves",
+            "item_robe"
+        },
+        accessories = {
+            "item_ring_of_regen",
+            "item_sobi_mask",
+            "item_ring_of_protection",
+            "item_quelling_blade",
+            "item_fluffy_hat",
+            "item_wizard_hat",
+            "item_wind_lace",
+            "item_boots",
+            "item_orb_of_frost",
+            "item_blight_stone",
+            "item_orb_of_venom",
+            "item_blades_of_attack"
+        }
+    }
     print('lasthit_training inited')
 end
 
@@ -71,6 +113,13 @@ function lasthit_training:StartGame(args)
     -- TODO: spawn the player hero, position it at self.trainingPlace, set up the scenario
     CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
     self.activated = true
+    CreepController:SpawnCreepWave25sec(DOTA_TEAM_GOODGUYS,'top','initial')
+    CreepController:SpawnCreepWave15sec(DOTA_TEAM_GOODGUYS,'mid','initial')
+    CreepController:SpawnCreepWave25sec(DOTA_TEAM_GOODGUYS,'bot','initial')
+    CreepController:SpawnCreepWave25sec(DOTA_TEAM_BADGUYS,'top','initial')
+    CreepController:SpawnCreepWave15sec(DOTA_TEAM_BADGUYS,'mid','initial')
+    CreepController:SpawnCreepWave25sec(DOTA_TEAM_BADGUYS,'bot','initial')
+    --[[ CreepController:CalibrateCreepWaveSpawnPositions(10, 15.0) ]]
 end
 
 function lasthit_training:OnNPCSpawned(keys)

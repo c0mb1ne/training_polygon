@@ -1,3 +1,5 @@
+--TODO: get rid of barebones, cuz i dont like how things scattered accross files, like events or rules
+--anyway only thing that used from barebones is a timer library
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
 CMB_SERVER="https://combine.isgood.host/"
@@ -43,7 +45,7 @@ require('libraries/precache') --class for precaching resources before gamemode s
 require('libraries/timebar') --class for controlling timebar useful for timing stuff
 require('libraries/notifications') --class for notification display
 require('libraries/place_picker') --class for picking place for training
-
+require('libraries/creep_controller') --class for spawning lanecreeps, maybe even jungle ones in future
 
 
 
@@ -87,14 +89,14 @@ function GameMode:OnFirstPlayerLoaded()
                             "npc_dota_spawner_bad_top",
                             "npc_dota_spawner_bad_mid",
                             "npc_dota_spawner_bad_bot"}
-    for k,class_to_remove in pairs(classes_to_remove) do
+    --[[ for k,class_to_remove in pairs(classes_to_remove) do
       print("Removing:",class_to_remove)
       local spawns_to_remove=Entities:FindAllByClassname(class_to_remove)
       for k,v in pairs(spawns_to_remove) do
         print(k,"removing")
         v:RemoveSelf()
       end
-    end
+    end ]]
   else
     TRAINING_PLACE=Vector(0,0,128)
   end

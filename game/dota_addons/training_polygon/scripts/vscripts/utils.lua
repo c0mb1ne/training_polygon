@@ -186,3 +186,6 @@ function debugModifier(event)
 	end
 	print('[ModifierGained] name_const: '..name..' duration: '..tostring(duration)..' entindex_ability_const: '..ability..' entindex_caster_const: '..caster..' entindex_parent_const: '..parent)
 end
+function printVector(vector)
+	print('Vector('..vector.x..','..vector.y..','..vector.z..')')
+end

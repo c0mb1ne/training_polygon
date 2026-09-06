@@ -2,6 +2,7 @@ if Notifications == nil then
   Notifications = class({})
 end
 --TODO: add icons to sounds to make them look cute, but i havent figure out how i can display emoticons properly without extracting them and putting in custom game files
+--add some localization workaround
 function Notifications:Init()
   self.notificationsSounds={
     frog={sounds={"soundboard.frog"},icon="todo",displayName="frog"},
