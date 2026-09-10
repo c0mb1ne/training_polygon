@@ -13,7 +13,7 @@
             <Label class="menu_button_label" text="#lasthit_training"/>
             <Label text="#pickLane"/>
             <Panel class="RowNoFill">
-                <Panel class="radioRow">
+                <Panel id="laneSelector" class="radioRow">
                     <RadioButton group="lanePick" class="radioRowButton" id="topLane">
                         <Label text="#DOTA_LaneNameTop"/>
                     </RadioButton>
@@ -27,7 +27,7 @@
             </Panel>
             <Label text="#pickSide"/>
             <Panel class="RowNoFill">
-                <Panel class="radioRow">
+                <Panel id="sideSelector" class="radioRow">
                     <RadioButton group="sidePick" class="radioRowButton" id="direside">
                         <Label text="#DOTA_BadGuys"/>
                     </RadioButton>
@@ -40,6 +40,9 @@
             <Panel id="heroPickerContainer" class="ColNoFill padding5">
             </Panel>
             <Label text="#startingItems"/>
+            <Panel id="startingItemsContainer" class="RowNoFill padding5">
+                
+            </Panel>
             <Panel class="RowNoFill">
                 <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
                     <Label class="mode_play_label" id="menu_play_label" text="Play"/>
