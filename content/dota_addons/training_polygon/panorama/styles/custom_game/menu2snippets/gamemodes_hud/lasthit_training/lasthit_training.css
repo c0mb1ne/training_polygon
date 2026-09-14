@@ -4,9 +4,33 @@
 }
 .itemIconContainer{
 	flow-children: right-wrap;
-	width: 120px;
+	width: 220px;
 }
 .itemIcon{
-	width: 32px;
-	height: 64px;
+	margin: 2px;
+	width: 42px;
+	height: width-percentage( 72.7% );
+	
+}
+.availableItem{
+	border: 1px solid #E4C269;
+}
+.boughtItemIcon{
+	/* background-color: gradient( linear, 0% 0%, 0% 100%, from( #00000000 ), to( #00000000 ) ); */
+	width: 64px;
+	height: width-percentage( 72.7% );
+	margin: 5px;
+}
+#boughtItems{
+	margin: 5px;
+	flow-children: right-wrap;
+	width: 300px;
+	height: 150px;
+	border: 1px solid #333333;
+}
+.goldLabel{
+	font-size: 22px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	color: #ffcc33;
 }

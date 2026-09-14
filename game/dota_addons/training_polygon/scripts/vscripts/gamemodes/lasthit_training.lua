@@ -76,6 +76,7 @@ function lasthit_training:Init()
             "item_blades_of_attack"
         }
     }
+    --parseQuadroValue(DotaDB:GetItemKV("item_tango")["ItemCost"])
     self.playerHeroName=""
     self.selectedLane=""
     self.selectedSide=""
@@ -207,8 +208,19 @@ function lasthit_training:OnEntityHurt(keys)
 end
 
 function lasthit_training:SendItemTable()
-    
-    CustomGameEventManager:Send_ServerToAllClients("lasthit_training_spell_table", self.startingItems)
+    local itemsWithPrices = {}
+
+    for category, itemList in pairs(self.startingItems) do
+        itemsWithPrices[category] = {}
+        for i, itemName in ipairs(itemList) do
+            local cost = parseQuadroValue(DotaDB:GetItemKV(itemName)["ItemCost"]) or 0
+            itemsWithPrices[category][i] = {
+                item_name = itemName,
+                price = cost
+            }
+        end
+    end
+    CustomGameEventManager:Send_ServerToAllClients("lasthit_training_spell_table", itemsWithPrices)
 end
 
 function lasthit_training:PrepareDeactivate()

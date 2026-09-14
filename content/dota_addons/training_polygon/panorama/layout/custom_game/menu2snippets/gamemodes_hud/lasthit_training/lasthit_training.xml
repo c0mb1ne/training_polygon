@@ -43,6 +43,9 @@
             <Panel id="startingItemsContainer" class="RowNoFill padding5">
                 
             </Panel>
+            <Panel id="boughtItems">
+                
+            </Panel>
             <Panel class="RowNoFill">
                 <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
                     <Label class="mode_play_label" id="menu_play_label" text="Play"/>

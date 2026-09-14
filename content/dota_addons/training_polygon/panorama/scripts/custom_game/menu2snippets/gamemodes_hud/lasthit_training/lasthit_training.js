@@ -1,9 +1,5 @@
 $.Msg('lasthit_training menu hud loaded')
-GameEvents.SendCustomGameEventToServer (
-	"get_lasthit_training_starting_items",
-	{
-	}
-);
+
 
 function startGame() {
 	var errorMsg=$('#errorMsg')
@@ -44,12 +40,83 @@ function drawCategory(categoryName,data){
 	let iconsContainer=$.CreatePanel('Panel',categoryContainer,categoryName+'_icon_container')
 	iconsContainer.AddClass('itemIconContainer')
 	for (let itemInd in data){
-		drawItemIcon(data[itemInd])
+		drawItemIcon(data[itemInd],iconsContainer)
 	}
 }
-function drawItemIcon(itemName){
-	$.Msg(itemName)
+function drawItemIcon(item,parentPanel){
+	let itemName = item.item_name;
+    let price = item.price;
+	let icon=$.CreatePanel('DOTAAbilityImage',parentPanel,'icon_'+itemName)
+	icon.abilityname=itemName
+	icon.AddClass('itemIcon')
+	icon.SetPanelEvent(
+    "onmouseover",
+		function() {
+			$.DispatchEvent("DOTAShowAbilityTooltip", icon, itemName);
+		}
+	)
+	icon.SetPanelEvent(
+		"onmouseout",
+		function() {
+			$.DispatchEvent("DOTAHideAbilityTooltip", icon);
+		}
+	)
+	startBuyController.RegisterShopItem(icon,price)
+	/* $.Msg(itemName) */
 }
+let startBuyController = {
+	itemMap: {},
+	buyDisplayPanel: null,
+	buyDisplayArray: [],
+	maxBudget: 0,
+	currentBudget: 0,
+	Init: function(){
+		this.buyDisplayPanel=$('#boughtItems')
+		this.maxBudget=700
+		this.currentBudget=this.maxBudget
+
+	},
+	RegisterShopItem: function(panel,price){
+		this.itemMap[panel.abilityname]={itemPanel:panel,price:price}
+		this.RefreshAvailability(panel)
+		panel.SetPanelEvent(
+        "onactivate",
+			() => {
+				this.BuyItem(panel)
+			}
+		)
+	},
+	GetPanelPrice: function(panel){
+		return this.itemMap[panel.abilityname].price
+	},
+	GetNamePrice: function(item_name){
+		return this.itemMap[item_name].price
+	},
+	RefreshAvailability: function(panel){
+		let price=this.GetPanelPrice(panel)
+		if (price<this.currentBudget){
+			panel.AddClass('availableItem')
+		}
+	},
+	CreateBoughtIcon: function(item_name){
+		let bougthIcon=$.CreatePanel('DOTAAbilityImage',this.buyDisplayPanel,'icon_b_'+item_name)
+		bougthIcon.abilityname=item_name
+		bougthIcon.AddClass('boughtItemIcon')
+	},
+	BuyItem: function(panel){
+		let item_name=panel.abilityname
+		let price=this.GetPanelPrice(panel)
+		if (price<=this.currentBudget){
+			this.currentBudget=this.currentBudget-price
+			this.CreateBoughtIcon(item_name)
+			//add price refresh here
+			//add buy sound
+		}else{
+			//add error sound
+		}
+	}
+}
+startBuyController.Init()
 $('#midLane').checked=true; 
 $('#direside').checked=true; 
 let defaultHero="npc_dota_hero_antimage"
@@ -57,5 +124,12 @@ let HeroPicker = CreateHeroPicker($('#heroPickerContainer'), {
 	defaultHero: defaultHero,
 	onSelect: function(hero) { defaultHero = hero }
 })
+
+GameEvents.SendCustomGameEventToServer (
+	"get_lasthit_training_starting_items",
+	{
+	}
+);
+
 
 GameEvents.Subscribe("lasthit_training_spell_table", saveData);
