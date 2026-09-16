@@ -43,6 +43,10 @@
             <Panel id="startingItemsContainer" class="RowNoFill padding5">
                 
             </Panel>
+            <Panel id="budgetContainer">
+                <Label id="budgetDisplay" class="goldLabel" text="0"/>
+                <Panel id="goldIcon"/>
+            </Panel>
             <Panel id="boughtItems">
                 
             </Panel>

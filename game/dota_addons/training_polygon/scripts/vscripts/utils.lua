@@ -54,29 +54,26 @@ function string_in_array(str, arr)
     return false
 end
 --for parsing KV values like "1.0 2.0 3.0 4.0"
-function parseQuadroValue(data,level)
-	--print('parser input:',data,level)
-	local value_count
-	if level==nil then
-		value_count=1
-	else
-		value_count=level
+function parseQuadroValue(data, level)
+	if data == nil then
+		print("[parseQuadroValue WARNING] received nil data, returning nil")
+		return nil
 	end
-	local res_table={}
-	local result
-	local start=1
-	for i=1,string.len(data) do
-		local symbol=string.sub(data,i,i)
-		if symbol==" " then
-			--print('trying to insert:',string.sub(data,start,i-1))
-			table.insert(res_table,tonumber(string.sub(data,start,i-1)))
-			start=i+1
+
+	local value_count = level == nil and 1 or level
+	local res_table = {}
+	local start = 1
+
+	for i = 1, string.len(data) do
+		local symbol = string.sub(data, i, i)
+		if symbol == " " then
+			table.insert(res_table, tonumber(string.sub(data, start, i - 1)))
+			start = i + 1
 		end
-		
 	end
-	table.insert(res_table,tonumber(string.sub(data,start,string.len(data))))
-	--[[ DeepPrintTable(res_table) ]]
-	if value_count=='all' then
+	table.insert(res_table, tonumber(string.sub(data, start, string.len(data))))
+
+	if value_count == 'all' then
 		return res_table
 	else
 		return res_table[value_count]

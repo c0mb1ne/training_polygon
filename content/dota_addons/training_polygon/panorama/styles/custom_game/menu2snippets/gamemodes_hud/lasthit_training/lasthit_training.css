@@ -24,8 +24,8 @@
 #boughtItems{
 	margin: 5px;
 	flow-children: right-wrap;
-	width: 300px;
-	height: 150px;
+	width: 227px;
+	height: 120px;
 	border: 1px solid #333333;
 }
 .goldLabel{
@@ -33,4 +33,14 @@
 	font-weight: bold;
 	letter-spacing: 1px;
 	color: #ffcc33;
+}
+#budgetContainer{
+	margin-left: 15px;
+	flow-children: right;
+}
+#goldIcon{
+	background-image: url("s2r://panorama/images/hud/reborn/gold_small_psd.vtex");
+	background-size: 100% 100%;
+	width: 26px;
+	height: 26px;
 }

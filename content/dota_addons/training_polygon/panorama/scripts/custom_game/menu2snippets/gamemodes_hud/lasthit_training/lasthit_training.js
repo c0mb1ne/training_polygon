@@ -70,11 +70,13 @@ let startBuyController = {
 	buyDisplayArray: [],
 	maxBudget: 0,
 	currentBudget: 0,
+	budgetDisplayPanel: null,
 	Init: function(){
 		this.buyDisplayPanel=$('#boughtItems')
 		this.maxBudget=700
 		this.currentBudget=this.maxBudget
-
+		this.budgetDisplayPanel=$('#budgetDisplay')
+		this.budgetDisplayPanel.text=this.currentBudget
 	},
 	RegisterShopItem: function(panel,price){
 		this.itemMap[panel.abilityname]={itemPanel:panel,price:price}
@@ -94,14 +96,22 @@ let startBuyController = {
 	},
 	RefreshAvailability: function(panel){
 		let price=this.GetPanelPrice(panel)
-		if (price<this.currentBudget){
+		if (price<=this.currentBudget){
 			panel.AddClass('availableItem')
+		}else{
+			panel.RemoveClass('availableItem')
 		}
 	},
 	CreateBoughtIcon: function(item_name){
 		let bougthIcon=$.CreatePanel('DOTAAbilityImage',this.buyDisplayPanel,'icon_b_'+item_name)
 		bougthIcon.abilityname=item_name
 		bougthIcon.AddClass('boughtItemIcon')
+		bougthIcon.SetPanelEvent(
+        "onactivate",
+			() => {
+				this.SellItem(bougthIcon)
+			}
+		)
 	},
 	BuyItem: function(panel){
 		let item_name=panel.abilityname
@@ -112,8 +122,24 @@ let startBuyController = {
 			//add price refresh here
 			//add buy sound
 		}else{
-			//add error sound
+			//add error sound 
 		}
+		this.UpdateBudget()
+	},
+	SellItem: function(panel){
+		let price=this.GetPanelPrice(panel)
+		this.currentBudget=this.currentBudget+price
+		panel.DeleteAsync(0)
+		this.UpdateBudget()
+	},
+	UpdateBudget: function(){
+		this.budgetDisplayPanel.text=this.currentBudget
+		this.UpdateAvailability()
+	},
+	UpdateAvailability: function(){
+		Object.values(this.itemMap).forEach(entry => {
+			this.RefreshAvailability(entry.itemPanel)
+		})
 	}
 }
 startBuyController.Init()

@@ -6,24 +6,16 @@ if DotaDB == nil then
 end
 
 function DotaDB:Init()
-  self.abilities_KV=LoadKeyValues("scripts/npc/npc_abilities.txt")
+  --[[ self.abilities_KV=LoadKeyValues("scripts/npc/npc_abilities.txt") ]]
+  self.abilities_KV={}
   self.heroes_KV=LoadKeyValues("scripts/npc/npc_heroes.txt")
-  local heroTable=DotaDB:GetAllHeroes()
-  for k,v in pairs(heroTable) do
-    
-    if v~="npc_dota_hero_base" and v~="Version" then
-      --[[ print('trying to load',"scripts/npc/heroes/"..v..".txt") ]]
-      heroAbilities=LoadKeyValues("scripts/npc/heroes/"..v..".txt")
-      --[[ PrintTable(heroAbilities) ]]
-      for kk,vv in pairs(heroAbilities) do
-        if kk~="Version" then
-          --[[ print(kk,vv) ]]
-          --[[ table.insert(self.abilities_KV,heroAbilities[kk]) ]]
-          self.abilities_KV[kk]=vv
-        end
-      end
+  local allHeroesTable=DotaDB:GetAllHeroes()
+  --[[ DeepPrintTable(self.heroes_KV) ]]
+  for hero_id,hero_name in pairs(allHeroesTable) do
+    --[[ print('hero_id,hero_name',hero_id,hero_name) ]]
+    for ability_name,ability_values in pairs(self.heroes_KV[hero_name]['AbilityDefinitions']) do
+      self.abilities_KV[ability_name]=ability_values
     end
-    --[[ table.insert(self.abilities_KV, ]]
   end
   self.units_KV=LoadKeyValues("scripts/npc/npc_units.txt")
   self.items_KV=LoadKeyValues("scripts/npc/items.txt")
@@ -31,6 +23,7 @@ function DotaDB:Init()
   CustomGameEventManager:RegisterListener("dotadb_get_hero_list", function(_, event)
     DotaDB:HeroListForPanorama()
   end)
+  print("DotaDB inited")
 end
 
 function DotaDB:HeroListForPanorama(args)
@@ -102,6 +95,41 @@ end
 
 function DotaDB:test()
   print('dotadb test')
+end
+
+-- Safely walks a chain of keys in a KV table.
+-- Usage: DotaDB:SafeGet(self.abilities_KV, {"kez_raptor_dance","AbilityValues","invuln_period"}, default)
+function DotaDB:SafeGet(rootTable, pathKeys, default)
+  local current = rootTable
+  local pathSoFar = ""
+
+  if current == nil then
+    print("[DotaDB WARNING] SafeGet called with nil root table")
+    return default
+  end
+
+  for i, key in ipairs(pathKeys) do
+    pathSoFar = pathSoFar .. (i > 1 and "." or "") .. tostring(key)
+    if current == nil then
+      print(string.format("[DotaDB WARNING] KV path broken at '%s' (full path: %s) - Valve likely changed this KV. Using default: %s",
+        pathSoFar, table.concat(pathKeys, "."), tostring(default)))
+      return default
+    end
+    current = current[key]
+  end
+
+  if current == nil then
+    print(string.format("[DotaDB WARNING] KV path '%s' resolved to nil - Valve likely changed this KV. Using default: %s",
+      table.concat(pathKeys, "."), tostring(default)))
+    return default
+  end
+
+  return current
+end
+
+-- Convenience wrapper specifically for ability values
+function DotaDB:GetAbilityValueSafe(abilityName, pathKeys, default)
+  return self:SafeGet(self.abilities_KV, pathKeys, default)
 end
 
 DotaDB:Init()
