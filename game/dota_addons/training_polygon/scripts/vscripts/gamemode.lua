@@ -4207,7 +4207,7 @@ function lasthit_start_fix( eventSourceIndex, args )
   AGGRO_ENEMY:AddNewModifier(AGGRO_ENEMY, nil, "modifier_elder_titan_echo_stomp", {})
   --respawn_place:  Vector 00000000002528F0 [-986.967834 76.127319 128.000000]
   Timers:CreateTimer("last_hit_waves", {
-      useGameTime = false,
+      useGameTime = true,
       endTime = 0,
       callback = function()
         if LASTHIT_TRAINING==1 then
