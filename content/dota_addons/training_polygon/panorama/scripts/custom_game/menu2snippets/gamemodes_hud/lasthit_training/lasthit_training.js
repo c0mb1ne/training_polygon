@@ -46,7 +46,13 @@ function drawCategory(categoryName,data){
 function drawItemIcon(item,parentPanel){
 	let itemName = item.item_name;
     let price = item.price;
+	let limit = item.limit || 0;
 	let icon=$.CreatePanel('DOTAAbilityImage',parentPanel,'icon_'+itemName)
+	if (limit>0){
+		let count=$.CreatePanel('Label',icon,itemName+"_counter")
+		count.text=limit
+	}
+	
 	icon.abilityname=itemName
 	icon.AddClass('itemIcon')
 	icon.SetPanelEvent(
@@ -61,7 +67,7 @@ function drawItemIcon(item,parentPanel){
 			$.DispatchEvent("DOTAHideAbilityTooltip", icon);
 		}
 	)
-	startBuyController.RegisterShopItem(icon,price)
+	startBuyController.RegisterShopItem(icon,price,limit)
 	/* $.Msg(itemName) */
 }
 let startBuyController = {
@@ -78,8 +84,8 @@ let startBuyController = {
 		this.budgetDisplayPanel=$('#budgetDisplay')
 		this.budgetDisplayPanel.text=this.currentBudget
 	},
-	RegisterShopItem: function(panel,price){
-		this.itemMap[panel.abilityname]={itemPanel:panel,price:price}
+	RegisterShopItem: function(panel,price,limit){
+		this.itemMap[panel.abilityname]={itemPanel:panel,price:price,limit:limit}
 		this.RefreshAvailability(panel)
 		panel.SetPanelEvent(
         "onactivate",
@@ -95,8 +101,14 @@ let startBuyController = {
 		return this.itemMap[item_name].price
 	},
 	RefreshAvailability: function(panel){
-		let price=this.GetPanelPrice(panel)
-		if (price<=this.currentBudget){
+		let entry = this.itemMap[panel.abilityname]
+		let price = entry.price
+		let limit = entry.limit
+
+		let affordable = price <= this.currentBudget
+		let inStock = limit === -1 || limit > 0
+
+		if (affordable && inStock){
 			panel.AddClass('availableItem')
 		}else{
 			panel.RemoveClass('availableItem')
@@ -116,19 +128,40 @@ let startBuyController = {
 	BuyItem: function(panel){
 		let item_name=panel.abilityname
 		let price=this.GetPanelPrice(panel)
-		if (price<=this.currentBudget){
-			this.currentBudget=this.currentBudget-price
-			this.CreateBoughtIcon(item_name)
-			//add price refresh here
-			//add buy sound
+		let current_count=this.itemMap[panel.abilityname].limit
+		let isUnlimited = current_count === -1
+
+		if (isUnlimited || current_count>0){
+			if (price<=this.currentBudget){
+				this.currentBudget=this.currentBudget-price
+				this.CreateBoughtIcon(item_name)
+
+				if (!isUnlimited){
+					this.itemMap[panel.abilityname].limit--
+					let countLabel=panel.GetChild(0)
+					countLabel.text=this.itemMap[panel.abilityname].limit
+				}
+				//add price refresh here
+				//add buy sound
+			}else{
+				//add error sound 
+			}
+			this.UpdateBudget()
 		}else{
-			//add error sound 
+			//idk some error sound
 		}
-		this.UpdateBudget()
 	},
 	SellItem: function(panel){
 		let price=this.GetPanelPrice(panel)
 		this.currentBudget=this.currentBudget+price
+
+		let entry = this.itemMap[panel.abilityname]
+		if (entry.limit !== -1){
+			entry.limit++
+			let countLabel=entry.itemPanel.GetChild(0)
+			countLabel.text=entry.limit
+		}
+
 		panel.DeleteAsync(0)
 		this.UpdateBudget()
 	},

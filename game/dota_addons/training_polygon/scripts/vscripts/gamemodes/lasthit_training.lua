@@ -1,4 +1,5 @@
---TODO: describe what this gamemode does
+--TODO: make serverside check for legitimate buy of item in case of making competetive mode out of this
+--for now we dont care
 if lasthit_training == nil then
   lasthit_training = class({})
 end
@@ -76,6 +77,16 @@ function lasthit_training:Init()
             "item_blades_of_attack"
         }
     }
+    self.itemLimitTable={}
+    self.itemLimitTable["item_tango"]=2--idk why do you even need this but ok
+    self.itemLimitTable["item_flask"]=5
+    self.itemLimitTable["item_blood_grenade"]=0--let make this 0, who even gonna lasthit with grenade
+    self.itemLimitTable["item_clarity"]=5
+    self.itemLimitTable["item_enchanted_mango"]=4
+    self.itemLimitTable["item_ward_observer"]=2
+    self.itemLimitTable["item_ward_sentry"]=2
+    self.itemLimitTable["item_smoke_of_deceit"]=2
+
     --parseQuadroValue(DotaDB:GetItemKV("item_tango")["ItemCost"])
     self.playerHeroName=""
     self.selectedLane=""
@@ -214,9 +225,11 @@ function lasthit_training:SendItemTable()
         itemsWithPrices[category] = {}
         for i, itemName in ipairs(itemList) do
             local cost = parseQuadroValue(DotaDB:GetItemKV(itemName)["ItemCost"]) or 0
+            local limit = self.itemLimitTable[itemName] or -1
             itemsWithPrices[category][i] = {
                 item_name = itemName,
-                price = cost
+                price = cost,
+                limit = limit
             }
         end
     end
