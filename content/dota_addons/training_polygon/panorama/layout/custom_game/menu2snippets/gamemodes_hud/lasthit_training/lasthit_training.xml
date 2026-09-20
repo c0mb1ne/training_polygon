@@ -11,33 +11,41 @@
     <Panel class="lasthit_training_Main">
         <Panel class="Col width100">
             <Label class="menu_button_label" text="#lasthit_training"/>
-            <Label text="#pickLane"/>
             <Panel class="RowNoFill">
-                <Panel id="laneSelector" class="radioRow">
-                    <RadioButton group="lanePick" class="radioRowButton" id="topLane">
-                        <Label text="#DOTA_LaneNameTop"/>
-                    </RadioButton>
-                    <RadioButton group="lanePick" class="radioRowButton" id="midLane">
-                        <Label text="#DOTA_LaneNameMiddle"/>
-                    </RadioButton>
-                    <RadioButton group="lanePick" class="radioRowButton" id="botLane">
-                        <Label text="#DOTA_LaneNameBottom"/>
-                    </RadioButton>
+                <Panel class="ColNoFill padding5">
+                    <Label text="#pickLane"/>
+                    <Panel class="RowNoFill">
+                        <Panel id="laneSelector" class="radioRow">
+                            <RadioButton group="lanePick" class="radioRowButton" id="topLane">
+                                <Label text="#DOTA_LaneNameTop"/>
+                            </RadioButton>
+                            <RadioButton group="lanePick" class="radioRowButton" id="midLane">
+                                <Label text="#DOTA_LaneNameMiddle"/>
+                            </RadioButton>
+                            <RadioButton group="lanePick" class="radioRowButton" id="botLane">
+                                <Label text="#DOTA_LaneNameBottom"/>
+                            </RadioButton>
+                        </Panel>
+                    </Panel>
+                    <Label text="#pickSide"/>
+                    <Panel class="RowNoFill">
+                        <Panel id="sideSelector" class="radioRow">
+                            <RadioButton group="sidePick" class="radioRowButton" id="direside">
+                                <Label text="#DOTA_BadGuys"/>
+                            </RadioButton>
+                            <RadioButton group="sidePick" class="radioRowButton" id="radiantSide">
+                                <Label text="#DOTA_GoodGuys"/>
+                            </RadioButton>
+                        </Panel>
+                    </Panel>
+                    <Label text="#pickHero"/>
+                    <Panel id="heroPickerContainer" class="ColNoFill padding5">
+                    </Panel>
                 </Panel>
-            </Panel>
-            <Label text="#pickSide"/>
-            <Panel class="RowNoFill">
-                <Panel id="sideSelector" class="radioRow">
-                    <RadioButton group="sidePick" class="radioRowButton" id="direside">
-                        <Label text="#DOTA_BadGuys"/>
-                    </RadioButton>
-                    <RadioButton group="sidePick" class="radioRowButton" id="radiantSide">
-                        <Label text="#DOTA_GoodGuys"/>
-                    </RadioButton>
+                <Panel class="ColNoFill padding5">
+                    <ToggleButton checked="false" id="randomCreepHp" class="customCheckbox" text="#randomCreepHp" />
+                    <ToggleButton checked="false" id="onlyEnemyWave" class="customCheckbox" text="#onlyEnemyWave" />
                 </Panel>
-            </Panel>
-            <Label text="#pickHero"/>
-            <Panel id="heroPickerContainer" class="ColNoFill padding5">
             </Panel>
             <Label text="#startingItems"/>
             <Panel id="startingItemsContainer" class="RowNoFill padding5">

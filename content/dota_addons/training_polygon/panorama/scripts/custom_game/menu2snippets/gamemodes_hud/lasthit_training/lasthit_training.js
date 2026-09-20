@@ -16,12 +16,14 @@ function startGame() {
 			selectedSide=oPanel.id
 		}
 	})
+	let startItems=startBuyController.GetBoughtItems()
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 	{
 		gameModeName: "lasthit_training",
 		defaultHero: defaultHero,
 		selectedLane: selectedLane,
-		selectedSide: selectedSide
+		selectedSide: selectedSide,
+		startItems: startItems
 	});
 }
 
@@ -79,7 +81,7 @@ let startBuyController = {
 	budgetDisplayPanel: null,
 	Init: function(){
 		this.buyDisplayPanel=$('#boughtItems')
-		this.maxBudget=700
+		this.maxBudget=600
 		this.currentBudget=this.maxBudget
 		this.budgetDisplayPanel=$('#budgetDisplay')
 		this.budgetDisplayPanel.text=this.currentBudget
@@ -173,6 +175,14 @@ let startBuyController = {
 		Object.values(this.itemMap).forEach(entry => {
 			this.RefreshAvailability(entry.itemPanel)
 		})
+	},
+	GetBoughtItems: function(){
+		let returnArray=[]
+		$.Each(this.buyDisplayPanel.Children(), function (oPanel)
+		{
+			returnArray.push(oPanel.abilityname)
+		})
+		return returnArray
 	}
 }
 startBuyController.Init()

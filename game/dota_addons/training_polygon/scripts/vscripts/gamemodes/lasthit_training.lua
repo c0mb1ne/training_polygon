@@ -103,8 +103,9 @@ function lasthit_training:Init()
             bot=Vector(5176.671875,-5708.5913085938,128)
         }
     }
-    
+    self.startBuy=nil
     self.waveTimer=nil
+    self.creepTrashCan={}
 end
 --Vector(-6468.7875976563,3327.4189453125,128)
 --[[ function lasthit_training:SendRespawnPos()
@@ -163,18 +164,24 @@ function lasthit_training:StartGame(args)
     else
         self.selectedLane="bot"
     end
-    
     self.Player=PlayerResource:GetPlayer(0)
     local old_hero=self.Player:GetAssignedHero()
     self.playerHero=replaceHero(old_hero,self.playerHeroName)
     self.playerHero:SetBaseHealthRegen(300)
     self.playerHero:SetBaseManaRegen(300)
-    print('debug:',self.selectedSide,self.selectedLane,self.playerSpawns[self.selectedSide][self.selectedLane])
+    --[[ print('debug:',self.selectedSide,self.selectedLane,self.playerSpawns[self.selectedSide][self.selectedLane]) ]]
     self.playerHero:SetAbsOrigin(self.playerSpawns[self.selectedSide][self.selectedLane])
     --[[ PlayerResource:SetCustomTeamAssignment(args.PlayerID,self.selectedSide) ]]
     self.playerHero:SetTeam(self.selectedSide)
     self.Player=PlayerResource:GetPlayer(0)
     self.Player:SetTeam(self.selectedSide)
+    self.startBuy=args.startItems
+    --[[ print('start buy:') ]]
+    for index,item_name in pairs(self.startBuy) do
+        local item=CreateItem(item_name,self.playerHero,self.playerHero)
+        self.playerHero:AddItem(item)
+    end
+    self.playerHero:SetAbilityPoints(1)
     local cycleStartTime
     if self.selectedLane=="mid" then
         cycleStartTime=15
@@ -188,11 +195,20 @@ function lasthit_training:StartGame(args)
     self.waveTimer=Timers:CreateTimer(cycleStartTime,function()
         CreepController:SpawnCreepWave(DOTA_TEAM_BADGUYS,self.selectedLane,'initial')
         CreepController:SpawnCreepWave(DOTA_TEAM_GOODGUYS,self.selectedLane,'initial')
+        if self.activated then
+            return 30
+        else
+            return nil
+        end
     end)
 end
 
 function lasthit_training:OnNPCSpawned(keys)
-    -- TODO: react to units spawning (e.g. tag the player hero once it exists)
+    local npc = EntIndexToHScript(keys.entindex)
+    --[[ print('npc spawned: ',npc:GetClassname(),npc:GetUnitName()) ]]
+    if npc:GetClassname()=="npc_dota_creep_lane" then
+        table.insert(self.creepTrashCan,npc)
+    end
 end
 
 function lasthit_training:OrderFilter(event)
@@ -202,6 +218,10 @@ end
 
 function lasthit_training:ModifierGained(event)
     -- TODO: react to modifiers being applied (e.g. track dodge/invuln windows)
+    if event.name_const=="modifier_item_buff_ward" then
+        event.duration=-1
+    end
+    debugModifier(event)
     return true
 end
 
@@ -252,7 +272,11 @@ function lasthit_training:Deactivate()
     Timebar:ResetLines()
     Timebar:Hide()
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu", {})
-    
+    for _,creep in pairs(self.creepTrashCan) do
+        if IsValidEntity(creep) then
+            creep:RemoveSelf()
+        end
+    end
     -- TODO: clean up any spawned units/timers/helpers specific to this mode,
     -- following the pattern in dodge.lua:Deactivate() / timing.lua:Deactivate()
 end
