@@ -106,6 +106,10 @@ function lasthit_training:Init()
     self.startBuy=nil
     self.waveTimer=nil
     self.creepTrashCan={}
+    self.onlyEnemySide=false
+    self.randomCreepHp=false
+    self.botEnabled=false
+    self.lastHittableCreeps={}
 end
 --Vector(-6468.7875976563,3327.4189453125,128)
 --[[ function lasthit_training:SendRespawnPos()
@@ -185,22 +189,37 @@ function lasthit_training:StartGame(args)
     local cycleStartTime
     if self.selectedLane=="mid" then
         cycleStartTime=15
-        CreepController:SpawnCreepWave15sec(DOTA_TEAM_BADGUYS,self.selectedLane,'initial')
-        CreepController:SpawnCreepWave15sec(DOTA_TEAM_GOODGUYS,self.selectedLane,'initial')
     else
         cycleStartTime=5
-        CreepController:SpawnCreepWave25sec(DOTA_TEAM_BADGUYS,self.selectedLane,'initial')
-        CreepController:SpawnCreepWave15sec(DOTA_TEAM_GOODGUYS,self.selectedLane,'initial')
     end
+    self:SpawnCreepWave(DOTA_TEAM_BADGUYS,true)
+    self:SpawnCreepWave(DOTA_TEAM_GOODGUYS,true)
     self.waveTimer=Timers:CreateTimer(cycleStartTime,function()
-        CreepController:SpawnCreepWave(DOTA_TEAM_BADGUYS,self.selectedLane,'initial')
-        CreepController:SpawnCreepWave(DOTA_TEAM_GOODGUYS,self.selectedLane,'initial')
+        self:SpawnCreepWave(DOTA_TEAM_BADGUYS,false)
+        self:SpawnCreepWave(DOTA_TEAM_GOODGUYS,false)
         if self.activated then
             return 30
         else
             return nil
         end
     end)
+end
+
+function lasthit_training:SpawnCreepWave(side,bFirst)
+    if self.onlyEnemySide then
+        if side==self.selectedSide then
+            return nil
+        end
+    end
+    if bFirst then
+        if self.selectedLane=="mid" then
+            CreepController:SpawnCreepWave15sec(side,self.selectedLane,'initial')
+        else
+            CreepController:SpawnCreepWave25sec(side,self.selectedLane,'initial')
+        end
+    else
+        CreepController:SpawnCreepWave(side,self.selectedLane,'initial')
+    end
 end
 
 function lasthit_training:OnNPCSpawned(keys)
@@ -277,6 +296,7 @@ function lasthit_training:Deactivate()
             creep:RemoveSelf()
         end
     end
+    self.creepTrashCan={}
     -- TODO: clean up any spawned units/timers/helpers specific to this mode,
     -- following the pattern in dodge.lua:Deactivate() / timing.lua:Deactivate()
 end

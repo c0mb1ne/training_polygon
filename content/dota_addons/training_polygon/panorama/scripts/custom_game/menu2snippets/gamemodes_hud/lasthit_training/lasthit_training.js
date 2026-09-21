@@ -193,7 +193,11 @@ let HeroPicker = CreateHeroPicker($('#heroPickerContainer'), {
 	defaultHero: defaultHero,
 	onSelect: function(hero) { defaultHero = hero }
 })
-
+let botHero="npc_dota_hero_sniper"
+let botHeroPicker=CreateHeroPicker($('#botHeroPickerContainer'), {
+	defaultHero: botHero,
+	onSelect: function(hero) {botHero=hero}
+})
 GameEvents.SendCustomGameEventToServer (
 	"get_lasthit_training_starting_items",
 	{

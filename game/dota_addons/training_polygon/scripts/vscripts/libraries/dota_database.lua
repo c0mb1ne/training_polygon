@@ -93,9 +93,6 @@ function DotaDB:GetHeroByAbility(ability_name)
   return hero
 end
 
-function DotaDB:test()
-  print('dotadb test')
-end
 
 -- Safely walks a chain of keys in a KV table.
 -- Usage: DotaDB:SafeGet(self.abilities_KV, {"kez_raptor_dance","AbilityValues","invuln_period"}, default)
@@ -127,6 +124,67 @@ function DotaDB:SafeGet(rootTable, pathKeys, default)
   return current
 end
 
+function DotaDB:ParseKVValue(data,level)
+  if data == nil then
+    print("[parseQuadroValue WARNING] received nil data, returning nil")
+    return nil
+  end
+
+  local value_count = level == nil and 1 or level
+  local res_table = {}
+  local start = 1
+
+  for i = 1, string.len(data) do
+    local symbol = string.sub(data, i, i)
+    if symbol == " " then
+      table.insert(res_table, tonumber(string.sub(data, start, i - 1)))
+      start = i + 1
+    end
+  end
+  table.insert(res_table, tonumber(string.sub(data, start, string.len(data))))
+
+  if value_count == 'all' then
+    return res_table
+  else
+    return res_table[value_count]
+  end
+end
+
+function DotaDB:GetParsedValue(rootTable, pathKeys, default, level)
+  
+
+  local raw = self:SafeGet(rootTable, pathKeys, default)
+  if default == nil then
+    local pathStr = table.concat(pathKeys, ".")
+    print(string.format("[DotaDB MISSING DEFAULT] No default set for path '%s' - fix this!", pathStr),raw)
+  end
+  return self:ParseKVValue(raw, level)
+end
+-- Thin wrappers so callers don't repeat the entity name in the path
+
+function DotaDB:GetAbilityValue(abilityName, subPathKeys, default, level)
+  local pathKeys = {abilityName}
+  for _, key in ipairs(subPathKeys) do
+    table.insert(pathKeys, key)
+  end
+  return self:GetParsedValue(self.abilities_KV, pathKeys, default, level)
+end
+
+function DotaDB:GetItemValue(itemName, subPathKeys, default, level)
+  local pathKeys = {itemName}
+  for _, key in ipairs(subPathKeys) do
+    table.insert(pathKeys, key)
+  end
+  return self:GetParsedValue(self.items_KV, pathKeys, default, level)
+end
+
+function DotaDB:GetUnitValue(unitName, subPathKeys, default, level)
+  local pathKeys = {unitName}
+  for _, key in ipairs(subPathKeys) do
+    table.insert(pathKeys, key)
+  end
+  return self:GetParsedValue(self.units_KV, pathKeys, default, level)
+end
 -- Convenience wrapper specifically for ability values
 function DotaDB:GetAbilityValueSafe(abilityName, pathKeys, default)
   return self:SafeGet(self.abilities_KV, pathKeys, default)

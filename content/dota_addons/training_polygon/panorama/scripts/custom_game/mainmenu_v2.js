@@ -1,10 +1,3 @@
-//menu
-//	play
-//		any mode
-//	settings
-//	profile
-//	sub
-//	discord 
 
 //hiding scoreboard button
 $.GetContextPanel().SetDisableFocusOnMouseDown(false)
@@ -15,7 +8,7 @@ var MenuButtons=HUDElements.FindChild("MenuButtons")
 var ButtonBar=MenuButtons.FindChild("ButtonBar")
 var ToggleScoreboardButton=ButtonBar.FindChild("ToggleScoreboardButton")
 ToggleScoreboardButton.style['visibility']='collapse'
-
+GameEvents.SendCustomGameEventToServer ("get_version",{});
 $('#menu_button_avatar').ClearPanelEvent("onmouseover")
 $('#menu_button_avatar').ClearPanelEvent("onactivate")
 /*var playerAvatar=$.CreatePanel('DOTAAvatarImage',$('#menu_avatar_container'),'ts_avatar')
@@ -124,6 +117,12 @@ $('#quit_button').SetPanelEvent (
 function QuitGame() {
 	GameEvents.SendCustomGameEventToServer( "training_polygon_end", {} );
 }
+function updateVersion(data){
+	let version=data.version
+	$('#tp_version_label').text="version "+version
+}
+
+GameEvents.Subscribe("version_to_ui", updateVersion);
 GameEvents.Subscribe("old_hud_mode", oldHudMode);
 GameEvents.Subscribe("new_hud_mode", newHudMode);
 GameEvents.Subscribe("debug_output", debugOutput);

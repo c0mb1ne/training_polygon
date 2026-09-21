@@ -46,6 +46,11 @@
                     <ToggleButton checked="false" id="randomCreepHp" class="customCheckbox" text="#randomCreepHp" />
                     <ToggleButton checked="false" id="onlyEnemyWave" class="customCheckbox" text="#onlyEnemyWave" />
                 </Panel>
+                <Panel class="ColNoFill padding5">
+                    <ToggleButton checked="false" id="enemyBot" class="customCheckbox" text="#enemyBot" />
+                    <Panel id="botHeroPickerContainer" class="ColNoFill padding5">
+                    </Panel>
+                </Panel>
             </Panel>
             <Label text="#startingItems"/>
             <Panel id="startingItemsContainer" class="RowNoFill padding5">

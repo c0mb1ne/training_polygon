@@ -2,6 +2,9 @@
 --anyway only thing that used from barebones is a timer library
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
+TP_VERSION="0.4.1"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
+--so it will be possible to see version on screenshots
+--in mainmenu_v2 js we gonna grab version
 CMB_SERVER="https://combine.isgood.host/"
 DEVBUG_SERVER="http://tpsite/"
 PLAYER_CONFIG=nil --should be moved to separate class like player config manager or whatever
@@ -4281,6 +4284,9 @@ function legacy_check(eventSourceIndex, args)
     CustomGameEventManager:Send_ServerToAllClients("new_hud_mode",{})
   end
 end
+function GetVersion(eventSourceIndex, args)
+  CustomGameEventManager:Send_ServerToAllClients("version_to_ui",{version=TP_VERSION})
+end
 CustomGameEventManager:RegisterListener( "ai_test_action", ai_test_action )
 
 CustomGameEventManager:RegisterListener( "tp_precache", tp_precache )
@@ -4395,7 +4401,7 @@ CustomGameEventManager:RegisterListener( "morph_training_end", morph_training_en
 CustomGameEventManager:RegisterListener( "aim_start2", aim_training_start_2 )
 CustomGameEventManager:RegisterListener( "aim_start3", aim_training_start_3 )
 CustomGameEventManager:RegisterListener( "legacy_check", legacy_check )
-
+CustomGameEventManager:RegisterListener( "get_version", GetVersion )
 
 
 --morph_training_start

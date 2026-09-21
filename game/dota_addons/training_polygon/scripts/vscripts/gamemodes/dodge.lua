@@ -125,7 +125,7 @@ function dodge:Init()
         antimage_counterspell = 1.2,
         riki_tricks_of_the_trade = 2,
         nyx_assassin_spiked_carapace = 1.1,
-        kez_raptor_dance = parseQuadroValue(DotaDB:GetAbilityValueSafe("kez_raptor_dance", {"kez_raptor_dance","AbilityValues","invuln_period"}, "0.1")), --TODO get values like this to avoid errors
+        kez_raptor_dance = DotaDB:GetAbilityValue("kez_raptor_dance", {"AbilityValues","invuln_period"}, nil), --TODO get values like this to avoid errors
         chaos_knight_phantasm = parseQuadroValue(DotaDB:GetAbilityKV("chaos_knight_phantasm")["AbilityValues"]["invuln_duration"])
     }
     self.dodgeCastPointTable = {
