@@ -1,6 +1,7 @@
 --TODO: add feature for skills that kinda cool to cast before eul, like dark_willow_cursed_crown
 --should be easy but right know not sure how much important it is
 --when i 80% done i start thinking that this whole thing need to be redone, with timings being calculated before even drawn on ui, so it would be easier to filter them
+--also todo: some kind of test mode where all possible combinations cycled
 if timing == nil then
   timing = class({})
 end
@@ -132,17 +133,13 @@ function timing:Init()
         skeleton_king_reincarnation = "npc_dota_hero_skeleton_king",
     }
     --delays calculations
-    local cycloneKV=DotaDB:GetItemKV("item_cyclone")
-    local cycloneCastpoint=parseQuadroValue(cycloneKV['AbilityCastPoint'])
-    local cycloneDuration=parseQuadroValue(cycloneKV['AbilityValues']['cyclone_duration'])
-    local disruptionKV=DotaDB:GetAbilityKV("shadow_demon_disruption")
-    local disruptionCastpoint=parseQuadroValue(disruptionKV['AbilityCastPoint'])
-    local disruptionDuration=parseQuadroValue(disruptionKV['AbilityValues']['disruption_duration']['value'])
+    local cycloneCastpoint=DotaDB:GetItemValue("item_cyclone", {"AbilityCastPoint"}, "0")
+    local cycloneDuration=DotaDB:GetItemValue("item_cyclone", {"AbilityValues","cyclone_duration"}, "2.5")
+    local disruptionCastpoint=DotaDB:GetAbilityValue("shadow_demon_disruption", {"AbilityCastPoint"}, "0.3")
+    local disruptionDuration=DotaDB:GetAbilityValue("shadow_demon_disruption", {"AbilityValues","disruption_duration","value"}, "2.75")
     --for od astral we taking menu value cuz level change duration
-    local aegisKV=DotaDB:GetItemKV("item_aegis")
-    local aegisDuration=parseQuadroValue(aegisKV["AbilityValues"]["reincarnate_time"])
-    local wkResKV=DotaDB:GetAbilityKV("skeleton_king_reincarnation")
-    local wkResKVDuration=parseQuadroValue(wkResKV['AbilityValues']['reincarnate_time'])
+    local aegisDuration=DotaDB:GetItemValue("item_aegis", {"AbilityValues","reincarnate_time"}, "5")
+    local wkResKVDuration=DotaDB:GetAbilityValue("skeleton_king_reincarnation", {"AbilityValues","reincarnate_time"}, "3.0 3.0 3.0")
     self.delayTable={
         item_cyclone = cycloneCastpoint+cycloneDuration,
         shadow_demon_disruption = disruptionCastpoint+disruptionDuration,
@@ -297,9 +294,8 @@ function timing:StartGame(args)
     --exception for durations depending on skill level
     self.cycleSpellLevel=tonumber(args['abilityLevel'])
     if self.currentTimingType=="obsidian_destroyer_astral_imprisonment" then
-        local astralKV=DotaDB:GetAbilityKV("obsidian_destroyer_astral_imprisonment")
-        local astralCastpoint=parseQuadroValue(astralKV["AbilityCastPoint"])
-        local astralDuration=parseQuadroValue(astralKV["AbilityValues"]["prison_duration"]["value"],self.cycleSpellLevel)
+        local astralCastpoint=DotaDB:GetAbilityValue("obsidian_destroyer_astral_imprisonment", {"AbilityCastPoint"}, "0.30000001192093")
+        local astralDuration=DotaDB:GetAbilityValue("obsidian_destroyer_astral_imprisonment", {"AbilityValues","prison_duration","value"}, "1.75 2.5 3.25 4",self.cycleSpellLevel)
         self.cycleCastDuration=astralCastpoint+astralDuration
     end
     if args.helperMode==1 then
@@ -532,7 +528,7 @@ function timing:item_travel_boots_cycle(unit)--i dont wanna spend time on this, 
 end
 function timing:OnNPCSpawned(keys)
     local npc = EntIndexToHScript(keys.entindex)
-    print("[Timing] NPC spawned:",npc:GetUnitName())
+    --[[ print("[Timing] NPC spawned:",npc:GetUnitName()) ]]
     if npc:GetUnitName()=="npc_dota_visage_familiar1" then
         npc:SetAttackCapability(0)
         table.insert(self.visageBirds,npc)
@@ -676,7 +672,7 @@ function timing:ModifierGained(event)
         
         --[[ return true ]]
     end
-    debugModifier(event)
+    --[[ debugModifier(event) ]]
     return true
 end
 function timing:OnEntityHurt(keys)

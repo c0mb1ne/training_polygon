@@ -3,12 +3,12 @@
 
 
 function refreshItems(hero)
-	print('refresh items called')
+	--[[ print('refresh items called') ]]
 	for i=0, 10, 1 do
 		local current_item = hero:GetItemInSlot(i)
 		if current_item ~= nil then
 			current_item:EndCooldown()
-			print('refreshing:',current_item:GetAbilityName())
+			--[[ print('refreshing:',current_item:GetAbilityName()) ]]
 		end
 	end
 
@@ -53,7 +53,7 @@ function string_in_array(str, arr)
     end
     return false
 end
---for parsing KV values like "1.0 2.0 3.0 4.0"
+--never use in rework version, only used in legacy, delete this after move to new version!!!!
 function parseQuadroValue(data, level)
 	if data == nil then
 		print("[parseQuadroValue WARNING] received nil data, returning nil")

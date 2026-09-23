@@ -84,21 +84,21 @@ function GameMode:OnFirstPlayerLoaded()
   DebugPrint("[BAREBONES] First Player has loaded")
   if GetMapName() == "dota" then
     TRAINING_PLACE=Vector(-2276.069336, 5846.962891, 256.000000)
-    local classes_to_remove={"npc_dota_neutral_spawner",
+    local classes_to_remove={"npc_dota_neutral_spawner"--[[ ,
                             "npc_dota_spawner_good_bot",
                             "npc_dota_spawner_good_mid",
                             "npc_dota_spawner_good_top",
                             "npc_dota_spawner_bad_top",
                             "npc_dota_spawner_bad_mid",
-                            "npc_dota_spawner_bad_bot"}
-    --[[ for k,class_to_remove in pairs(classes_to_remove) do
-      print("Removing:",class_to_remove)
+                            "npc_dota_spawner_bad_bot" ]]}
+    for k,class_to_remove in pairs(classes_to_remove) do
+      --[[ print("Removing:",class_to_remove) ]]
       local spawns_to_remove=Entities:FindAllByClassname(class_to_remove)
       for k,v in pairs(spawns_to_remove) do
-        print(k,"removing")
+        --[[ print(k,"removing") ]]
         v:RemoveSelf()
       end
-    end ]]
+    end
   else
     TRAINING_PLACE=Vector(0,0,128)
   end
@@ -165,14 +165,7 @@ end
 
 function GameMode:OnHeroInGame(hero)
 
-  local cmdPlayer=PlayerResource:GetPlayer(0)
-  local steam=PlayerResource:GetSteamID(cmdPlayer:GetPlayerID())
-  --[[ print(tostring(steam)) ]]
-  if hero:GetOwner()==cmdPlayer then
-    if PLAYER_CONFIG=="no config" or PLAYER_CONFIG==nil then
-      getConfigData(steam)
-    end
-  end
+  
   DebugPrint("[BAREBONES] Hero spawned in game for first time -- " .. hero:GetUnitName())
 
   if hero:IsOwnedByAnyPlayer() then
@@ -187,7 +180,7 @@ end
 
 function GameMode:OnGameInProgress()
   DebugPrint("[BAREBONES] The game has officially begun")
-
+  
 
 
 end
@@ -3873,7 +3866,7 @@ end
 
 
 function GameMode:TestCommand2()
-  parseQuadroValue("2.1",nil)
+
   --TESTING=1
   local cmdPlayer = Convars:GetCommandClient()
   local old_hero = cmdPlayer:GetAssignedHero()

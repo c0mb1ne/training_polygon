@@ -58,10 +58,10 @@ function dream_coil_escape:Init()
     self.currentDodgeType=nil
     self.selectedEntry=nil
     self.playerHeroName=nil
-    self.dreamCoilRange=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityCastRange"])
-    self.dreamCoilDuration=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_duration"],3)
-    self.breakRadius=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_break_radius"])
-    self.coilCastRadius=parseQuadroValue(DotaDB:GetAbilityKV("puck_dream_coil")["AbilityValues"]["coil_radius"]["value"])
+    self.dreamCoilRange=DotaDB:GetAbilityValue("puck_dream_coil", {"AbilityCastRange"}, "750")
+    self.dreamCoilDuration=DotaDB:GetAbilityValue("puck_dream_coil", {"AbilityValues","coil_duration"}, "5 5.5 6",3)
+    self.breakRadius=DotaDB:GetAbilityValue("puck_dream_coil", {"AbilityValues","coil_break_radius"}, "600")
+    self.coilCastRadius=DotaDB:GetAbilityValue("puck_dream_coil", {"AbilityValues","coil_radius","value"}, "375")
     self.rangeDeviation=0--when puck spawns and cast, how far cast will be from center
     self.timebarExtraDistance=100
     self.puckTimer=nil

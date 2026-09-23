@@ -6,8 +6,8 @@ if DotaDB == nil then
 end
 
 function DotaDB:Init()
-  --[[ self.abilities_KV=LoadKeyValues("scripts/npc/npc_abilities.txt") ]]
-  self.abilities_KV={}
+  self.abilities_KV=LoadKeyValues("scripts/npc/npc_abilities.txt")
+  --[[ self.abilities_KV={} ]]
   self.heroes_KV=LoadKeyValues("scripts/npc/npc_heroes.txt")
   local allHeroesTable=DotaDB:GetAllHeroes()
   --[[ DeepPrintTable(self.heroes_KV) ]]
@@ -126,7 +126,7 @@ end
 
 function DotaDB:ParseKVValue(data,level)
   if data == nil then
-    print("[parseQuadroValue WARNING] received nil data, returning nil")
+    print("[DotaDB ParseKVValue WARNING] received nil data, returning nil")
     return nil
   end
 
@@ -177,7 +177,13 @@ function DotaDB:GetItemValue(itemName, subPathKeys, default, level)
   end
   return self:GetParsedValue(self.items_KV, pathKeys, default, level)
 end
-
+function DotaDB:GetHeroValue(heroName, subPathKeys, default, level)
+    local pathKeys = {heroName}
+    for _, key in ipairs(subPathKeys) do
+        table.insert(pathKeys, key)
+    end
+    return self:GetParsedValue(self.heroes_KV, pathKeys, default, level)
+end
 function DotaDB:GetUnitValue(unitName, subPathKeys, default, level)
   local pathKeys = {unitName}
   for _, key in ipairs(subPathKeys) do

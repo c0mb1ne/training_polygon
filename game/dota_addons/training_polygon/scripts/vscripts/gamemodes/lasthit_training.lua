@@ -263,7 +263,8 @@ function lasthit_training:SendItemTable()
     for category, itemList in pairs(self.startingItems) do
         itemsWithPrices[category] = {}
         for i, itemName in ipairs(itemList) do
-            local cost = parseQuadroValue(DotaDB:GetItemKV(itemName)["ItemCost"]) or 0
+            --using 100 as default value kinda bad, but i dont think anything will ever break here
+            local cost = DotaDB:GetItemValue(itemName, {"ItemCost"}, "100") or 0 
             local limit = self.itemLimitTable[itemName] or -1
             itemsWithPrices[category][i] = {
                 item_name = itemName,

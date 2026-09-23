@@ -40,6 +40,8 @@ function CreepController:Init()
     --[[ DeepPrintTable(self.spawnPoints) ]]
 end
 
+
+
 function CreepController:SpawnCreepWave(team,lane,typeOfWave)
     local returnTable={}
     local pathcorner=self.spawnPoints[team][lane].pathcorner

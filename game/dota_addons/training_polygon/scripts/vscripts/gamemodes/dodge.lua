@@ -125,8 +125,8 @@ function dodge:Init()
         antimage_counterspell = 1.2,
         riki_tricks_of_the_trade = 2,
         nyx_assassin_spiked_carapace = 1.1,
-        kez_raptor_dance = DotaDB:GetAbilityValue("kez_raptor_dance", {"AbilityValues","invuln_period"}, nil), --TODO get values like this to avoid errors
-        chaos_knight_phantasm = parseQuadroValue(DotaDB:GetAbilityKV("chaos_knight_phantasm")["AbilityValues"]["invuln_duration"])
+        kez_raptor_dance = DotaDB:GetAbilityValue("kez_raptor_dance", {"AbilityValues","invuln_period"}, "0.2"),
+        chaos_knight_phantasm = DotaDB:GetAbilityValue("chaos_knight_phantasm", {"AbilityValues","invuln_duration"}, "0.5")
     }
     self.dodgeCastPointTable = {
         item_manta = 0,
@@ -140,7 +140,7 @@ function dodge:Init()
         riki_tricks_of_the_trade = 0.3,
         nyx_assassin_spiked_carapace = 0,
         kez_raptor_dance = 0,--has cast point, but invul starts as soon as ability used
-        chaos_knight_phantasm = parseQuadroValue(DotaDB:GetAbilityKV("chaos_knight_phantasm")["AbilityCastPoint"])
+        chaos_knight_phantasm = DotaDB:GetAbilityValue("chaos_knight_phantasm", {"AbilityCastPoint"}, "0.4 0.4 0.4")
     }
     self.hurtModifiers={
         "modifier_stunned",
@@ -798,7 +798,7 @@ function dodge:OrderFilter(event)
             if event['entindex_ability']~=0 then
                 local ability=EntIndexToHScript(event['entindex_ability'])
                 if ability~=nil then
-                    print(ability)
+                    --[[ print(ability) ]]
                     if ability:GetAbilityName()=="alchemist_unstable_concoction_throw" then
                         --do nothing
                     else
@@ -824,7 +824,7 @@ function dodge:OrderFilter(event)
         end
         if ability~=nil then
             if ability:GetAbilityName()=="storm_spirit_ball_lightning" then
-                DeepPrintTable(event)
+                --[[ DeepPrintTable(event) ]]
                 --simulate short jump here, i tried mana manipulations but since most api calls for mana doesnt work, lets just modify orders
                 local startPos=self.playerHero:GetAbsOrigin()
                 local desiredPos=Vector(event['position_x'],event['position_y'],event['position_z'])
@@ -834,7 +834,7 @@ function dodge:OrderFilter(event)
                 local modifiedPos=startPos+jumpDir*jumpLen
                 event['position_x']=modifiedPos.x
                 event['position_y']=modifiedPos.y
-                print(self.stormFlyTime)
+                --[[ print(self.stormFlyTime) ]]
             end
         end
     end
@@ -863,7 +863,7 @@ function dodge:ModifierGained(event)
         if self.currentDodgeType~="monkey_king_mischief" then
             if self.playerGotHurt==false then
                 self.playerGotHurt=true
-                print('player hurt by stun')
+                --[[ print('player hurt by stun') ]]
                 self.playerHurtTime=Time()
                 Timebar:BlueLine()
             end
@@ -918,7 +918,7 @@ end
 function dodge:OnAbilityUsed(keys)
     local player = PlayerResource:GetPlayer(keys.PlayerID)
     local abilityname = keys.abilityname
-    print("abilityname",abilityname)
+    --[[ print("abilityname",abilityname) ]]
     if abilityname=="monkey_king_mischief" then
         refreshSkills(self.playerHero)
     end
@@ -936,7 +936,7 @@ function dodge:OnEntityHurt(keys)
         if keys.damage~=0 and entVictim==self.playerHero then
             if self.playerGotHurt==false then
                 self.playerGotHurt=true
-                print('player hurt by damage')
+                --[[ print('player hurt by damage') ]]
                 self.playerHurtTime=Time()
                 Timebar:BlueLine()
             end
