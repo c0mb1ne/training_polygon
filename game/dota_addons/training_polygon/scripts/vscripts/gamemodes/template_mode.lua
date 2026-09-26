@@ -1,4 +1,5 @@
---TODO: describe what this gamemode does
+--prepared all generic methods single gamemode needs
+--init prepare deactivate are necessary, events and damage filters can be removed if not used
 if template_mode == nil then
   template_mode = class({})
 end
@@ -87,7 +88,11 @@ function template_mode:ModifierGained(event)
 end
 
 function template_mode:DamageFilter(event)
-    -- TODO: return false to prevent specific damage instances, true to allow
+    --return false to prevent specific damage instances, true to allow
+    --event.damagetype_const        damage type
+    --event.damage      damage (returns full damage even if victim had less hp)
+    --event.entindex_victim_const        entindex of victim
+    --entindex_attacker_const        entindex of attacker
     return true
 end
 
@@ -95,8 +100,27 @@ function template_mode:OnAbilityUsed(keys)
     -- TODO: react to abilities being cast
 end
 
+function template_mode:OnEntityKilled(keys)
+    --keys.fires when entity got killed
+    --keys.entindex_killed       victim entindex
+    --keys.splitscreenplayer      no idea tbh
+    --keys.entindex_attacker      attacker entindex
+    --keys.game_event_name        event name
+    --keys.entindex_inflictor        entindex of ability killed with (not exist if autoattack)
+    --keys.damagebits        no idea always 0
+    --keys.game_event_listener       never used
+end
+
 function template_mode:OnEntityHurt(keys)
-    -- TODO: react to entities taking damage
+    --react to entities taking damage
+    --keys.entindex_inflictor        entindex of ability if caused by (not exist if autoattack)
+    --keys.damagebits         no idea
+    --keys.game_event_listener        never needed
+    --keys.game_event_name    returns name of event
+    --keys.entindex_killed        victim of damage
+    --keys.damage     amount of damage taken (actual damage compare to damage filter)
+    --keys.entindex_attacker      attacker entindex
+    --keys.splitscreenplayer      no idea
 end
 
 function template_mode:SendSpellTable()

@@ -9,5 +9,12 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
         </Button>
+        <Panel class="statDisplay" id="statDisplay">
+            <Label text="Stats:"/>
+            <Panel class="Row">
+                <Label text="Min damage:"/>
+                <Label text="" id="minDamageValue"/>
+            </Panel>
+        </Panel>
     </Panel>
 </root>

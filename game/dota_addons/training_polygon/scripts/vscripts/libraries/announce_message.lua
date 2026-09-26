@@ -1,11 +1,8 @@
 --[[
 	class for showing announce messages at the top of the screen, launchable
 	from server Lua directly or from client JS (through custom game events)
-
-	Place at: game/scripts/vscripts/announcer.lua
-	Require it once from your addon_game_mode.lua:
-
-		require('announcer')
+	uses announce_message.xml
+	
 
 	Usage from anywhere in server Lua:
 		announcer:Show({message="Roshan has spawned!", duration=5})   -- auto-hides after 5s

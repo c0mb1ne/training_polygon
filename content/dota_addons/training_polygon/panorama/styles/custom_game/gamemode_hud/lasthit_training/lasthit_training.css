@@ -62,3 +62,21 @@
     width: 150px;
     height: 50px;
 }
+
+.statDisplay{
+	padding: 15px;
+	/* visibility: collapse; */
+	horizontal-align: right;
+	flow-children: down;
+	margin-top: 190px;
+	margin-right: 1%;
+	width: 300px;
+	/* height: 250px; */
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	box-shadow: #000000 0px 0px 12px;
+}
+.statDisplay Label{
+	color: white;
+}

@@ -1,5 +1,6 @@
 --TODO: make serverside check for legitimate buy of item in case of making competetive mode out of this
 --for now we dont care
+--make towers invulnerable
 if lasthit_training == nil then
   lasthit_training = class({})
 end
@@ -11,8 +12,6 @@ function lasthit_training:Init()
     self.activated = false -- Whether the mode is activated
     self.Player = nil -- Reference to the player
     self.playerHero = nil -- Reference to the player's hero
-    self.trainingPlaceDefault = Vector(0, 0, 128) -- TODO: set real training location
-    self.trainingPlace = self.trainingPlaceDefault
 
     -- TODO: define self.spellTable / self.unitTable / self.modifierTable etc. here,
     -- following the pattern used in dodge.lua / timing.lua if this mode needs one
@@ -110,16 +109,14 @@ function lasthit_training:Init()
     self.randomCreepHp=false
     self.botEnabled=false
     self.lastHittableCreeps={}
+    self.playerMinDamage=0
+    self.playerMaxDamage=0
+    self.playerDamageTracker=nil
+    self.pingLasthittable=true
+    self.hpHistory={}
+    self.lastCreepHurtDmg={}
+    self.lastCreepHurtSrc={}
 end
---Vector(-6468.7875976563,3327.4189453125,128)
---[[ function lasthit_training:SendRespawnPos()
-    CustomGameEventManager:Send_ServerToAllClients("lasthit_training_respawn_pos", {pos = {self.trainingPlace.x, self.trainingPlace.y, self.trainingPlace.z}})
-end
-
-function lasthit_training:ResetRespawn()
-    self.trainingPlace = self.trainingPlaceDefault
-    lasthit_training:SendRespawnPos()
-end ]]
 
 function lasthit_training:Prepare(args)
     print("[TemplateMode] Preparing gamemode")
@@ -172,7 +169,7 @@ function lasthit_training:StartGame(args)
     local old_hero=self.Player:GetAssignedHero()
     self.playerHero=replaceHero(old_hero,self.playerHeroName)
     self.playerHero:SetBaseHealthRegen(300)
-    self.playerHero:SetBaseManaRegen(300)
+    --[[ self.playerHero:SetBaseManaRegen(300) ]]
     --[[ print('debug:',self.selectedSide,self.selectedLane,self.playerSpawns[self.selectedSide][self.selectedLane]) ]]
     self.playerHero:SetAbsOrigin(self.playerSpawns[self.selectedSide][self.selectedLane])
     --[[ PlayerResource:SetCustomTeamAssignment(args.PlayerID,self.selectedSide) ]]
@@ -203,6 +200,19 @@ function lasthit_training:StartGame(args)
             return nil
         end
     end)
+    self:StartDamageTracker()
+    --[[ ParticleMessage:Test(self.playerHero) ]]
+end
+
+function lasthit_training:AddLasthittableMarker(npc)
+    if npc:IsAlive() and self.pingLasthittable then
+        --[[ local particleFX = ParticleManager:CreateParticle("particles/msg_fx/msg_deniable_start.vpcf", PATTACH_ABSORIGIN_FOLLOW, npc) ]]
+        --[[ local particleFX = ParticleManager:CreateParticle("particles/ui_mouseactions/ping.vpcf", PATTACH_ABSORIGIN_FOLLOW, npc)
+        ParticleManager:SetParticleControl(particleFX, 1, Vector(0,0,500))--z is height of bean
+        ParticleManager:SetParticleControl(particleFX, 2, Vector(25,0.05,0))--x is radius, y is duration
+        ParticleManager:SetParticleControl(particleFX, 5, Vector(-1,0,0))--removing icon, but 6 might be good
+        ParticleManager:SetParticleControl(particleFX, 3, Vector(0,0,0))--y is removing dota plus badge ]]
+    end
 end
 
 function lasthit_training:SpawnCreepWave(side,bFirst)
@@ -245,6 +255,18 @@ function lasthit_training:ModifierGained(event)
 end
 
 function lasthit_training:DamageFilter(event)
+    --[[ DeepPrintTable(event) ]]
+    if EntIndexToHScript(event.entindex_attacker_const)==self.playerHero then
+        --[[ DeepPrintTable(event) ]]
+        local damage=math.ceil(event.damage)
+        print('[Lasthit] damage filter:',damage)
+        --[[ print('[Lasthit] damage filter raw:',event.damage) ]]
+    end
+    local entVictim=EntIndexToHScript(event.entindex_victim_const)
+    if entVictim:GetClassname()=="npc_dota_creep_lane" then
+        local damage=math.ceil(event.damage)
+        self.lastCreepHurtDmg[event.entindex_victim_const]=damage
+    end
     -- TODO: return false to prevent specific damage instances, true to allow
     return true
 end
@@ -254,7 +276,112 @@ function lasthit_training:OnAbilityUsed(keys)
 end
 
 function lasthit_training:OnEntityHurt(keys)
-    -- TODO: react to entities taking damage
+    --[[ DeepPrintTable(keys) ]]
+    if keys.entindex_attacker ~= nil and keys.entindex_killed ~= nil then
+        local entCause = EntIndexToHScript(keys.entindex_attacker)
+        if entCause==self.playerHero then
+            DeepPrintTable(keys)
+            local damage=keys.damage
+            print('[Lasthit] entity hurt:',damage)
+            local entVictim = EntIndexToHScript(keys.entindex_killed)
+            local hp=entVictim:GetHealth()
+            print('[Lasthit] entity hp:',hp)
+        end
+        local entVictim = EntIndexToHScript(keys.entindex_killed)
+        if entVictim:GetClassname()=="npc_dota_creep_lane" then
+            --logic for autoattack
+            local victim_hp=entVictim:GetHealth()
+            local victim_armor=entVictim:GetPhysicalArmorValue(false)
+            local dmg_multiplier=1-(0.05*victim_armor/(1+0.05*math.abs(victim_armor)))
+            if victim_hp<=self.playerMinDamage*dmg_multiplier then
+                
+                if self.lastHittableCreeps[entVictim:entindex()]==nil then
+                    print('creep became lasthittable')
+                    self.lastHittableCreeps[entVictim:entindex()]=Time()
+                    self:AddLasthittableMarker(entVictim)
+                end
+            end
+            local damage=keys.damage
+            local hp=entVictim:GetHealth()
+            if hp>0 then
+                self:RecordHp(keys.entindex_killed,hp)
+            end
+            --[[ self.lastCreepHurtSrc=keys.entindex_inflictor ]]
+        end
+    end
+end
+
+function lasthit_training:RecordHp(entindex, hp)
+    local hist = self.hpHistory[entindex]
+    if hist == nil then
+        hist = {}
+        self.hpHistory[entindex] = hist
+    end
+    hist[#hist+1] = {t = Time(), hp = hp}
+end
+
+function lasthit_training:GetLasthittableTime(entindex, damage)
+    local hist = self.hpHistory[entindex]
+    if hist == nil or #hist == 0 then
+        return nil
+    end
+
+    -- walk backward from most recent record
+    local crossedAt = nil
+    for i = #hist, 1, -1 do
+        if hist[i].hp <= damage then
+            crossedAt = hist[i].t
+        else
+            -- found a point where hp was above the threshold, so the most
+            -- recent crossing is whatever we captured in crossedAt (if any)
+            break
+        end
+    end
+
+    return crossedAt -- nil if hp was never <= damage in recorded history
+end
+
+function lasthit_training:OnEntityKilled(keys)
+    --[[ DeepPrintTable(keys) ]]
+    local attacker=EntIndexToHScript(keys.entindex_attacker)
+    local victim=EntIndexToHScript(keys.entindex_killed)
+    if victim:GetClassname()=="npc_dota_creep_lane" then
+        if attacker:IsControllableByAnyPlayer() then
+            --creep killed by hero or controllable unit
+            local lastDmg=self.lastCreepHurtDmg[keys.entindex_killed]
+            local lasthitableTime=self:GetLasthittableTime(keys.entindex_killed,lastDmg)
+            local delay=Time()-lasthitableTime
+            delay=math.floor(delay*1000)/1000
+            if keys.entindex_inflictor~=nil then
+                --killed by ability
+                local ability=EntIndexToHScript(keys.entindex_inflictor)
+                Notifications:Show('green','good delay:'..delay,ability:GetAbilityName())
+                ParticleMessage:ShowNumber(victim, Vector(0,0,50), delay, green, false)
+            else
+                Notifications:Show('green','good delay:'..delay,'none')
+                ParticleMessage:ShowNumber(victim, Vector(0,0,50), delay, green, false)
+                --killed by autoattack
+            end
+        else
+            Notifications:Show('red','bad','none')
+            --creep killed by creep probably
+        end
+        --clean tables for this creep (funeral)
+        self.lastCreepHurtDmg[keys.entindex_killed]=nil
+        self.hpHistory[keys.entindex_killed]=nil
+    end
+end
+
+function lasthit_training:StartDamageTracker()
+    self.playerDamageTracker=Timers:CreateTimer(0,function()
+        if IsValidEntity(self.playerHero) then
+            self.playerMinDamage=self.playerHero:GetBaseDamageMin()
+            return FrameTime()
+        else
+            print('[Lasthit] Damage tracker died cuz player hero nil')
+            return nil
+        end
+    end)
 end
 
 function lasthit_training:SendItemTable()
@@ -285,7 +412,13 @@ end
 
 function lasthit_training:Deactivate()
     self.activated = false
-    Timers:RemoveTimer(self.waveTimer)
+    self.lastHittableCreeps={}
+    if self.waveTimer~=nil then
+        Timers:RemoveTimer(self.waveTimer)
+    end
+    if self.playerDamageTracker~=nil then
+        Timers:RemoveTimer(self.playerDamageTracker)
+    end
     self.deactivateCalled = false
     self.playerHero:SetTeam(DOTA_TEAM_GOODGUYS)
     self.Player:SetTeam(DOTA_TEAM_GOODGUYS)
@@ -304,3 +437,5 @@ end
 
 lasthit_training:Init()
 GamemodeManager:RegisterMode(lasthit_training.name, lasthit_training, lasthit_training.type)
+
+

@@ -49,7 +49,7 @@ require('libraries/timebar') --class for controlling timebar useful for timing s
 require('libraries/notifications') --class for notification display
 require('libraries/place_picker') --class for picking place for training
 require('libraries/creep_controller') --class for spawning lanecreeps, maybe even jungle ones in future
-
+require('libraries/particle_message') --class for showing particle numbers in world
 
 
 
@@ -211,6 +211,7 @@ function GameMode:InitGameMode()
   LinkLuaModifier("modifier_custom_speed_boost_flat", "libraries/modifiers/modifier_custom_speed_boost_flat.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_custom_speed_boost", "libraries/modifiers/modifier_custom_speed_boost.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_set_max_mana.lua", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_lasthitable_effect.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
 function GameMode:DamageFilter(event)
@@ -5082,7 +5083,9 @@ end
 function GameMode:OnEntityKilled( keys )
   DebugPrint( '[BAREBONES] OnEntityKilled Called' )
   DebugPrintTable( keys )
-  
+  if GamemodeManager.activeGameMode~=nil and GamemodeManager.activeGameMode.OnEntityKilled then
+    GamemodeManager.activeGameMode:OnEntityKilled(keys)
+  end
 
   -- The Unit that was Killed
   local killedUnit = EntIndexToHScript( keys.entindex_killed )
