@@ -18,6 +18,10 @@ function createNotification(color,text,icon,sound){
 		notification.AddClass('AllyEvent')
 		Game.EmitSound(sound)
 	}
+	if (color=='yellow'){
+		notification.AddClass('NeutralEvent')
+		Game.EmitSound(sound)
+	}
 	eventLabel.text=text
 	if (icon!='none'){
 		if (icon=='pogchamp'){

@@ -1,6 +1,7 @@
 <root>
     <styles>
         <include src="file://{resources}/styles/custom_game/gamemode_hud/lasthit_training/lasthit_training.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/gamemode_hud/lasthit_training/lasthit_training.js" />
@@ -9,12 +10,59 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
         </Button>
-        <Panel class="statDisplay" id="statDisplay">
-            <Label text="Stats:"/>
-            <Panel class="Row">
-                <Label text="Min damage:"/>
-                <Label text="" id="minDamageValue"/>
+        <Panel class="statDisplay Row" id="statDisplay">
+            <Panel class="Col"><!-- descriptions -->
+                <Label text="#lasthitCounterAA"/>
+                <Label text="#lasthitCounterAbil"/>
+                <Label text="#denyCounter"/>
+                <Label text="#missCounter"/>
+                <Label text="#botLastHit"/>
+                <Label text="#avgDelayCounter"/>
+                <Label text="#luckyStrikes"/>
+                <Label text="#lasthitToMissPrecent"/>
+                <Label text="#sessionTime"/>
             </Panel>
+            <Panel class="Col"><!-- icons -->
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="aalhIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="splhIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="denyIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="missIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="botIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="avgIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="luckyIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="lhtomissIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="timerIcon"/>
+                </Panel>
+            </Panel>
+            <Panel class="Col countersValue"><!-- values -->
+                <Label text="" id="lasthitCounterAA"/>
+                <Label text="" id="lasthitCounterAbil"/>
+                <Label text="" id="denyCounter"/>
+                <Label text="" id="missCounter"/>
+                <Label text="" id="botLastHit"/>
+                <Label text="" id="avgDelayCounter"/>
+                <Label text="" id="luckyStrikes"/>
+                <Label text="" id="lasthitToMissPrecent"/>
+                <Label text="" id="sessionTime"/>
+            </Panel>
+            
         </Panel>
     </Panel>
 </root>

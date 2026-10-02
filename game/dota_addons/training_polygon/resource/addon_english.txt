@@ -139,5 +139,18 @@
 		"fullDur" "full"
 		"rgbZone" "rbg zone"
 		"zoneDisplay" "zone display"
+		"randomCreepHp" "random creep hp"
+		"onlyEnemyWave" "only enemy wave"
+		"luckyCheckEnabled" "lucky check"
+		"luckyCheckEnabledTooltip" "Checks if creep was lasthitted by damage bigger than minimal roll. If damage roll would be minimal lasthit would be failed. Cannot work properly with passives like antimage one, need more work to process all cases"
+		"lasthitCounterAA" "autoattack lasthits"
+		"lasthitCounterAbil" "ability lasthits"
+		"denyCounter" "denies"
+		"missCounter"	"misses"
+		"botLastHit"	"lasthits by bot"
+		"avgDelayCounter"	"average delay"
+		"luckyStrikes"	"lucky lasthits"
+		"lasthitToMissPrecent"	"lasthit/miss precent"
+		"sessionTime"	"session time"
 	}
 }

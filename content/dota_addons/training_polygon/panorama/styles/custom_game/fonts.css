@@ -1,0 +1,21 @@
+@define colorTI10Gold: gradient( linear, 0% 100%, 0% 0%, from( #DBAB6A ), color-stop( 0.08, #DBAB6A ), color-stop( 0.38, #f5d7ad ), color-stop( 0.68, #ffe180 ), color-stop( 0.80, #DBAB6A ), to( #DBAB6A ) );
+@define colorTI10GoldDim: #FFD88F;
+@define ContextMenuFadoutTime: 0.2s;
+@define contextmenu_zindex: 10000100;
+@define mousepanningcursorsize: 64px;
+@define colorHomeStatLineText: #999999;
+@define colorHomeStatLineTextBright: #dedede;
+@define defaultFont: Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+@define monospaceNumbersFont: RadianceM,Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+@define titleFont: Reaver,Goudy Trajan Medium,FZKai-Z03,TH Sarabun New,YDYGO 540;
+@define monospaceFont: Courier New,Courier;
+@define diretideFont: Creepster,Valve Radus,Radiance,FZKai-Z03,TH Sarabun New,YDYGO 540;
+@define diretideFontX: UnifrakturCook,Valve Radus,Radiance,FZKai-Z03,TH Sarabun New,YDYGO 540;
+@define diretideFontXX: Grenze,Valve Radus,Radiance,FZKai-Z03,TH Sarabun New,YDYGO 540;
+@define comicFont: Bangers,Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+@define underlordsTitleFont: ravenhook,Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+
+Label,TextEntry
+{
+    font-family: defaultFont;
+}

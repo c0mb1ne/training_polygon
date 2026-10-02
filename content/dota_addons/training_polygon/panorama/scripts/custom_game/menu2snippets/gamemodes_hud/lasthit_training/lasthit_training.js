@@ -17,16 +17,43 @@ function startGame() {
 		}
 	})
 	let startItems=startBuyController.GetBoughtItems()
+	let randomCreepHp=false
+	let onlyEnemyWave=false
+	let luckyCheckEnabled=false
+	if ($('#luckyCheckEnabled').checked){
+		luckyCheckEnabled=true
+	}
+	if ($('#randomCreepHp').checked){
+		randomCreepHp=true
+	}
+	if ($('#onlyEnemyWave').checked){
+		onlyEnemyWave=true
+	}
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 	{
 		gameModeName: "lasthit_training",
 		defaultHero: defaultHero,
 		selectedLane: selectedLane,
 		selectedSide: selectedSide,
-		startItems: startItems
+		startItems: startItems,
+		botHero: botHero,
+		onlyEnemyWave: onlyEnemyWave,
+		randomCreepHp: randomCreepHp,
+		luckyCheckEnabled: luckyCheckEnabled
 	});
 }
-
+$('#luckyCheckEnabled').SetPanelEvent(
+	"onmouseover", 
+	function() {
+		$.DispatchEvent("DOTAShowTextTooltip", $('#luckyCheckEnabled'), "#luckyCheckEnabledTooltip");
+	}
+)
+$('#luckyCheckEnabled').SetPanelEvent(
+	"onmouseout", 
+	function() {
+		$.DispatchEvent("DOTAHideTextTooltip", $('#luckyCheckEnabled'));
+	}
+)
 function saveData(data){
     $.Msg(JSON.stringify(data));
 	for (let category in data){
@@ -188,6 +215,7 @@ let startBuyController = {
 startBuyController.Init()
 $('#midLane').checked=true; 
 $('#direside').checked=true; 
+$('#luckyCheckEnabled').checked=true; 
 let defaultHero="npc_dota_hero_antimage"
 let HeroPicker = CreateHeroPicker($('#heroPickerContainer'), {
 	defaultHero: defaultHero,

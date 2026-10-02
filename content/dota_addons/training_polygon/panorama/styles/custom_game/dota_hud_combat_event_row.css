@@ -174,18 +174,27 @@ DOTACombatEventRow.LocalPlayerInvolved
 
 .AllyEvent.LocalPlayerInvolved .EventListLabel { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #2E4826cc ) ); }
 .EnemyEvent.LocalPlayerInvolved .EventListLabel { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #5B3525cc ) ); }
+.NeutralEvent.LocalPlayerInvolved .EventListLabel { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #7d852dcc ) ); }
+
 .AllyEvent .EventListLabel			 { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #2E4826cc ) ); }
 .EnemyEvent .EventListLabel			 { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #5B3525cc ) ); }
+.NeutralEvent .EventListLabel			 { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #7d852dcc ) ); }
 
 .HUDFlipped .AllyEvent.LocalPlayerInvolved #SlashContainer { background-color: #2E4826cc ; }
 .HUDFlipped .EnemyEvent.LocalPlayerInvolved #SlashContainer { background-color: #5B3525cc; }
+.HUDFlipped .NeutralEvent.LocalPlayerInvolved #SlashContainer { background-color: #7d852dcc ; }
+
 .HUDFlipped .AllyEvent #SlashContainer 			 { background-color: #2E4826cc; }
 .HUDFlipped .EnemyEvent #SlashContainer			 { background-color: #5B3525cc; }
+.HUDFlipped .NeutralEvent #SlashContainer 			 { background-color: #7d852dcc; }
 
 .HUDFlipped .AllyEvent.LocalPlayerInvolved .EventListLabel { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #2E4826cc ) ); }
 .HUDFlipped .EnemyEvent.LocalPlayerInvolved .EventListLabel { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #5B3525cc ) ); }
+.HUDFlipped .NeutralEvent.LocalPlayerInvolved .EventListLabel { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #7d852dcc ) ); }
+
 .HUDFlipped .AllyEvent .EventListLabel			 { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #2E4826cc ) ); }
 .HUDFlipped .EnemyEvent .EventListLabel			 { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #5B3525cc ) ); }
+.HUDFlipped .NeutralEvent .EventListLabel			 { background-color: gradient( linear, 100% 0%, 0% 0%, from( #00000088 ), to( #7d852dcc ) ); }
 
 #TeamColorBar
 {

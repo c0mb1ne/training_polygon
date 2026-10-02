@@ -109,13 +109,27 @@ function lasthit_training:Init()
     self.randomCreepHp=false
     self.botEnabled=false
     self.lastHittableCreeps={}
-    self.playerMinDamage=0
-    self.playerMaxDamage=0
     self.playerDamageTracker=nil
     self.pingLasthittable=true
     self.hpHistory={}
     self.lastCreepHurtDmg={}
     self.lastCreepHurtSrc={}
+    self.creepLuckyStrike={}
+    self.luckyCheckEnabled=true
+    --stat counters:
+    self.counters={
+        lasthitCounterAA=0,
+        lasthitCounterAbil=0,
+        denyCounter=0,
+        missCounter=0,
+        botLastHit=0,
+        avgDelayCounter=0,
+        luckyStrikes=0,
+        lasthitToMissPrecent=0,
+        sessionTime=0
+    }
+    self.delaySum=0
+    self.delayCount=0
 end
 
 function lasthit_training:Prepare(args)
@@ -165,6 +179,24 @@ function lasthit_training:StartGame(args)
     else
         self.selectedLane="bot"
     end
+    self.onlyEnemySide=false
+    if args['onlyEnemyWave']==1 then
+        self.onlyEnemySide=true
+    else
+        self.onlyEnemySide=false
+    end
+    self.randomCreepHp=false
+    if args['randomCreepHp']==1 then
+        self.randomCreepHp=true
+    else
+        self.randomCreepHp=false
+    end
+    self.luckyCheckEnabled=false
+    if args['luckyCheckEnabled']==1 then
+        self.luckyCheckEnabled=true
+    else
+        self.luckyCheckEnabled=false
+    end
     self.Player=PlayerResource:GetPlayer(0)
     local old_hero=self.Player:GetAssignedHero()
     self.playerHero=replaceHero(old_hero,self.playerHeroName)
@@ -200,7 +232,15 @@ function lasthit_training:StartGame(args)
             return nil
         end
     end)
-    self:StartDamageTracker()
+    TowerController:TurnOnAttack()
+    Timers:CreateTimer(1,function()
+        if self.activated then
+            self:UpdateCounters('sessionTime',1)
+            return 1
+        else
+            return
+        end
+    end)
     --[[ ParticleMessage:Test(self.playerHero) ]]
 end
 
@@ -237,6 +277,11 @@ function lasthit_training:OnNPCSpawned(keys)
     --[[ print('npc spawned: ',npc:GetClassname(),npc:GetUnitName()) ]]
     if npc:GetClassname()=="npc_dota_creep_lane" then
         table.insert(self.creepTrashCan,npc)
+        if self.randomCreepHp then
+            local maxHp=npc:GetMaxHealth()
+            local newHp=RandomInt(0,maxHp)
+            npc:SetHealth(newHp)
+        end
     end
 end
 
@@ -280,20 +325,19 @@ function lasthit_training:OnEntityHurt(keys)
     if keys.entindex_attacker ~= nil and keys.entindex_killed ~= nil then
         local entCause = EntIndexToHScript(keys.entindex_attacker)
         if entCause==self.playerHero then
-            DeepPrintTable(keys)
+            --[[ DeepPrintTable(keys)
             local damage=keys.damage
             print('[Lasthit] entity hurt:',damage)
             local entVictim = EntIndexToHScript(keys.entindex_killed)
             local hp=entVictim:GetHealth()
-            print('[Lasthit] entity hp:',hp)
+            print('[Lasthit] entity hp:',hp) ]]
         end
         local entVictim = EntIndexToHScript(keys.entindex_killed)
         if entVictim:GetClassname()=="npc_dota_creep_lane" then
             --logic for autoattack
             local victim_hp=entVictim:GetHealth()
-            local victim_armor=entVictim:GetPhysicalArmorValue(false)
-            local dmg_multiplier=1-(0.05*victim_armor/(1+0.05*math.abs(victim_armor)))
-            if victim_hp<=self.playerMinDamage*dmg_multiplier then
+            local minDamage=self:GetMinDamageForTarget(self.playerHero,entVictim)
+            if victim_hp<=minDamage then
                 
                 if self.lastHittableCreeps[entVictim:entindex()]==nil then
                     print('creep became lasthittable')
@@ -305,12 +349,33 @@ function lasthit_training:OnEntityHurt(keys)
             local hp=entVictim:GetHealth()
             if hp>0 then
                 self:RecordHp(keys.entindex_killed,hp)
+            else
+                if entCause:IsControllableByAnyPlayer() then
+                    --triggers when killed
+                    if damage>minDamage then
+                        self.creepLuckyStrike[keys.entindex_killed]=true
+                        --[[ ParticleMessage:ShowLuckySign(entVictim,Vector(0,0,70))
+                        print('lucky strike') ]]
+                    end
+                end
             end
             --[[ self.lastCreepHurtSrc=keys.entindex_inflictor ]]
         end
     end
 end
 
+function lasthit_training:GetMinDamageForTarget(attackerEnt,victimEnt)
+    local victim_armor=victimEnt:GetPhysicalArmorValue(false)
+    local dmg_multiplier=1-(0.05*victim_armor/(1+0.05*math.abs(victim_armor)))
+    local attackerMinDamage=attackerEnt:GetBaseDamageMin()
+    return attackerMinDamage*dmg_multiplier
+end
+function lasthit_training:GetMaxDamageForTarget(attackerEnt,victimEnt)
+    local victim_armor=victimEnt:GetPhysicalArmorValue(false)
+    local dmg_multiplier=1-(0.05*victim_armor/(1+0.05*math.abs(victim_armor)))
+    local attackerMaxDamage=attackerEnt:GetBaseDamageMax()
+    return attackerMaxDamage*dmg_multiplier
+end
 function lasthit_training:RecordHp(entindex, hp)
     local hist = self.hpHistory[entindex]
     if hist == nil then
@@ -341,6 +406,14 @@ function lasthit_training:GetLasthittableTime(entindex, damage)
     return crossedAt -- nil if hp was never <= damage in recorded history
 end
 
+function lasthit_training:ShowDelayParticle(npc,offsetVec,delay,color,showSigns)
+    if delay~=nil then
+        ParticleMessage:ShowNumber(npc, offsetVec, delay, color, showSigns)
+    else
+        ParticleMessage:ShowGoodSign(npc,offsetVec,color)
+    end
+end
+
 function lasthit_training:OnEntityKilled(keys)
     --[[ DeepPrintTable(keys) ]]
     local attacker=EntIndexToHScript(keys.entindex_attacker)
@@ -348,41 +421,86 @@ function lasthit_training:OnEntityKilled(keys)
     if victim:GetClassname()=="npc_dota_creep_lane" then
         if attacker:IsControllableByAnyPlayer() then
             --creep killed by hero or controllable unit
+            local green=Vector(0,255,0)
             local lastDmg=self.lastCreepHurtDmg[keys.entindex_killed]
             local lasthitableTime=self:GetLasthittableTime(keys.entindex_killed,lastDmg)
-            local delay=Time()-lasthitableTime
-            delay=math.floor(delay*1000)/1000
+            local delay --can be nil in randomCreepHp if creep spawns already lasthitable
+            --i feel like nil delay handling kinda messy here, but dont wanna stuck here or rewrite everything for now
+            if lasthitableTime==nil then
+                delay=nil
+            else
+                delay=Time()-lasthitableTime
+                delay=math.floor(delay*1000)/1000
+            end
             if keys.entindex_inflictor~=nil then
                 --killed by ability
                 local ability=EntIndexToHScript(keys.entindex_inflictor)
-                Notifications:Show('green','good delay:'..delay,ability:GetAbilityName())
-                ParticleMessage:ShowNumber(victim, Vector(0,0,50), delay, green, false)
+                if delay==nil then
+                    Notifications:Show('green','good',ability:GetAbilityName())
+                else
+                    Notifications:Show('green','good delay:'..delay,ability:GetAbilityName())
+                    self:UpdateCounters('avgDelayCounter',delay)
+                end
+                self:UpdateCounters('lasthitCounterAbil',1)
+                self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
             else
-                Notifications:Show('green','good delay:'..delay,'none')
-                ParticleMessage:ShowNumber(victim, Vector(0,0,50), delay, green, false)
                 --killed by autoattack
+                if self.luckyCheckEnabled then
+                    if self.creepLuckyStrike[keys.entindex_killed] then
+                        Notifications:Show('yellow','lucky strike, delay:'..delay,'none')
+                        self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
+                        ParticleMessage:ShowLuckySign(victim,Vector(0,0,70))
+                        self:UpdateCounters('luckyStrikes',1)
+                        if attacker:GetTeam()==victim:GetTeam() then
+                            self:UpdateCounters('denyCounter',1)
+                        else
+                            self:UpdateCounters('lasthitCounterAA',1)
+                        end
+                        
+                        --[[ print('lucky strike') ]]
+                    else
+                        if delay==nil then
+                            Notifications:Show('green','good','none')
+                        else
+                            Notifications:Show('green','good delay:'..delay,'none')
+                            self:UpdateCounters('avgDelayCounter',delay)
+                        end
+                        if attacker:GetTeam()==victim:GetTeam() then
+                            self:UpdateCounters('denyCounter',1)
+                        else
+                            self:UpdateCounters('lasthitCounterAA',1)
+                        end
+                        self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
+                    end
+                else
+                    if delay==nil then
+                        Notifications:Show('green','good','none')
+                    else
+                        Notifications:Show('green','good delay:'..delay,'none')
+                        self:UpdateCounters('avgDelayCounter',delay)
+                    end
+                    if attacker:GetTeam()==victim:GetTeam() then
+                        self:UpdateCounters('denyCounter',1)
+                    else
+                        self:UpdateCounters('lasthitCounterAA',1)
+                    end
+                    self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
+                end
             end
         else
             Notifications:Show('red','bad','none')
+            self:UpdateCounters('missCounter',1)
+            --todo add check if killed by bot
+
             --creep killed by creep probably
         end
         --clean tables for this creep (funeral)
         self.lastCreepHurtDmg[keys.entindex_killed]=nil
         self.hpHistory[keys.entindex_killed]=nil
+        self.creepLuckyStrike[keys.entindex_killed]=nil
     end
 end
 
-function lasthit_training:StartDamageTracker()
-    self.playerDamageTracker=Timers:CreateTimer(0,function()
-        if IsValidEntity(self.playerHero) then
-            self.playerMinDamage=self.playerHero:GetBaseDamageMin()
-            return FrameTime()
-        else
-            print('[Lasthit] Damage tracker died cuz player hero nil')
-            return nil
-        end
-    end)
-end
 
 function lasthit_training:SendItemTable()
     local itemsWithPrices = {}
@@ -403,6 +521,33 @@ function lasthit_training:SendItemTable()
     CustomGameEventManager:Send_ServerToAllClients("lasthit_training_spell_table", itemsWithPrices)
 end
 
+function lasthit_training:UpdateCounters(name,value)
+    if self.counters[name]==nil then
+        print('[Lasthit] Failed to update counter, wrong name')
+    else
+        if name=="avgDelayCounter" then
+            self.delaySum=self.delaySum+value
+            self.delayCount=self.delayCount+1
+            self.counters[name]=self.delaySum/self.delayCount
+        else
+            local old=self.counters[name]
+            self.counters[name]=old+value
+        end
+        local hits=self.counters['lasthitCounterAA']+self.counters['lasthitCounterAbil']+self.counters['denyCounter']
+        local total=hits+self.counters['missCounter']
+        if total>0 then
+            self.counters['lasthitToMissPrecent']=math.floor((hits/total)*100)
+        else
+            self.counters['lasthitToMissPrecent']=0
+        end
+        CustomGameEventManager:Send_ServerToAllClients("lasthit_refresh_counters", self.counters)
+    end
+end
+
+function lasthit_training:CreateEnemyBot()
+
+end
+
 function lasthit_training:PrepareDeactivate()
     self.deactivateCalled = true
     --[[ announcer:Show({message = "#waitingForCastEnd"}) ]]
@@ -412,6 +557,12 @@ end
 
 function lasthit_training:Deactivate()
     self.activated = false
+    TowerController:TurnOffAttack()
+    self.delaySum=0
+    self.delayCount=0
+    for k in pairs(self.counters) do
+        self.counters[k] = 0
+    end
     self.lastHittableCreeps={}
     if self.waveTimer~=nil then
         Timers:RemoveTimer(self.waveTimer)
@@ -422,6 +573,7 @@ function lasthit_training:Deactivate()
     self.deactivateCalled = false
     self.playerHero:SetTeam(DOTA_TEAM_GOODGUYS)
     self.Player:SetTeam(DOTA_TEAM_GOODGUYS)
+    self.playerHero:SetAbsOrigin(Vector(-1501.5784912109,820.67797851563,0))
     Timebar:ResetLines()
     Timebar:Hide()
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu", {})

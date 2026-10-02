@@ -928,15 +928,15 @@
 					[
 						{
 							x = 0.0
-							y = 1.1716
-							m_flSlopeIncoming = 27.651999
-							m_flSlopeOutgoing = 27.651999
+							y = 1.8745601
+							m_flSlopeIncoming = 44.243202
+							m_flSlopeOutgoing = 44.243202
 						},
 						{
 							x = 0.29213
-							y = 5.0
-							m_flSlopeIncoming = 0.536675
-							m_flSlopeOutgoing = 0.536675
+							y = 8.0
+							m_flSlopeIncoming = 0.85868
+							m_flSlopeOutgoing = 0.85868
 						},
 					]
 					m_tangents = 
@@ -951,7 +951,7 @@
 						},
 					]
 					m_vDomainMins = [ 0.0, 0.0 ]
-					m_vDomainMaxs = [ 1.0, 5.0 ]
+					m_vDomainMaxs = [ 1.0, 8.0 ]
 				}
 			}
 			m_nSetMethod = "PARTICLE_SET_SCALE_INITIAL_VALUE"

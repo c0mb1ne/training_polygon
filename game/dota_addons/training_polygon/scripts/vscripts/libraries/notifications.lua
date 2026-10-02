@@ -75,7 +75,7 @@ function Notifications:Show(strColor,strText,strIcon)
   --text can be whatever, but would be nice to add support of localize string
   --icon can be 'none' 'pepega' 'pogchamp' or ability icon by name, for ex: 'axe_berserkers_call'
   local sound 
-  if strColor=="green" then
+  if strColor=="green" or strColor=="yellow" then
     sound=self.goodSound
   else
     sound=self.badSound

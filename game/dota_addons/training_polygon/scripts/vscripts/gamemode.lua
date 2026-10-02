@@ -50,7 +50,8 @@ require('libraries/notifications') --class for notification display
 require('libraries/place_picker') --class for picking place for training
 require('libraries/creep_controller') --class for spawning lanecreeps, maybe even jungle ones in future
 require('libraries/particle_message') --class for showing particle numbers in world
-
+require('libraries/tower_controller') --class for controlling towers like invul or attack capability, dont wanna search for them every time
+--tower controller inited in OnFirstPlayerLoaded
 
 
 --gamemodes:
@@ -79,6 +80,7 @@ end
 
 function GameMode:OnFirstPlayerLoaded()
   --nice place to put things that should be performed on very early stage of the game
+  TowerController:Init()
   TRAINING_PLACE=nil
   TEST_ID=1
   DebugPrint("[BAREBONES] First Player has loaded")
@@ -211,7 +213,8 @@ function GameMode:InitGameMode()
   LinkLuaModifier("modifier_custom_speed_boost_flat", "libraries/modifiers/modifier_custom_speed_boost_flat.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_custom_speed_boost", "libraries/modifiers/modifier_custom_speed_boost.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_set_max_mana.lua", LUA_MODIFIER_MOTION_NONE)
-  LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_lasthitable_effect.lua", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_invulnerable_custom", "libraries/modifiers/modifier_invulnerable_custom.lua", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_disarmed_custom", "libraries/modifiers/modifier_disarmed_custom.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
 function GameMode:DamageFilter(event)
