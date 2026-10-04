@@ -55,10 +55,10 @@ require('libraries/tower_controller') --class for controlling towers like invul 
 
 
 --gamemodes:
-require('gamemodes/dodge')
-require('gamemodes/timing')
-require('gamemodes/dream_coil_escape')
-require('gamemodes/lasthit_training')
+require('gamemodes/dodge/dodge')
+require('gamemodes/timing/timing')
+require('gamemodes/dream_coil_escape/dream_coil_escape')
+require('gamemodes/lasthit_training/lasthit_training')
 
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])

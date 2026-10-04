@@ -5,7 +5,7 @@
 if timing == nil then
   timing = class({})
 end
-require('gamemodes/timing_timebar_skills')--setup for each skills here
+require('gamemodes/timing/timing_timebar_skills')--setup for each skills here
 function timing:Init()
     self.type="sandbox" -- Define the type of mode
     self.name="timing" -- Name of the gamemode

@@ -2,7 +2,7 @@
 if dodge == nil then
   dodge = class({})
 end
-require('gamemodes/dodge_skills')--setup for each skills here
+require('gamemodes/dodge/dodge_skills')--setup for each skills here
 
 function dodge:Init()
     -- Each entry: {spell_name, hero_name, level, aghs, shard, is_ability, cast_func}

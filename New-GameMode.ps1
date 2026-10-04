@@ -29,7 +29,7 @@ $TemplateName = "template_mode"
 # Source template file locations (relative to $AddonRoot) - files that live on their own,
 # outside the per-mode HUD folder.
 $TemplateFiles = @(
-    "game\dota_addons\training_polygon\scripts\vscripts\gamemodes\$TemplateName.lua"
+    
 )
 
 # Source template FOLDER locations (relative to $AddonRoot) - for gamemodes with multiple
@@ -38,6 +38,7 @@ $TemplateFiles = @(
 # content\...\gamemodes_hud\template_mode\
 # The whole folder gets copied, renamed, and every file inside gets its name/contents updated.
 $TemplateFolders = @(
+    "game\dota_addons\training_polygon\scripts\vscripts\gamemodes\$TemplateName.lua"
     "content\dota_addons\training_polygon\panorama\layout\custom_game\menu2snippets\gamemodes_hud\$TemplateName",
     "content\dota_addons\training_polygon\panorama\styles\custom_game\menu2snippets\gamemodes_hud\$TemplateName",
     "content\dota_addons\training_polygon\panorama\scripts\custom_game\menu2snippets\gamemodes_hud\$TemplateName",
