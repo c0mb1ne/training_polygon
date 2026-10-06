@@ -20,6 +20,7 @@ function startGame() {
 	let randomCreepHp=false
 	let onlyEnemyWave=false
 	let luckyCheckEnabled=false
+	let enemyBot=false
 	if ($('#luckyCheckEnabled').checked){
 		luckyCheckEnabled=true
 	}
@@ -28,6 +29,9 @@ function startGame() {
 	}
 	if ($('#onlyEnemyWave').checked){
 		onlyEnemyWave=true
+	}
+	if ($('#enemyBot').checked){
+		enemyBot=true
 	}
     GameEvents.SendCustomGameEventToServer("activate_game_mode",
 	{
@@ -39,7 +43,8 @@ function startGame() {
 		botHero: botHero,
 		onlyEnemyWave: onlyEnemyWave,
 		randomCreepHp: randomCreepHp,
-		luckyCheckEnabled: luckyCheckEnabled
+		luckyCheckEnabled: luckyCheckEnabled,
+		enemyBot: enemyBot,
 	});
 }
 $('#luckyCheckEnabled').SetPanelEvent(

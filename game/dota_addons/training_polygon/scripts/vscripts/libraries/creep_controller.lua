@@ -78,8 +78,8 @@ function CreepController:SpawnCreepWave25sec(team,lane,typeOfWave)
     local pathcornerEnt=Entities:FindByName(nil, pathcorner)
     
     local respawnPlace=spawnPoints[team][lane]
-    for k,v in pairs(self.creepWaves[team][typeOfWave]) do
-        local unit=CreateUnitByName(v,respawnPlace,true,nil,nil,team)
+    for _,creepName in pairs(self.creepWaves[team][typeOfWave]) do
+        local unit=CreateUnitByName(creepName,respawnPlace,true,nil,nil,team)
         unit:SetInitialGoalEntity(pathcornerEnt)
         table.insert(returnTable,unit)
         table.insert(self.creepStorage,unit)

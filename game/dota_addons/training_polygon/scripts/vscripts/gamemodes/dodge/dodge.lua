@@ -731,6 +731,7 @@ function dodge:cycleEnemies()
     end
     refreshSkills(self.playerHero)
     refreshItems(self.playerHero)
+    SetPositionNicely(self.playerHero,self.trainingPlace)
     local manaMod=self.playerHero:FindModifierByName("modifier_set_max_mana")
     if manaMod then
         manaMod:SetStackCount(1000)

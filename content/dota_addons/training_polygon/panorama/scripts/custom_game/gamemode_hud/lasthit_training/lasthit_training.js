@@ -16,7 +16,7 @@ function formatTime(totalSeconds) {
 }
 
 function refreshCounters(data) {
-    $.Msg(JSON.stringify(data));
+    /* $.Msg(JSON.stringify(data)); */
     for (var key in data) {
         var label = $("#" + key);
         if (!label) continue; // no label with this id, skip

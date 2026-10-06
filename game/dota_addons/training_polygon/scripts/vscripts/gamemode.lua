@@ -51,6 +51,7 @@ require('libraries/place_picker') --class for picking place for training
 require('libraries/creep_controller') --class for spawning lanecreeps, maybe even jungle ones in future
 require('libraries/particle_message') --class for showing particle numbers in world
 require('libraries/tower_controller') --class for controlling towers like invul or attack capability, dont wanna search for them every time
+require('libraries/debug_var')--debug panel
 --tower controller inited in OnFirstPlayerLoaded
 
 
@@ -6355,7 +6356,7 @@ function GameMode:GoldFilter(event)
       return true
     else
       event['gold']=0
-      print('TRY TO MOD GOLD')
+      --[[ print('TRY TO MOD GOLD') ]]
       return true
     end
     

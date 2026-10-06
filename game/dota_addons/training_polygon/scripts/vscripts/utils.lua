@@ -186,3 +186,26 @@ end
 function printVector(vector)
 	print('Vector('..vector.x..','..vector.y..','..vector.z..')')
 end
+function SetPositionNicely(npcEnt, posVec)
+    if not npcEnt or npcEnt:IsNull() then return end
+
+    local startPos = npcEnt:GetAbsOrigin()
+
+    -- Departure effects
+    local startFx = ParticleManager:CreateParticle("particles/items_fx/blink_dagger_start.vpcf", PATTACH_ABSORIGIN, npcEnt)
+    ParticleManager:SetParticleControl(startFx, 0, startPos)
+    ParticleManager:ReleaseParticleIndex(startFx)
+    EmitSoundOnLocationWithCaster(startPos, "DOTA_Item.BlinkDagger.Activate", npcEnt)
+
+    -- Teleport (snap to ground, then resolve collisions)
+    npcEnt:SetAbsOrigin(GetGroundPosition(posVec, npcEnt))
+    FindClearSpaceForUnit(npcEnt, npcEnt:GetAbsOrigin(), true)
+
+    local endPos = npcEnt:GetAbsOrigin()
+
+    -- Arrival effects
+    local endFx = ParticleManager:CreateParticle("particles/items_fx/blink_dagger_end.vpcf", PATTACH_ABSORIGIN, npcEnt)
+    ParticleManager:SetParticleControl(endFx, 0, endPos)
+    ParticleManager:ReleaseParticleIndex(endFx)
+    EmitSoundOnLocationWithCaster(endPos, "DOTA_Item.BlinkDagger.NailedIt", npcEnt)
+end

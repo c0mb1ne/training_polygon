@@ -15,6 +15,7 @@
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/timebar.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/place_picker.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/announce_message.xml" />
+    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/debug_panel.xml" />
     <!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/xml_compiler.xml" /> -->
   </Panel>
 </root>

@@ -5,6 +5,7 @@ if lasthit_training == nil then
   lasthit_training = class({})
 end
 
+require('gamemodes/lasthit_training/lasthit_training_bot')--wanna isolate bot logic
 
 function lasthit_training:Init()
     self.type = "sandbox" -- Define the type of mode
@@ -108,6 +109,8 @@ function lasthit_training:Init()
     self.onlyEnemySide=false
     self.randomCreepHp=false
     self.botEnabled=false
+    self.botHeroName="npc_dota_hero_sniper"
+    self.botEnt=nil
     self.lastHittableCreeps={}
     self.playerDamageTracker=nil
     self.pingLasthittable=true
@@ -140,10 +143,9 @@ function lasthit_training:Prepare(args)
     -- following the unitsToPrecache/unitsAdded pattern from dodge.lua:Prepare()
     local unitsToPrecache = {}
     local defaultHero = args.defaultHero or "npc_dota_hero_antimage"
+    local botHero = args.botHero or "npc_dota_hero_sniper"
     precache:PrecacheAddPlayerUnitToList({defaultHero})
-    if #unitsToPrecache > 0 then
-        precache:PrecacheAddUnitToList(unitsToPrecache)
-    end
+    precache:PrecacheAddUnitToList({botHero})
 
     -- Store args for use after precaching
     self.pendingArgs = args
@@ -167,6 +169,7 @@ function lasthit_training:StartGame(args)
     CreepController:SpawnCreepWave25sec(DOTA_TEAM_BADGUYS,'bot','initial') ]]
     --[[ CreepController:CalibrateCreepWaveSpawnPositions(10, 15.0) ]]
     self.playerHeroName=args.defaultHero
+    self.botHeroName=args.botHero
     if args.selectedSide=="direside" then
         self.selectedSide=DOTA_TEAM_BADGUYS
     else
@@ -190,6 +193,12 @@ function lasthit_training:StartGame(args)
         self.randomCreepHp=true
     else
         self.randomCreepHp=false
+    end
+    self.botEnabled=false
+    if args['enemyBot']==1 then
+        self.botEnabled=true
+    else
+        self.botEnabled=false
     end
     self.luckyCheckEnabled=false
     if args['luckyCheckEnabled']==1 then
@@ -241,6 +250,11 @@ function lasthit_training:StartGame(args)
             return
         end
     end)
+    if self.botEnabled then
+        local botRespawnPlace=self.playerSpawns[5-self.selectedSide][self.selectedLane]
+        self.botEnt=lasthit_training_bot:Init(self.botHeroName,botRespawnPlace,5-self.selectedSide)
+
+    end
     --[[ ParticleMessage:Test(self.playerHero) ]]
 end
 
@@ -276,6 +290,9 @@ function lasthit_training:OnNPCSpawned(keys)
     local npc = EntIndexToHScript(keys.entindex)
     --[[ print('npc spawned: ',npc:GetClassname(),npc:GetUnitName()) ]]
     if npc:GetClassname()=="npc_dota_creep_lane" then
+        if IsValidEntity(self.botEnt) then
+            lasthit_training_bot:RegisterCreep(npc)
+        end
         table.insert(self.creepTrashCan,npc)
         if self.randomCreepHp then
             local maxHp=npc:GetMaxHealth()
@@ -295,7 +312,7 @@ function lasthit_training:ModifierGained(event)
     if event.name_const=="modifier_item_buff_ward" then
         event.duration=-1
     end
-    debugModifier(event)
+    --[[ debugModifier(event) ]]
     return true
 end
 
@@ -425,7 +442,7 @@ function lasthit_training:OnEntityKilled(keys)
             local lastDmg=self.lastCreepHurtDmg[keys.entindex_killed]
             local lasthitableTime=self:GetLasthittableTime(keys.entindex_killed,lastDmg)
             local delay --can be nil in randomCreepHp if creep spawns already lasthitable
-            --i feel like nil delay handling kinda messy here, but dont wanna stuck here or rewrite everything for now
+            --i feel like nil delay handling kinda messy here, but dont wanna stuck here or rewrite everything for now        
             if lasthitableTime==nil then
                 delay=nil
             else
@@ -569,6 +586,10 @@ function lasthit_training:Deactivate()
     end
     if self.playerDamageTracker~=nil then
         Timers:RemoveTimer(self.playerDamageTracker)
+    end
+    if IsValidEntity(self.botEnt) then
+        self.botEnt:RemoveSelf()
+        self.botEnt=nil
     end
     self.deactivateCalled = false
     self.playerHero:SetTeam(DOTA_TEAM_GOODGUYS)
