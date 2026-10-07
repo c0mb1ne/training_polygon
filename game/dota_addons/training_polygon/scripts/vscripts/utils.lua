@@ -209,3 +209,37 @@ function SetPositionNicely(npcEnt, posVec)
     ParticleManager:ReleaseParticleIndex(endFx)
     EmitSoundOnLocationWithCaster(endPos, "DOTA_Item.BlinkDagger.NailedIt", npcEnt)
 end
+
+function DrawDebugBoxCustom(min, max, color, ztest, duration)
+    local z = min.z
+
+    local p1 = Vector(min.x, min.y, z) -- bottom-left
+    local p2 = Vector(max.x, min.y, z) -- bottom-right
+    local p3 = Vector(max.x, max.y, z) -- top-right
+    local p4 = Vector(min.x, max.y, z) -- top-left
+
+    local r, g, b = color.x, color.y, color.z
+
+    DebugDrawLine(p1, p2, r, g, b, ztest, duration)
+    DebugDrawLine(p2, p3, r, g, b, ztest, duration)
+    DebugDrawLine(p3, p4, r, g, b, ztest, duration)
+    DebugDrawLine(p4, p1, r, g, b, ztest, duration)
+end
+
+function AveragePoint(vectors)
+    local avg = Vector(0,0,0)
+
+    -- Sum all the vectors
+    for i, vec in ipairs(vectors) do
+        avg.x = avg.x + vec.x
+        avg.y = avg.y + vec.y
+        avg.z = avg.z + vec.z
+    end
+
+    -- Divide by the number of vectors to find the average
+    avg.x = avg.x / #vectors
+    avg.y = avg.y / #vectors
+    avg.z = avg.z / #vectors
+
+    return avg
+end

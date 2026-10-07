@@ -4986,24 +4986,6 @@ SN_AI_KILLSTREAK=0
 SN_AI_KILLCOUNT=0
 
 
-function AveragePoint(vectors)
-    local avg = Vector(0,0,0)
-
-    -- Sum all the vectors
-    for i, vec in ipairs(vectors) do
-        avg.x = avg.x + vec.x
-        avg.y = avg.y + vec.y
-        avg.z = avg.z + vec.z
-    end
-
-    -- Divide by the number of vectors to find the average
-    avg.x = avg.x / #vectors
-    avg.y = avg.y / #vectors
-    avg.z = avg.z / #vectors
-
-    return avg
-end
-
 function moveUnitAndTurnToDirection(unit,point,direction)
 	ExecuteOrderFromTable({
 	  UnitIndex = unit:entindex(),
@@ -5030,10 +5012,10 @@ function sniperAIv2(sniper)
 	sniper:SetPhysicalArmorBaseValue(50)
 	sniper:SetIdleAcquire(false)
 	local blades_of_attack=CreateItem("item_blades_of_attack",sniper,sniper)
-  sniper:AddItem(blades_of_attack)
-  local fairy_hueta=CreateItem("item_faerie_fire",sniper,sniper)
-  sniper:AddItem(fairy_hueta)
-  sniper:AddItem(fairy_hueta)
+	sniper:AddItem(blades_of_attack)
+	local fairy_hueta=CreateItem("item_faerie_fire",sniper,sniper)
+	sniper:AddItem(fairy_hueta)
+	sniper:AddItem(fairy_hueta)
 	local ability = sniper:FindAbilityByName("sniper_take_aim")
 	ability:SetLevel(4)
 	custom_value=12

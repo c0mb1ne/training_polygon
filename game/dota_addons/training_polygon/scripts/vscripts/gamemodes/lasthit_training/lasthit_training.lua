@@ -133,6 +133,11 @@ function lasthit_training:Init()
     }
     self.delaySum=0
     self.delayCount=0
+    --helper for bot to undestand waves
+    self.creepWaves={
+        [DOTA_TEAM_BADGUYS]={},
+        [DOTA_TEAM_GOODGUYS]={}
+    }--todo: add some kind of cleanup
 end
 
 function lasthit_training:Prepare(args)
@@ -252,8 +257,7 @@ function lasthit_training:StartGame(args)
     end)
     if self.botEnabled then
         local botRespawnPlace=self.playerSpawns[5-self.selectedSide][self.selectedLane]
-        self.botEnt=lasthit_training_bot:Init(self.botHeroName,botRespawnPlace,5-self.selectedSide)
-
+        self.botEnt=lasthit_training_bot:Init(self.botHeroName,botRespawnPlace,5-self.selectedSide,self.selectedLane)
     end
     --[[ ParticleMessage:Test(self.playerHero) ]]
 end
@@ -270,6 +274,7 @@ function lasthit_training:AddLasthittableMarker(npc)
 end
 
 function lasthit_training:SpawnCreepWave(side,bFirst)
+    local spawnedWave={}
     if self.onlyEnemySide then
         if side==self.selectedSide then
             return nil
@@ -277,12 +282,15 @@ function lasthit_training:SpawnCreepWave(side,bFirst)
     end
     if bFirst then
         if self.selectedLane=="mid" then
-            CreepController:SpawnCreepWave15sec(side,self.selectedLane,'initial')
+            spawnedWave[side]=CreepController:SpawnCreepWave15sec(side,self.selectedLane,'initial')
         else
-            CreepController:SpawnCreepWave25sec(side,self.selectedLane,'initial')
+            spawnedWave[side]=CreepController:SpawnCreepWave25sec(side,self.selectedLane,'initial')
         end
     else
-        CreepController:SpawnCreepWave(side,self.selectedLane,'initial')
+        spawnedWave[side]=CreepController:SpawnCreepWave(side,self.selectedLane,'initial')
+    end
+    for side,creepTable in pairs(spawnedWave) do
+        table.insert(self.creepWaves[side],creepTable)
     end
 end
 
@@ -290,9 +298,6 @@ function lasthit_training:OnNPCSpawned(keys)
     local npc = EntIndexToHScript(keys.entindex)
     --[[ print('npc spawned: ',npc:GetClassname(),npc:GetUnitName()) ]]
     if npc:GetClassname()=="npc_dota_creep_lane" then
-        if IsValidEntity(self.botEnt) then
-            lasthit_training_bot:RegisterCreep(npc)
-        end
         table.insert(self.creepTrashCan,npc)
         if self.randomCreepHp then
             local maxHp=npc:GetMaxHealth()
