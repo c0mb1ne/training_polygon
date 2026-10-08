@@ -52,6 +52,44 @@ function lasthit_training_bot:CreateBotUnit()
     end)
 end
 
+local function IsCreepAlive(c)
+    return c ~= nil and IsValidEntity(c) and c:IsAlive()
+end
+
+-- removes dead/invalid creeps from the wave in place, returns true if any are left
+local function PruneWave(wave)
+    for i = #wave, 1, -1 do
+        if not IsCreepAlive(wave[i]) then
+            table.remove(wave, i)
+        end
+    end
+    return #wave > 0
+end
+
+function lasthit_training_bot:getOldestWave(team)
+    local waves = lasthit_training.creepWaves[team]
+    while #waves > 0 and not PruneWave(waves[1]) do
+        table.remove(waves, 1)
+    end
+    return waves[1]  -- nil if no living waves
+end
+
+function lasthit_training_bot:getLatestWave(team)
+    local waves = lasthit_training.creepWaves[team]
+    while #waves > 0 and not PruneWave(waves[#waves]) do
+        table.remove(waves, #waves)
+    end
+    return waves[#waves]  -- nil if no living waves
+end
+-- prunes all waves of a team, drops empty ones
+function lasthit_training_bot:CleanupWaves(team)
+    local waves = lasthit_training.creepWaves[team]
+    for i = #waves, 1, -1 do
+        if not PruneWave(waves[i]) then
+            table.remove(waves, i)
+        end
+    end
+end
 function lasthit_training_bot:Think()
     self.botEnt:Stop()
     local color1=Vector(255,0,0)
@@ -60,13 +98,32 @@ function lasthit_training_bot:Think()
     local color4=Vector(255,255,0)
     local color5=Vector(0,0,0)
     local botPosition=self.botEnt:GetAbsOrigin()
+    local allyTeam=self.botTeam
+    local enemyTeam=5-self.botTeam
+    self:CleanupWaves(allyTeam)
+    self:CleanupWaves(enemyTeam)
     --[[ DebugVar("botPos",self.botEnt:GetAbsOrigin()) ]]
     self.friendlyCreepsHealthSum=0
     self.enemyCreepsHealthSum=0
     self.aliveCreeps={}
+    local friendlyWave=self:getOldestWave(allyTeam)
+    local enemyWave=self:getOldestWave(enemyTeam)
     self.friendlyCreeps={}
     self.enemyCreeps={}
-    self.aliveCreeps=Entities:FindAllByName("npc_dota_creep_lane")
+    local allyWaves = lasthit_training.creepWaves[allyTeam]
+    for _,wave in pairs(allyWaves) do
+        local creepsPos={}
+        for _,creep in pairs(wave) do
+            local pos=creep:GetAbsOrigin()
+            table.insert(creepsPos,pos)
+        end
+        if #creepsPos > 0 then
+            DebugDrawCircle(AveragePoint(creepsPos), color2, 20, 20, true, self.botThinkInterval)
+        end
+    end
+    
+    
+    --[[ self.aliveCreeps=Entities:FindAllByName("npc_dota_creep_lane")
     for _,creep in pairs(self.aliveCreeps) do
         if creep:IsAlive() then
             if creep:GetTeam()==self.botEnt:GetTeam() then
@@ -79,9 +136,9 @@ function lasthit_training_bot:Think()
                 self.enemyCreepsHealthSum=self.enemyCreepsHealthSum+hp
             end
         end
-    end
+    end ]]
     DebugDrawCircle(botPosition, color1, 20, self.botAttackRange, true, self.botThinkInterval)
-
+    
     --[[ DebugDrawCircle(self.creepScanZone.minVec, color2, 20, 20, true, self.botThinkInterval) ]]
     --[[ DrawDebugBoxCustom(self.creepScanZone.minVec,self.creepScanZone.maxVec,color2,true,self.botThinkInterval)
     DebugDrawCircle(self.creepScanZone.minVec, color2, 20, 20, true, self.botThinkInterval)

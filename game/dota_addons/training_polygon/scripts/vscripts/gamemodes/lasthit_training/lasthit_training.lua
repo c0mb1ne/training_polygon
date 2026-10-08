@@ -469,9 +469,14 @@ function lasthit_training:OnEntityKilled(keys)
                 --killed by autoattack
                 if self.luckyCheckEnabled then
                     if self.creepLuckyStrike[keys.entindex_killed] then
-                        Notifications:Show('yellow','lucky strike, delay:'..delay,'none')
-                        self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
-                        ParticleMessage:ShowLuckySign(victim,Vector(0,0,70))
+                        if delay==nil then
+                            Notifications:Show('green','good','none')
+                        else
+                            Notifications:Show('yellow','lucky strike','none')
+                            self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
+                            ParticleMessage:ShowLuckySign(victim,Vector(0,0,70))
+                        end
+                        
                         self:UpdateCounters('luckyStrikes',1)
                         if attacker:GetTeam()==victim:GetTeam() then
                             self:UpdateCounters('denyCounter',1)
@@ -520,6 +525,21 @@ function lasthit_training:OnEntityKilled(keys)
         self.lastCreepHurtDmg[keys.entindex_killed]=nil
         self.hpHistory[keys.entindex_killed]=nil
         self.creepLuckyStrike[keys.entindex_killed]=nil
+        --waves table cleanup:
+        --[[ for side, waves in pairs(self.creepWaves) do
+            for i = #waves, 1, -1 do
+                local wave = waves[i]
+                for j = #wave, 1, -1 do
+                    if wave[j] == killed then
+                        table.remove(wave, j)
+                        break
+                    end
+                end
+                if #wave == 0 then
+                    table.remove(waves, i)
+                end
+            end
+        end ]]
     end
 end
 
@@ -582,6 +602,10 @@ function lasthit_training:Deactivate()
     TowerController:TurnOffAttack()
     self.delaySum=0
     self.delayCount=0
+    self.creepWaves={
+        [DOTA_TEAM_BADGUYS]={},
+        [DOTA_TEAM_GOODGUYS]={}
+    }
     for k in pairs(self.counters) do
         self.counters[k] = 0
     end
