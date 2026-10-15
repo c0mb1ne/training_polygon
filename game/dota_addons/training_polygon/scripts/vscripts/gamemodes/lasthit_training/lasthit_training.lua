@@ -137,7 +137,19 @@ function lasthit_training:Init()
     self.creepWaves={
         [DOTA_TEAM_BADGUYS]={},
         [DOTA_TEAM_GOODGUYS]={}
-    }--todo: add some kind of cleanup
+    }
+    --debug of attack tracker
+    self.attacksLaunched=0
+    self.attacksLanded=0
+    self.landedUnknown=0
+    self.attacksFailed=0
+    self.pendingByRecord = {}   -- [record] = hit
+    self.pendingByTarget = {}   -- [target entindex] = { [record] = hit }
+    self.flightModel     = {}   -- [unitName] = {speed=, offset=}, falls back to nominal speed, offset 0
+    self.flightModel["npc_dota_creep_badguys_ranged"] = {speed=1000, offset=75}
+    self.flightModel["npc_dota_creep_goodguys_ranged"] = {speed=1000, offset=75}
+    self.flightStats     = {}   -- [unitName] = regression + error sums
+    self.lastLaunch={}
 end
 
 function lasthit_training:Prepare(args)
@@ -214,7 +226,9 @@ function lasthit_training:StartGame(args)
     self.Player=PlayerResource:GetPlayer(0)
     local old_hero=self.Player:GetAssignedHero()
     self.playerHero=replaceHero(old_hero,self.playerHeroName)
-    self.playerHero:SetBaseHealthRegen(300)
+    if not self.botEnabled then
+        self.playerHero:SetBaseHealthRegen(300)
+    end
     --[[ self.playerHero:SetBaseManaRegen(300) ]]
     --[[ print('debug:',self.selectedSide,self.selectedLane,self.playerSpawns[self.selectedSide][self.selectedLane]) ]]
     self.playerHero:SetAbsOrigin(self.playerSpawns[self.selectedSide][self.selectedLane])
@@ -229,6 +243,7 @@ function lasthit_training:StartGame(args)
         self.playerHero:AddItem(item)
     end
     self.playerHero:SetAbilityPoints(1)
+    
     local cycleStartTime
     if self.selectedLane=="mid" then
         cycleStartTime=15
@@ -259,6 +274,7 @@ function lasthit_training:StartGame(args)
         local botRespawnPlace=self.playerSpawns[5-self.selectedSide][self.selectedLane]
         self.botEnt=lasthit_training_bot:Init(self.botHeroName,botRespawnPlace,5-self.selectedSide,self.selectedLane)
     end
+    self.playerHero:AddNewModifier(hero, nil, "modifier_attack_tracker", {})
     --[[ ParticleMessage:Test(self.playerHero) ]]
 end
 
@@ -385,6 +401,161 @@ function lasthit_training:OnEntityHurt(keys)
         end
     end
 end
+--a lot of ai code gonna be here, since im too lazy to calculate attacks by myself
+local function ArmorMultiplier(target)
+    local armor = target:GetPhysicalArmorValue(false)
+    return 1 - 0.06 * armor / (1 + 0.06 * math.abs(armor))
+end
+
+function lasthit_training:OnAttackLaunched(attacker, target, record)
+    if attacker == nil or target == nil or target:IsNull() then return end
+    self.attacksLaunched = (self.attacksLaunched or 0) + 1
+    DebugVar("attacksLaunched",self.attacksLaunched)
+    self.lastLaunch[attacker:entindex()] = Time()
+    local pos = attacker:GetAbsOrigin()
+    local hit = {
+        record     = record,
+        attacker   = attacker,
+        target     = target,
+        launchPos  = pos,
+        launchTime = Time(),
+        ranged     = attacker:IsRangedAttacker(),
+        damage     = attacker:GetAverageTrueAttackDamage(target) * ArmorMultiplier(target),
+    }
+    hit.predictedFlight = self:PredictFlight(attacker, target, pos)  -- at launch, for comparison
+
+    self.pendingByRecord[record] = hit
+    local idx = target:entindex()
+    local t = self.pendingByTarget[idx] or {}
+    self.pendingByTarget[idx] = t
+    t[record] = hit
+end
+
+function lasthit_training:RemoveHit(record)
+    local h = self.pendingByRecord[record]
+    if not h then return nil end
+    self.pendingByRecord[record] = nil
+    local t = self.pendingByTarget[h.target:entindex()]
+    if t then t[record] = nil end
+    return h
+end
+
+function lasthit_training:OnAttackLanded(attacker, target, record)
+    local h = self:RemoveHit(record)
+    if not h then
+        self.landedUnknown = (self.landedUnknown or 0) + 1
+        return
+    end
+    self.attacksLanded = (self.attacksLanded or 0) + 1
+    DebugVar("attacksLanded",self.attacksLanded)
+    if not h.ranged then return end
+
+    local flight = Time() - h.launchTime
+    local dist   = (target:GetAbsOrigin() - h.launchPos):Length2D()
+    if flight < 0.01 then return end
+
+    local name = attacker:GetUnitName()
+    local s = self.flightStats[name]
+    if not s then
+        s = {n=0, sx=0, sy=0, sxx=0, sxy=0, errSum=0, errAbsSum=0}
+        self.flightStats[name] = s
+    end
+    local err = flight - h.predictedFlight   -- positive: projectile was slower than predicted
+    s.n = s.n + 1
+    s.sx, s.sy = s.sx + dist, s.sy + flight
+    s.sxx, s.sxy = s.sxx + dist*dist, s.sxy + dist*flight
+    s.errSum, s.errAbsSum = s.errSum + err, s.errAbsSum + math.abs(err)
+end
+
+function lasthit_training:OnAttackFail(record)
+    if self:RemoveHit(record) then
+        self.attacksFailed = (self.attacksFailed or 0) + 1
+        DebugVar("attacksFailed",self.attacksFailed)
+    end
+end
+
+function lasthit_training:PredictFlight(attacker, target, launchPos)
+    if not attacker:IsRangedAttacker() then return 0 end
+    local m = self.flightModel[attacker:GetUnitName()]
+    local speed  = m and m.speed  or attacker:GetProjectileSpeed()
+    local offset = m and m.offset or 0
+    local dist = (target:GetAbsOrigin() - launchPos):Length2D()
+    return math.max(0, dist - offset) / speed
+end
+
+function lasthit_training:DumpFlightStats()
+    for name, s in pairs(self.flightStats) do
+        local denom = s.n * s.sxx - s.sx * s.sx
+        local line = ""
+        if s.n >= 5 and denom > 1e-6 then
+            local slope = (s.n * s.sxy - s.sx * s.sy) / denom
+            local intercept = (s.sy - slope * s.sx) / s.n
+            local speed = 1 / slope
+            local offset = -intercept * speed
+            line = string.format(" fit: speed=%.0f offset=%.0f", speed, offset)
+            s.fit = {speed = speed, offset = offset}
+        end
+        DebugVar(name,(string.format("%s: n=%d meanErr=%.3f meanAbsErr=%.3f%s",
+            name, s.n, s.errSum / s.n, s.errAbsSum / s.n, line)))
+    end
+end
+
+function lasthit_training:ApplyFits(minSamples)
+    for name, s in pairs(self.flightStats) do
+        if s.fit and s.n >= (minSamples or 30) and s.fit.speed > 0 then
+            self.flightModel[name] = {speed = s.fit.speed, offset = s.fit.offset}
+        end
+    end
+end
+
+function lasthit_training:PredictLastHittableTime(target, damage)
+    local now = Time()
+    local hp = target:GetHealth()
+    if hp <= damage then return now end
+
+    local hits = {}
+
+    -- 1) hits in flight
+    local pending = self.pendingByTarget[target:entindex()]
+    if pending then
+        for record, h in pairs(pending) do
+            local t = h.launchTime + self:PredictFlight(h.attacker, target, h.launchPos)
+            if h.attacker:IsNull() or now - t > 1.0 then
+                self:RemoveHit(record)          -- safety sweep, shouldn't trigger often
+            else
+                hits[#hits+1] = {t = math.max(t, now), damage = h.damage}
+            end
+        end
+    end
+
+    -- 2) future attacks from units currently targeting this creep
+    local horizon = 6
+    local units = FindUnitsInRadius(target:GetTeamNumber(), target:GetAbsOrigin(), nil, 1500,
+        DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_ALL,
+        DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
+
+    for _, a in ipairs(units) do
+        if a:GetAttackTarget() == target then
+            local spa = a:GetSecondsPerAttack(false)
+            local last = self.lastLaunch[a:entindex()] or (now - spa)
+            local launch = math.max(now, last + spa)
+            local travel = self:PredictFlight(a, target, a:GetAbsOrigin())
+            local dmg = a:GetAverageTrueAttackDamage(target) * ArmorMultiplier(target)
+            while launch - now < horizon do
+                hits[#hits+1] = {t = launch + travel, damage = dmg}
+                launch = launch + spa
+            end
+        end
+    end
+
+    table.sort(hits, function(a, b) return a.t < b.t end)
+    for _, h in ipairs(hits) do
+        hp = hp - h.damage
+        if hp <= 0 then return nil end
+        if hp <= damage then return h.t end
+    end
+    return nil
+end
 
 function lasthit_training:GetMinDamageForTarget(attackerEnt,victimEnt)
     local victim_armor=victimEnt:GetPhysicalArmorValue(false)
@@ -440,6 +611,13 @@ function lasthit_training:OnEntityKilled(keys)
     --[[ DeepPrintTable(keys) ]]
     local attacker=EntIndexToHScript(keys.entindex_attacker)
     local victim=EntIndexToHScript(keys.entindex_killed)
+    if victim==self.playerHero then
+        self.playerHero:SetRespawnPosition(self.playerSpawns[self.selectedSide][self.selectedLane])
+        self.playerHero:SetTimeUntilRespawn(5)
+        --[[ Timers:CreateTimer(5,function()
+            self.playerHero:RespawnHero(false,false)
+        end) ]]
+    end
     if victim:GetClassname()=="npc_dota_creep_lane" then
         if attacker:IsControllableByAnyPlayer() then
             --creep killed by hero or controllable unit
@@ -518,7 +696,9 @@ function lasthit_training:OnEntityKilled(keys)
             Notifications:Show('red','bad','none')
             self:UpdateCounters('missCounter',1)
             --todo add check if killed by bot
-
+            if attacker==self.botEnt then
+                self:UpdateCounters('botLastHit',1)
+            end
             --creep killed by creep probably
         end
         --clean tables for this creep (funeral)
@@ -600,8 +780,18 @@ end
 function lasthit_training:Deactivate()
     self.activated = false
     TowerController:TurnOffAttack()
+    self.attacksLaunched=0
+    self.attacksLanded=0
+    self.landedUnknown=0
+    self.attacksFailed=0
+    self.pendingByRecord = {}   -- [record] = hit
+    self.pendingByTarget = {}   -- [target entindex] = { [record] = hit }
+    self.flightModel     = {}   -- [unitName] = {speed=, offset=}, falls back to nominal speed, offset 0
+    self.flightStats     = {}   -- [unitName] = regression + error sums
+    self.lastLaunch={}
     self.delaySum=0
     self.delayCount=0
+    self.attacksFailed=0
     self.creepWaves={
         [DOTA_TEAM_BADGUYS]={},
         [DOTA_TEAM_GOODGUYS]={}

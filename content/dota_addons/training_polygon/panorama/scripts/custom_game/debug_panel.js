@@ -24,13 +24,18 @@ function OnDebugVar(data) {
     // every time: just update the value
     label.text = String(data.value); 
 }
-function ShowPanel(){
-    $.GetContextPanel().style['visibility']='visible'
-    $.GetContextPanel().style['opacity']='1'
+function ShowPanel() {
+    ClearPanel();
+    $.GetContextPanel().style['visibility'] = 'visible';
+    $.GetContextPanel().style['opacity'] = '1';
 }
 function HidePanel(){
     $.GetContextPanel().style['visibility']='collapse'
     $.GetContextPanel().style['opacity']='0'
+}
+function ClearPanel() {
+    container.RemoveAndDeleteChildren();
+    valueLabels = {};
 }
 HidePanel()
 GameEvents.Subscribe("send_debug_var", OnDebugVar);

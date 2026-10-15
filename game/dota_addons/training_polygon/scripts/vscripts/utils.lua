@@ -243,3 +243,8 @@ function AveragePoint(vectors)
 
     return avg
 end
+
+function distanceBetweenTwoVec(vec1,vec2)
+	local len=vec1-vec2
+	return len:Length()
+end

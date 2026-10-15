@@ -216,6 +216,8 @@ function GameMode:InitGameMode()
   LinkLuaModifier("modifier_set_max_mana", "libraries/modifiers/modifier_set_max_mana.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_invulnerable_custom", "libraries/modifiers/modifier_invulnerable_custom.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_disarmed_custom", "libraries/modifiers/modifier_disarmed_custom.lua", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_bonus_attack_speed", "libraries/modifiers/modifier_bonus_attack_speed.lua", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_attack_tracker", "gamemodes/lasthit_training/modifier_attack_tracker.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
 function GameMode:DamageFilter(event)
