@@ -6,7 +6,7 @@ if lasthit_training == nil then
 end
 
 require('gamemodes/lasthit_training/lasthit_training_bot')--wanna isolate bot logic
-
+require('gamemodes/lasthit_training/lasthit_training_bot_balance')
 function lasthit_training:Init()
     self.type = "sandbox" -- Define the type of mode
     self.name = "lasthit_training" -- Name of the gamemode (must match the key used to register it)
@@ -272,7 +272,7 @@ function lasthit_training:StartGame(args)
     end)
     if self.botEnabled then
         local botRespawnPlace=self.playerSpawns[5-self.selectedSide][self.selectedLane]
-        self.botEnt=lasthit_training_bot:Init(self.botHeroName,botRespawnPlace,5-self.selectedSide,self.selectedLane)
+        self.botEnt=lasthit_training_bot_balance:Init(self.botHeroName, botRespawnPlace, 5-self.selectedSide, self.selectedLane)
     end
     self.playerHero:AddNewModifier(hero, nil, "modifier_attack_tracker", {})
     --[[ ParticleMessage:Test(self.playerHero) ]]
@@ -378,7 +378,7 @@ function lasthit_training:OnEntityHurt(keys)
             if victim_hp<=minDamage then
                 
                 if self.lastHittableCreeps[entVictim:entindex()]==nil then
-                    print('creep became lasthittable')
+                    --[[ print('creep became lasthittable') ]]
                     self.lastHittableCreeps[entVictim:entindex()]=Time()
                     self:AddLasthittableMarker(entVictim)
                 end
@@ -698,6 +698,18 @@ function lasthit_training:OnEntityKilled(keys)
             --todo add check if killed by bot
             if attacker==self.botEnt then
                 self:UpdateCounters('botLastHit',1)
+                local red=Vector(255,0,0)
+                local lastDmg=self.lastCreepHurtDmg[keys.entindex_killed]
+                local lasthitableTime=self:GetLasthittableTime(keys.entindex_killed,lastDmg)
+                if lasthitableTime==nil then
+                    delay=nil
+                else
+                    delay=Time()-lasthitableTime
+                    delay=math.floor(delay*1000)/1000
+                end
+                if delay~=nil then
+                    self:ShowDelayParticle(victim, Vector(0,0,50), delay, red, false)
+                end
             end
             --creep killed by creep probably
         end
@@ -806,10 +818,7 @@ function lasthit_training:Deactivate()
     if self.playerDamageTracker~=nil then
         Timers:RemoveTimer(self.playerDamageTracker)
     end
-    if IsValidEntity(self.botEnt) then
-        self.botEnt:RemoveSelf()
-        self.botEnt=nil
-    end
+    lasthit_training_bot_balance:Stop()
     self.deactivateCalled = false
     self.playerHero:SetTeam(DOTA_TEAM_GOODGUYS)
     self.Player:SetTeam(DOTA_TEAM_GOODGUYS)

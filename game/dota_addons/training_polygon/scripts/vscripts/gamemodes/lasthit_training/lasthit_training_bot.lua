@@ -36,6 +36,7 @@ function lasthit_training_bot:Init(botHeroName,vecRespawnPlace,botTeam,selectedL
     self.botAttackRange=self.botEnt:GetBaseAttackRange()
     self.botDamageMin=0
     self.sleepUntil=nil
+    self.fixatedCreep=nil
     --[[ local new_as = self.botEnt:AddNewModifier(self.botEnt, nil, "modifier_bonus_attack_speed", {})
     new_as:SetStackCount(200) ]]
     DebugPanelShow()
@@ -72,6 +73,19 @@ local function PruneWave(wave)
         end
     end
     return #wave > 0
+end
+local function ArmorMultiplier(target)
+    local armor = target:GetPhysicalArmorValue(false)
+    return 1 - 0.06 * armor / (1 + 0.06 * math.abs(armor))
+end
+
+local function GetTimeBeforeAutoAttack(creep,damage)
+    local prediction=lasthit_training:PredictLastHittableTime(creep,damage*ArmorMultiplier(creep))
+    if prediction==nil then
+        return nil
+    else
+        return prediction-Time()
+    end
 end
 
 function lasthit_training_bot:getOldestWave(team)
@@ -170,7 +184,8 @@ function lasthit_training_bot:Think()
     local allyWaves = lasthit_training.creepWaves[allyTeam]
     local lowestHpAllyCreep=nil
     local lowestHpEnemyCreep=nil
-    local botAttackTime=self.botEnt:GetSecondsPerAttack(false)
+    --[[ local botAttackTime=self.botEnt:GetSecondsPerAttack(false) ]]
+    local botAttackTime=self.botEnt:GetAttackAnimationPoint()
     self.botDamageMin=self.botEnt:GetBaseDamageMin()
     local leastDelayCreep=nil
     local leastDelay=nil
@@ -188,17 +203,20 @@ function lasthit_training_bot:Think()
             end
             local pos=creep:GetAbsOrigin()
             table.insert(creepsPos,pos)
-            local prediction=lasthit_training:PredictLastHittableTime(creep,self.botDamageMin)
+            local prediction=GetTimeBeforeAutoAttack(creep,self.botDamageMin)
             if prediction~=nil then
-                if leastDelay==nil then
-                    leastDelay=prediction-Time()
-                else
-                    if leastDelay<prediction-Time() then
-                        leastDelay=prediction-Time()
+                if IsCreepDeniable(creep) then
+                    if leastDelay==nil then
+                        leastDelay=prediction
                         leastDelayCreep=creep
+                    else
+                        if leastDelay<prediction then
+                            leastDelay=prediction
+                            leastDelayCreep=creep
+                        end
                     end
                 end
-                local displayDelay=math.floor((prediction-Time())*1000)/1000
+                local displayDelay=math.floor((prediction)*1000)/1000
                 DebugDrawText(creep:GetAbsOrigin(),tostring(displayDelay),true,self.botThinkInterval)
             end
         end
@@ -217,28 +235,39 @@ function lasthit_training_bot:Think()
                 end
             end
             if creep:IsAttackingEntity(self.botEnt) then
-                creepsAttackingBot=creepsAttackingBot+1
-                DebugDrawLine(creep:GetAbsOrigin(),self.botEnt:GetAbsOrigin(),255,255,0,false,self.botThinkInterval)
+                --lets ignore creeps that being attack by bots tower
+                local distance=distanceBetweenTwoVec(self.friendlyTower:GetAbsOrigin(),creep:GetAbsOrigin())
+                if distance>self.friendlyTower:GetBaseAttackRange() then
+                    creepsAttackingBot=creepsAttackingBot+1
+                    DebugDrawLine(creep:GetAbsOrigin(),self.botEnt:GetAbsOrigin(),255,255,0,false,self.botThinkInterval)
+                end
             end
             --[[ local creepTarget=creep:GetAttackTarget()
             if creepTarget~=nil and creepTarget==self.botEnt then
                 DebugDrawLine(creep:GetAbsOrigin(),self.botEnt:GetAbsOrigin(),255,255,0,false,self.botThinkInterval)
             end ]]
-            local prediction=lasthit_training:PredictLastHittableTime(creep,self.botDamageMin)
+            local prediction=GetTimeBeforeAutoAttack(creep,self.botDamageMin)
             if prediction~=nil then
                 if leastDelay==nil then
-                    leastDelay=prediction-Time()
+                    leastDelay=prediction
+                    leastDelayCreep=creep
                 else
-                    if leastDelay<prediction-Time() then
-                        leastDelay=prediction-Time()
+                    if leastDelay<prediction then
+                        leastDelay=prediction
                         leastDelayCreep=creep
                     end
                 end
-                local displayDelay=math.floor((prediction-Time())*1000)/1000
+                local displayDelay=math.floor((prediction)*1000)/1000
                 DebugDrawText(creep:GetAbsOrigin(),tostring(displayDelay),true,self.botThinkInterval)
             end
         end
-        
+    end
+    if self.fixatedCreep==nil then
+        self.fixatedCreep=leastDelayCreep
+    else
+        if not IsCreepAlive(self.fixatedCreep) or GetTimeBeforeAutoAttack(self.fixatedCreep,self.botDamageMin)==nil then
+            self.fixatedCreep=leastDelayCreep
+        end
     end
     if self.enemyTower:IsAttackingEntity(self.botEnt) then
         creepsAttackingBot=creepsAttackingBot+1
@@ -275,7 +304,9 @@ function lasthit_training_bot:Think()
         end
     end ]]
     DebugDrawCircle(botPosition, color1, 20, self.botAttackRange, true, self.botThinkInterval)
-    
+    if self.fixatedCreep~=nil then
+        DebugDrawCircle(self.fixatedCreep:GetAbsOrigin(), color4, 20, 20, true, self.botThinkInterval)
+    end
     --[[ DebugDrawCircle(self.creepScanZone.minVec, color2, 20, 20, true, self.botThinkInterval) ]]
     --[[ DrawDebugBoxCustom(self.creepScanZone.minVec,self.creepScanZone.maxVec,color2,true,self.botThinkInterval)
     DebugDrawCircle(self.creepScanZone.minVec, color2, 20, 20, true, self.botThinkInterval)
@@ -301,10 +332,21 @@ function lasthit_training_bot:Think()
             return
         end
     end
-    if leastDelayCreep~=nil and self.botEnt:IsAttacking()==false then
-        self:AttackCreep(leastDelayCreep)
+    if self.fixatedCreep~=nil and self.botEnt:IsAttacking()==false then
+        self:AttackCreep(self.fixatedCreep)
         return
     end
+    if self.botEnt:IsAttackingEntity(self.fixatedCreep) and self.botEnt:IsAttacking() then
+        local fixatedDelay=GetTimeBeforeAutoAttack(self.fixatedCreep,self.botDamageMin)
+        if fixatedDelay~=nil then
+            if fixatedDelay>botAttackTime then
+                self.botEnt:Stop()
+            else
+                self.sleepUntil=Time()+self.botThinkInterval*5
+            end
+        end
+    end
+    --[[ DebugVar("player:IsAttacking()",lasthit_training.playerHero:IsAttacking()) ]]
     if distanceBetweenTwoVec(safeSpot,botPosition)>150 then
         self:MoveToSaveSpotBehaviour(safeSpot)
         return

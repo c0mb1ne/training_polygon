@@ -81,7 +81,7 @@ function Notifications:Show(strColor,strText,strIcon)
     sound=self.badSound
   end
   local soundToPlay=self.notificationsSounds[sound].sounds[RandomInt(1,#self.notificationsSounds[sound].sounds)]
-  print('[Notifications] Playing sound:',soundToPlay)
+  --[[ print('[Notifications] Playing sound:',soundToPlay) ]]
   CustomGameEventManager:Send_ServerToAllClients("show_notification",{color=strColor,text=strText,icon=strIcon,sound=soundToPlay})
 end
 function Notifications:SendSounds()
