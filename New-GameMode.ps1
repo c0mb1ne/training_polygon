@@ -38,7 +38,7 @@ $TemplateFiles = @(
 # content\...\gamemodes_hud\template_mode\
 # The whole folder gets copied, renamed, and every file inside gets its name/contents updated.
 $TemplateFolders = @(
-    "game\dota_addons\training_polygon\scripts\vscripts\gamemodes\$TemplateName.lua"
+    "game\dota_addons\training_polygon\scripts\vscripts\gamemodes\$TemplateName"
     "content\dota_addons\training_polygon\panorama\layout\custom_game\menu2snippets\gamemodes_hud\$TemplateName",
     "content\dota_addons\training_polygon\panorama\styles\custom_game\menu2snippets\gamemodes_hud\$TemplateName",
     "content\dota_addons\training_polygon\panorama\scripts\custom_game\menu2snippets\gamemodes_hud\$TemplateName",

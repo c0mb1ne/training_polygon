@@ -1,0 +1,30 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/test_sandbox/test_sandbox.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/test_sandbox/test_sandbox.js" />
+    </scripts>
+    <Panel class="test_sandbox_Main">
+        <Panel class="Col">
+            <Label class="menu_button_label" text="#test_sandbox"/>
+            <Label text="template gamemode for easy creation of file structures for future modes"/>
+            
+            <Panel class="RowNoFill">
+                
+                
+            </Panel>
+
+            
+
+            <Panel class="RowNoFill">
+                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
+                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                </Button>
+                <Label id="errorMsg"></Label>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

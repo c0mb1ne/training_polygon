@@ -1,5 +1,5 @@
 modifier_attack_tracker = class({})
-
+--kinda useful, todo: move to modifiers folder and hook gamemodes to it
 function modifier_attack_tracker:IsHidden() return true end
 function modifier_attack_tracker:IsPurgable() return false end
 function modifier_attack_tracker:RemoveOnDeath() return false end

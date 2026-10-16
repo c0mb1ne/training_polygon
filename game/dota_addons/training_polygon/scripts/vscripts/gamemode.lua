@@ -2,7 +2,7 @@
 --anyway only thing that used from barebones is a timer library
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
-TP_VERSION="0.4.1"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
+TP_VERSION="0.4.2"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
 --so it will be possible to see version on screenshots
 --in mainmenu_v2 js we gonna grab version
 CMB_SERVER="https://combine.isgood.host/"
@@ -60,6 +60,7 @@ require('gamemodes/dodge/dodge')
 require('gamemodes/timing/timing')
 require('gamemodes/dream_coil_escape/dream_coil_escape')
 require('gamemodes/lasthit_training/lasthit_training')
+require('gamemodes/test_sandbox/test_sandbox')--for testing stuff, not actual gamemode
 
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
@@ -217,7 +218,8 @@ function GameMode:InitGameMode()
   LinkLuaModifier("modifier_invulnerable_custom", "libraries/modifiers/modifier_invulnerable_custom.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_disarmed_custom", "libraries/modifiers/modifier_disarmed_custom.lua", LUA_MODIFIER_MOTION_NONE)
   LinkLuaModifier("modifier_bonus_attack_speed", "libraries/modifiers/modifier_bonus_attack_speed.lua", LUA_MODIFIER_MOTION_NONE)
-  LinkLuaModifier("modifier_attack_tracker", "gamemodes/lasthit_training/modifier_attack_tracker.lua", LUA_MODIFIER_MOTION_NONE)
+  --[[ LinkLuaModifier("modifier_attack_tracker", "gamemodes/lasthit_training/modifier_attack_tracker.lua", LUA_MODIFIER_MOTION_NONE) ]]
+  LinkLuaModifier("modifier_bonus_attack_damage", "libraries/modifiers/modifier_bonus_attack_damage.lua", LUA_MODIFIER_MOTION_NONE)
 end
 
 function GameMode:DamageFilter(event)
@@ -5345,7 +5347,14 @@ function GameMode:TestCommand1()
   local cmdPlayer=PlayerResource:GetPlayer(0)
   --DeepPrintTable(cmdPlayer)
   active_hero = cmdPlayer:GetAssignedHero()
-  announcer:Show({message="Roshan has spawned!", duration=5})
+  if test_sandbox~=nil then
+    local hero=test_sandbox.playerHero
+    local modifier_name="modifier_ringmaster_dark_carnival_souvenirs"
+    local modifier=hero:FindModifierByName(modifier_name)
+    modifier:SetStackCount(1)
+  end
+  
+  --[[ announcer:Show({message="Roshan has spawned!", duration=5}) ]]
   --[[ local newHero=replaceHero(active_hero,"npc_dota_hero_antimage") ]]
   --[[ local steam=PlayerResource:GetSteamID(0)
   local other={combo=67,avg=0.420}

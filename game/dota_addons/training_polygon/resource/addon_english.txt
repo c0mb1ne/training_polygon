@@ -152,5 +152,17 @@
 		"luckyStrikes"	"lucky lasthits"
 		"lasthitToMissPrecent"	"lasthit/miss precent"
 		"sessionTime"	"session time"
+		"startingItems" "starting items:"
+		"pickLane" "pick lane:"
+		"pickSide" "pick side:"
+		"pickHero" "pick hero:"
+		"enemyBot" "enemy bot"
+		"lasthit_training" "lasthit training"
+		"BotMS"	"bot movespeed:"
+		"BotAS" "bot attack speed:"
+		"BotAD" "bot attack damage:"
+		"stunDuration" "stun duration:"
+		"minRangeFromCenter" "minimal range from center:"
+		"maxRangeFromCenter" "maximum range from center:"
 	}
 }

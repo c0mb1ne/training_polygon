@@ -10,6 +10,33 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
         </Button>
+        <Button class="ShowSettings" id="unHideSettings" onactivate="tempShow()">
+			<Panel class="ShowIcon"/>
+		</Button>
+        <Panel class="additionalSettings" id="additionalSettings">
+            <Panel class="HideButton" id="HideButton"/>
+            <Panel class="padding"/>
+            <Panel class="botSettings" id="botSettings">
+                <Panel class="Row">
+                    <Label class="settingLabel" text="#BotMS"/>
+                    <Label class="settingLabel" id="botActualMS" text="67"/>
+                </Panel>
+                <Panel class="Control" id="msControl"/>
+                <Panel class="padding"/>
+                <Panel class="Row">
+                    <Label class="settingLabel" text="#BotAS"/>
+                    <Label class="settingLabel" id="botActualAS" text="67"/>
+                </Panel>
+                <Panel class="Control" id="asControl"/>
+                <Panel class="padding"/>
+                <Panel class="Row">
+                    <Label class="settingLabel" text="#BotAD"/>
+                    <Label class="settingLabel" id="botActualAD" text="67-67"/>
+                </Panel>
+                <Panel class="Control" id="adControl"/>
+                <Panel class="padding"/>
+            </Panel>
+        </Panel>
         <Panel class="statDisplay Row" id="statDisplay">
             <Panel class="Col"><!-- descriptions -->
                 <Label text="#lasthitCounterAA"/>

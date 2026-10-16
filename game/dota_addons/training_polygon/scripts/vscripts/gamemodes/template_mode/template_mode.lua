@@ -57,7 +57,10 @@ function template_mode:Prepare(args)
     if #unitsToPrecache > 0 then
         precache:PrecacheAddUnitToList(unitsToPrecache)
     end
-
+    --To precache player hero use this
+    if playerHero then
+        precache:PrecacheAddPlayerUnitToList({playerHero})
+    end
     -- Store args for use after precaching
     self.pendingArgs = args
 

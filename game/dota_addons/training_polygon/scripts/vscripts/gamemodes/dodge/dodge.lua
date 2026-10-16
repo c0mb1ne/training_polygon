@@ -85,6 +85,7 @@ function dodge:Init()
     self.spellTable.nyx_assassin_spiked_carapace = self.spellTable.item_manta
     self.spellTable.kez_raptor_dance = self.spellTable.item_manta
     self.spellTable.chaos_knight_phantasm = self.spellTable.item_manta
+    self.spellTable.ringmaster_funhouse_mirror = self.spellTable.item_manta
     -- Define a table mapping abilities to heroes
     self.unitTable = {
         item_manta = "npc_dota_hero_antimage",
@@ -99,6 +100,7 @@ function dodge:Init()
         nyx_assassin_spiked_carapace = "npc_dota_hero_nyx_assassin",
         kez_raptor_dance = "npc_dota_hero_kez",
         chaos_knight_phantasm = "npc_dota_hero_chaos_knight",
+        ringmaster_funhouse_mirror = "npc_dota_hero_ringmaster"
     }
     self.modifierTable = { --not used anywhere btw
         item_manta = "modifier_invulnerable",
@@ -113,6 +115,7 @@ function dodge:Init()
         nyx_assassin_spiked_carapace = "modifier_nyx_assassin_spiked_carapace",
         kez_raptor_dance = "modifier_kez_raptor_dance_immune",
         chaos_knight_phantasm = "npc_dota_hero_chaos_knight",
+        ringmaster_funhouse_mirror = "modifier_ringmaster_funhouse_mirror_phase"
     }
     self.dodgeWindowTime = {
         item_manta = 0.1,
@@ -126,7 +129,8 @@ function dodge:Init()
         riki_tricks_of_the_trade = 2,
         nyx_assassin_spiked_carapace = 1.1,
         kez_raptor_dance = DotaDB:GetAbilityValue("kez_raptor_dance", {"AbilityValues","invuln_period"}, "0.2"),
-        chaos_knight_phantasm = DotaDB:GetAbilityValue("chaos_knight_phantasm", {"AbilityValues","invuln_duration"}, "0.5")
+        chaos_knight_phantasm = DotaDB:GetAbilityValue("chaos_knight_phantasm", {"AbilityValues","invuln_duration"}, "0.5"),
+        ringmaster_funhouse_mirror = DotaDB:GetAbilityValue("ringmaster_funhouse_mirror", {"AbilityValues","invuln_duration"}, "0.5")
     }
     self.dodgeCastPointTable = {
         item_manta = 0,
@@ -140,7 +144,8 @@ function dodge:Init()
         riki_tricks_of_the_trade = 0.3,
         nyx_assassin_spiked_carapace = 0,
         kez_raptor_dance = 0,--has cast point, but invul starts as soon as ability used
-        chaos_knight_phantasm = DotaDB:GetAbilityValue("chaos_knight_phantasm", {"AbilityCastPoint"}, "0.4 0.4 0.4")
+        chaos_knight_phantasm = DotaDB:GetAbilityValue("chaos_knight_phantasm", {"AbilityCastPoint"}, "0.4 0.4 0.4"),
+        ringmaster_funhouse_mirror = DotaDB:GetAbilityValue("ringmaster_funhouse_mirror", {"AbilityCastPoint"}, "0.0")
     }
     self.hurtModifiers={
         "modifier_stunned",
@@ -592,8 +597,17 @@ function dodge:doSelfCast(enemyName,enemySpell,preCastDelay,afterCastDelay,spawn
     end)
 end
 function dodge:getRandomDelay()
-    local randomDelay=RandomFloat(0,0.5)
+    local randomDelay=RandomFloat(0,0.9)
     return randomDelay
+end
+
+function dodge:funhouseFix()
+    local abilityCheck=self.playerHero:GetAbilityByIndex(3)
+    if abilityCheck:GetAbilityName()=="ringmaster_empty_souvenir" then
+        self.playerHero:SwapAbilities("ringmaster_empty_souvenir", "ringmaster_funhouse_mirror", false, true)
+        local ability=self.playerHero:FindAbilityByName("ringmaster_funhouse_mirror")
+        ability:SetCurrentAbilityCharges(99)
+    end
 end
 
 function dodge:StartGame(args)
@@ -669,10 +683,11 @@ function dodge:StartGame(args)
         self.mantaEnt=CreateItem("item_manta",self.playerHero,self.playerHero)
         self.dodgeAbilityEnt=self.mantaEnt
         self.playerHero:AddItem(self.mantaEnt)
+    elseif self.currentDodgeType=="ringmaster_funhouse_mirror" then
+        self:funhouseFix()
     else
         self.dodgeAbilityEnt=self.playerHero:FindAbilityByName(self.currentDodgeType)
         self.playerHero:UpgradeAbility(self.dodgeAbilityEnt)
-        
     end
     if self.yashaKayaPlayer then
         local yashaKaya=CreateItem("item_yasha_and_kaya",self.playerHero,self.playerHero)
@@ -728,6 +743,9 @@ function dodge:cycleEnemies()
         self.spellIndex=1
     else
         self.spellIndex=self.spellIndex+1
+    end
+    if self.currentDodgeType=="ringmaster_funhouse_mirror" then
+        self:funhouseFix()
     end
     refreshSkills(self.playerHero)
     refreshItems(self.playerHero)
@@ -843,7 +861,7 @@ function dodge:OrderFilter(event)
 end
 
 function dodge:ModifierGained(event)
-    --[[ debugModifier(event) ]]
+    debugModifier(event)
     --[[ DeepPrintTable(event) ]]
     if event.name_const=="modifier_ember_spirit_sleight_of_fist_caster_invulnerability" then
         --[[ self.debugTime=Time()

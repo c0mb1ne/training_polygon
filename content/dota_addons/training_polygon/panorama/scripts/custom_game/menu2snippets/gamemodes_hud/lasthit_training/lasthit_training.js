@@ -70,7 +70,7 @@ function drawCategory(categoryName,data){
 	let categoryContainer=$.CreatePanel('Panel',$('#startingItemsContainer'),categoryName+'_container')
 	categoryContainer.AddClass('ColNoFill')
 	let categoryLabel=$.CreatePanel('Label',categoryContainer,categoryName+'_label')
-	categoryLabel.text='#'+categoryName
+	categoryLabel.text=$.Localize('#'+categoryName)
 	let iconsContainer=$.CreatePanel('Panel',categoryContainer,categoryName+'_icon_container')
 	iconsContainer.AddClass('itemIconContainer')
 	for (let itemInd in data){

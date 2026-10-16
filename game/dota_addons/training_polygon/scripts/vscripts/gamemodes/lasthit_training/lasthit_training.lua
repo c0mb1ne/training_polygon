@@ -5,7 +5,6 @@ if lasthit_training == nil then
   lasthit_training = class({})
 end
 
-require('gamemodes/lasthit_training/lasthit_training_bot')--wanna isolate bot logic
 require('gamemodes/lasthit_training/lasthit_training_bot_balance')
 function lasthit_training:Init()
     self.type = "sandbox" -- Define the type of mode
@@ -34,7 +33,7 @@ function lasthit_training:Init()
 
     self.deactivateCalled = false
     self.startingItems = {
-        consumables = {
+        DOTA_SUBSHOP_CONSUMABLES = {
             "item_tango",
             "item_flask", 
             "item_faerie_fire",
@@ -48,7 +47,7 @@ function lasthit_training:Init()
             "item_dust",
             "item_smoke_of_deceit",
         },
-        attributes = {
+        DOTA_SUBSHOP_ATTRIBUTES = {
             "item_branches",
             "item_gauntlets",
             "item_slippers",
@@ -62,7 +61,7 @@ function lasthit_training:Init()
             "item_boots_of_elves",
             "item_robe"
         },
-        accessories = {
+        DOTA_SUBSHOP_RECIPE_BASICS = {
             "item_ring_of_regen",
             "item_sobi_mask",
             "item_ring_of_protection",
@@ -133,23 +132,27 @@ function lasthit_training:Init()
     }
     self.delaySum=0
     self.delayCount=0
-    --helper for bot to undestand waves
-    self.creepWaves={
-        [DOTA_TEAM_BADGUYS]={},
-        [DOTA_TEAM_GOODGUYS]={}
+    self.lastWave={}
+    self.botMSModifier = nil
+    self.botADModifier = nil
+    self.botASModifier = nil
+    CustomGameEventManager:RegisterListener("lasthit_training_bot_ms_change", function(eventSourceIndex, args)
+        lasthit_training:BotMoveSpeedChange(args)
+    end)
+    CustomGameEventManager:RegisterListener("lasthit_training_bot_as_change", function(eventSourceIndex, args)
+        lasthit_training:BotAttackSpeedChange(args)
+    end)
+    CustomGameEventManager:RegisterListener("lasthit_training_bot_ad_change", function(eventSourceIndex, args)
+        lasthit_training:BotAttackDamageChange(args)
+    end)
+    self.botWardsPos={
+        Vector(-546.03894042969,497.81063842773,128),
+        Vector(-6077.0205078125,4995.62890625,128),
+        Vector(-6438.8442382813,3897.9162597656,128),
+        Vector(6358.568359375,-3521.2277832031,128),
+        Vector(5887.6669921875,-5583.138671875,128)
     }
-    --debug of attack tracker
-    self.attacksLaunched=0
-    self.attacksLanded=0
-    self.landedUnknown=0
-    self.attacksFailed=0
-    self.pendingByRecord = {}   -- [record] = hit
-    self.pendingByTarget = {}   -- [target entindex] = { [record] = hit }
-    self.flightModel     = {}   -- [unitName] = {speed=, offset=}, falls back to nominal speed, offset 0
-    self.flightModel["npc_dota_creep_badguys_ranged"] = {speed=1000, offset=75}
-    self.flightModel["npc_dota_creep_goodguys_ranged"] = {speed=1000, offset=75}
-    self.flightStats     = {}   -- [unitName] = regression + error sums
-    self.lastLaunch={}
+    self.botWardsEnts={}
 end
 
 function lasthit_training:Prepare(args)
@@ -252,15 +255,17 @@ function lasthit_training:StartGame(args)
     end
     self:SpawnCreepWave(DOTA_TEAM_BADGUYS,true)
     self:SpawnCreepWave(DOTA_TEAM_GOODGUYS,true)
-    self.waveTimer=Timers:CreateTimer(cycleStartTime,function()
-        self:SpawnCreepWave(DOTA_TEAM_BADGUYS,false)
-        self:SpawnCreepWave(DOTA_TEAM_GOODGUYS,false)
-        if self.activated then
-            return 30
-        else
-            return nil
-        end
-    end)
+    if self.onlyEnemySide==false then
+        self.waveTimer=Timers:CreateTimer(cycleStartTime,function()
+            self:SpawnCreepWave(DOTA_TEAM_BADGUYS,false)
+            self:SpawnCreepWave(DOTA_TEAM_GOODGUYS,false)
+            if self.activated then
+                return 30
+            else
+                return nil
+            end
+        end)
+    end
     TowerController:TurnOnAttack()
     Timers:CreateTimer(1,function()
         if self.activated then
@@ -273,9 +278,72 @@ function lasthit_training:StartGame(args)
     if self.botEnabled then
         local botRespawnPlace=self.playerSpawns[5-self.selectedSide][self.selectedLane]
         self.botEnt=lasthit_training_bot_balance:Init(self.botHeroName, botRespawnPlace, 5-self.selectedSide, self.selectedLane)
+        self.botMSModifier = self.botEnt:AddNewModifier(self.botEnt,nil,"modifier_custom_speed_boost_flat",{})
+        self.botADModifier = self.botEnt:AddNewModifier(self.botEnt,nil,"modifier_bonus_attack_damage",{})
+        self.botASModifier = self.botEnt:AddNewModifier(self.botEnt,nil,"modifier_bonus_attack_speed",{})
+        --we only have settings for bot, so show them here
+        CustomGameEventManager:Send_ServerToAllClients("lasthit_show_settings",{})
+        self:refreshBotStats()
+        --lets also put wards for bot
+        for _,pos in pairs(self.botWardsPos) do
+            local ward=CreateUnitByName("npc_dota_observer_wards",pos,true,nil,nil,5-self.selectedSide)
+            ward:AddNewModifier(ward,nil,"modifier_invisible",{})
+            table.insert(self.botWardsEnts,ward)
+        end
     end
-    self.playerHero:AddNewModifier(hero, nil, "modifier_attack_tracker", {})
+    --[[ self.playerHero:AddNewModifier(hero, nil, "modifier_attack_tracker", {}) ]]
     --[[ ParticleMessage:Test(self.playerHero) ]]
+end
+
+function lasthit_training:BotMoveSpeedChange(args)
+    if self.botMSModifier then
+        self.botMSModifier:SetStackCount(tonumber(args.value))
+        self:refreshBotStats()
+    end
+end
+
+function lasthit_training:BotAttackDamageChange(args)
+    print("attack speed change",args.value)
+    if self.botADModifier then
+        self.botADModifier:SetStackCount(tonumber(args.value))
+        self:refreshBotStats()
+    end
+end
+
+function lasthit_training:BotAttackSpeedChange(args)
+    if self.botASModifier then
+        self.botASModifier:SetStackCount(tonumber(args.value))
+        self:refreshBotStats()
+    end
+end
+
+function lasthit_training:refreshBotStats()
+    local bot = self.botEnt
+    if not bot or bot:IsNull() then return end
+
+    -- white damage range
+    local baseMin = bot:GetDamageMin()
+    local baseMax = bot:GetDamageMax()
+
+    -- total average damage (includes bonus damage from items/modifiers)
+    local avgTotal = bot:GetAverageTrueAttackDamage(nil)
+    local bonus = avgTotal - (baseMin + baseMax) / 2
+
+    local minDmg = baseMin + bonus
+    local maxDmg = baseMax + bonus
+
+    local ms = bot:GetIdealSpeed()
+
+    local attackSpeed = bot:GetAttackSpeed(false) * 100   -- e.g. 100 = base speed
+    local aps = bot:GetAttacksPerSecond(false)
+
+    CustomGameEventManager:Send_ServerToAllClients("lasthit_training_bot_stats", {
+        minDmg = math.floor(minDmg),
+        maxDmg = math.floor(maxDmg),
+        ms = ms,
+        attackSpeed = attackSpeed,
+        aps = aps,
+    })
 end
 
 function lasthit_training:AddLasthittableMarker(npc)
@@ -298,16 +366,14 @@ function lasthit_training:SpawnCreepWave(side,bFirst)
     end
     if bFirst then
         if self.selectedLane=="mid" then
-            spawnedWave[side]=CreepController:SpawnCreepWave15sec(side,self.selectedLane,'initial')
+            spawnedWave=CreepController:SpawnCreepWave15sec(side,self.selectedLane,'initial')
         else
-            spawnedWave[side]=CreepController:SpawnCreepWave25sec(side,self.selectedLane,'initial')
+            spawnedWave=CreepController:SpawnCreepWave25sec(side,self.selectedLane,'initial')
         end
     else
-        spawnedWave[side]=CreepController:SpawnCreepWave(side,self.selectedLane,'initial')
+        spawnedWave=CreepController:SpawnCreepWave(side,self.selectedLane,'initial')
     end
-    for side,creepTable in pairs(spawnedWave) do
-        table.insert(self.creepWaves[side],creepTable)
-    end
+    self.lastWave=spawnedWave
 end
 
 function lasthit_training:OnNPCSpawned(keys)
@@ -350,7 +416,9 @@ function lasthit_training:DamageFilter(event)
         local damage=math.ceil(event.damage)
         self.lastCreepHurtDmg[event.entindex_victim_const]=damage
     end
-    -- TODO: return false to prevent specific damage instances, true to allow
+    if entVictim:GetUnitName()=="npc_dota_observer_wards" then
+        return false
+    end
     return true
 end
 
@@ -400,161 +468,6 @@ function lasthit_training:OnEntityHurt(keys)
             --[[ self.lastCreepHurtSrc=keys.entindex_inflictor ]]
         end
     end
-end
---a lot of ai code gonna be here, since im too lazy to calculate attacks by myself
-local function ArmorMultiplier(target)
-    local armor = target:GetPhysicalArmorValue(false)
-    return 1 - 0.06 * armor / (1 + 0.06 * math.abs(armor))
-end
-
-function lasthit_training:OnAttackLaunched(attacker, target, record)
-    if attacker == nil or target == nil or target:IsNull() then return end
-    self.attacksLaunched = (self.attacksLaunched or 0) + 1
-    DebugVar("attacksLaunched",self.attacksLaunched)
-    self.lastLaunch[attacker:entindex()] = Time()
-    local pos = attacker:GetAbsOrigin()
-    local hit = {
-        record     = record,
-        attacker   = attacker,
-        target     = target,
-        launchPos  = pos,
-        launchTime = Time(),
-        ranged     = attacker:IsRangedAttacker(),
-        damage     = attacker:GetAverageTrueAttackDamage(target) * ArmorMultiplier(target),
-    }
-    hit.predictedFlight = self:PredictFlight(attacker, target, pos)  -- at launch, for comparison
-
-    self.pendingByRecord[record] = hit
-    local idx = target:entindex()
-    local t = self.pendingByTarget[idx] or {}
-    self.pendingByTarget[idx] = t
-    t[record] = hit
-end
-
-function lasthit_training:RemoveHit(record)
-    local h = self.pendingByRecord[record]
-    if not h then return nil end
-    self.pendingByRecord[record] = nil
-    local t = self.pendingByTarget[h.target:entindex()]
-    if t then t[record] = nil end
-    return h
-end
-
-function lasthit_training:OnAttackLanded(attacker, target, record)
-    local h = self:RemoveHit(record)
-    if not h then
-        self.landedUnknown = (self.landedUnknown or 0) + 1
-        return
-    end
-    self.attacksLanded = (self.attacksLanded or 0) + 1
-    DebugVar("attacksLanded",self.attacksLanded)
-    if not h.ranged then return end
-
-    local flight = Time() - h.launchTime
-    local dist   = (target:GetAbsOrigin() - h.launchPos):Length2D()
-    if flight < 0.01 then return end
-
-    local name = attacker:GetUnitName()
-    local s = self.flightStats[name]
-    if not s then
-        s = {n=0, sx=0, sy=0, sxx=0, sxy=0, errSum=0, errAbsSum=0}
-        self.flightStats[name] = s
-    end
-    local err = flight - h.predictedFlight   -- positive: projectile was slower than predicted
-    s.n = s.n + 1
-    s.sx, s.sy = s.sx + dist, s.sy + flight
-    s.sxx, s.sxy = s.sxx + dist*dist, s.sxy + dist*flight
-    s.errSum, s.errAbsSum = s.errSum + err, s.errAbsSum + math.abs(err)
-end
-
-function lasthit_training:OnAttackFail(record)
-    if self:RemoveHit(record) then
-        self.attacksFailed = (self.attacksFailed or 0) + 1
-        DebugVar("attacksFailed",self.attacksFailed)
-    end
-end
-
-function lasthit_training:PredictFlight(attacker, target, launchPos)
-    if not attacker:IsRangedAttacker() then return 0 end
-    local m = self.flightModel[attacker:GetUnitName()]
-    local speed  = m and m.speed  or attacker:GetProjectileSpeed()
-    local offset = m and m.offset or 0
-    local dist = (target:GetAbsOrigin() - launchPos):Length2D()
-    return math.max(0, dist - offset) / speed
-end
-
-function lasthit_training:DumpFlightStats()
-    for name, s in pairs(self.flightStats) do
-        local denom = s.n * s.sxx - s.sx * s.sx
-        local line = ""
-        if s.n >= 5 and denom > 1e-6 then
-            local slope = (s.n * s.sxy - s.sx * s.sy) / denom
-            local intercept = (s.sy - slope * s.sx) / s.n
-            local speed = 1 / slope
-            local offset = -intercept * speed
-            line = string.format(" fit: speed=%.0f offset=%.0f", speed, offset)
-            s.fit = {speed = speed, offset = offset}
-        end
-        DebugVar(name,(string.format("%s: n=%d meanErr=%.3f meanAbsErr=%.3f%s",
-            name, s.n, s.errSum / s.n, s.errAbsSum / s.n, line)))
-    end
-end
-
-function lasthit_training:ApplyFits(minSamples)
-    for name, s in pairs(self.flightStats) do
-        if s.fit and s.n >= (minSamples or 30) and s.fit.speed > 0 then
-            self.flightModel[name] = {speed = s.fit.speed, offset = s.fit.offset}
-        end
-    end
-end
-
-function lasthit_training:PredictLastHittableTime(target, damage)
-    local now = Time()
-    local hp = target:GetHealth()
-    if hp <= damage then return now end
-
-    local hits = {}
-
-    -- 1) hits in flight
-    local pending = self.pendingByTarget[target:entindex()]
-    if pending then
-        for record, h in pairs(pending) do
-            local t = h.launchTime + self:PredictFlight(h.attacker, target, h.launchPos)
-            if h.attacker:IsNull() or now - t > 1.0 then
-                self:RemoveHit(record)          -- safety sweep, shouldn't trigger often
-            else
-                hits[#hits+1] = {t = math.max(t, now), damage = h.damage}
-            end
-        end
-    end
-
-    -- 2) future attacks from units currently targeting this creep
-    local horizon = 6
-    local units = FindUnitsInRadius(target:GetTeamNumber(), target:GetAbsOrigin(), nil, 1500,
-        DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_ALL,
-        DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-
-    for _, a in ipairs(units) do
-        if a:GetAttackTarget() == target then
-            local spa = a:GetSecondsPerAttack(false)
-            local last = self.lastLaunch[a:entindex()] or (now - spa)
-            local launch = math.max(now, last + spa)
-            local travel = self:PredictFlight(a, target, a:GetAbsOrigin())
-            local dmg = a:GetAverageTrueAttackDamage(target) * ArmorMultiplier(target)
-            while launch - now < horizon do
-                hits[#hits+1] = {t = launch + travel, damage = dmg}
-                launch = launch + spa
-            end
-        end
-    end
-
-    table.sort(hits, function(a, b) return a.t < b.t end)
-    for _, h in ipairs(hits) do
-        hp = hp - h.damage
-        if hp <= 0 then return nil end
-        if hp <= damage then return h.t end
-    end
-    return nil
 end
 
 function lasthit_training:GetMinDamageForTarget(attackerEnt,victimEnt)
@@ -619,6 +532,20 @@ function lasthit_training:OnEntityKilled(keys)
         end) ]]
     end
     if victim:GetClassname()=="npc_dota_creep_lane" then
+        if self.onlyEnemySide then
+            local aliveCreeps=0
+            for _,creep in pairs(self.lastWave) do
+                if IsValidEntity(creep) and creep:IsAlive() then
+                    aliveCreeps=aliveCreeps+1
+                end
+            end
+            if aliveCreeps==0 then
+                if self.activated then
+                    self:SpawnCreepWave(DOTA_TEAM_BADGUYS,true)
+                    self:SpawnCreepWave(DOTA_TEAM_GOODGUYS,true)
+                end
+            end
+        end
         if attacker:IsControllableByAnyPlayer() then
             --creep killed by hero or controllable unit
             local green=Vector(0,255,0)
@@ -792,22 +719,10 @@ end
 function lasthit_training:Deactivate()
     self.activated = false
     TowerController:TurnOffAttack()
-    self.attacksLaunched=0
-    self.attacksLanded=0
-    self.landedUnknown=0
-    self.attacksFailed=0
-    self.pendingByRecord = {}   -- [record] = hit
-    self.pendingByTarget = {}   -- [target entindex] = { [record] = hit }
-    self.flightModel     = {}   -- [unitName] = {speed=, offset=}, falls back to nominal speed, offset 0
-    self.flightStats     = {}   -- [unitName] = regression + error sums
-    self.lastLaunch={}
     self.delaySum=0
     self.delayCount=0
     self.attacksFailed=0
-    self.creepWaves={
-        [DOTA_TEAM_BADGUYS]={},
-        [DOTA_TEAM_GOODGUYS]={}
-    }
+    self.lastWave={}
     for k in pairs(self.counters) do
         self.counters[k] = 0
     end
@@ -832,8 +747,13 @@ function lasthit_training:Deactivate()
         end
     end
     self.creepTrashCan={}
-    -- TODO: clean up any spawned units/timers/helpers specific to this mode,
-    -- following the pattern in dodge.lua:Deactivate() / timing.lua:Deactivate()
+    for _,ward in pairs(self.botWardsEnts) do
+        if IsValidEntity(ward) then
+            ward:RemoveSelf()
+        end
+    end
+    self.botWardsEnts={}
+    
 end
 
 lasthit_training:Init()
