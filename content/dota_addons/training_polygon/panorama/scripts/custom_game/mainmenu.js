@@ -700,19 +700,14 @@ var url = "https://combine.isgood.host/"
 
 
 
-GameEvents.SendCustomGameEventToServer (
+/* GameEvents.SendCustomGameEventToServer (
 	"init_user",
 	{
-/* 		url: url,
-		type: 'POST', */
-		route: 'init_user',
         data: {
-			
-			steam: steamID64,
 			language: client_lang
 		}
 	} 
-); 
+);  */
 
 function ReplaceDonation(panelId,name,money,level) {
 	var defaultPanel = $('#don_e_' + panelId)

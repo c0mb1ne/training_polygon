@@ -41,7 +41,67 @@
                 </Panel>
             </Panel>
             <Panel class="ColWFill" id="testPan">
-                
+                <Panel class="RowWFill">
+                    <Panel class="ColWFill">
+                        <Panel id="testing2" class="embeedingContainer">
+                            <Panel class="embeedingHeader">
+                                <Label class="menu_button_label" text="something"/>
+                            </Panel>
+                            <Panel class="embeedingContent">
+                                <Label class="embeedingContentLabel" text="something"/>
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                     <Panel id="loginWindow" class="ColWFill">
+                        <Panel class="embeedingContainer">
+                            <Panel class="embeedingHeader">
+                                <Label class="menu_button_label" text="#LOGIN"/>
+                            </Panel>
+                            <Panel class="embeedingContent width100">
+                                <Panel id="loginPlaceHolder">
+                                    <Panel class="ColNoFill horCenter vertCenter">
+                                        <Panel class="RowNoFill">
+                                            <Label class="embeedingContentLabel" text="#connectDesc"/>
+                                        </Panel>
+                                        <Panel class="RowNoFill">
+                                            <Panel class="smolIcon pcIcon"/>
+                                            <Panel class="Loader">
+                                                <Panel class="LoaderBar" />
+                                            </Panel>
+                                            <Panel class="smolIcon serverIcon"/>
+                                        </Panel>
+                                    </Panel>
+                                </Panel>
+                                <Panel id="loginForm">
+                                    <Panel class="ColWFill">
+                                        <Label class="embeedingContentLabel" text="#LoginDescription"/>
+                                        <Panel class="padding10"/>
+                                        <Panel class="RowWFill">
+                                            <Panel class="ColWFill">
+                                                <Button id="loginInGame" class="small_button" onactivate="openInternal()">
+                                                    <Label class="mode_play_label" text="#loginInGame"/>
+                                                </Button>
+                                            </Panel>
+                                            <Panel class="ColWFill">
+                                                <Button id="loginExternal" class="small_button">
+                                                    <Label class="mode_play_label" text="#loginExternal"/>
+                                                </Button>
+                                            </Panel>
+                                        </Panel>
+                                    </Panel>
+                                </Panel>
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                </Panel>
+                <Panel id="testing3" class="embeedingContainer">
+                    <Panel class="embeedingHeader">
+                        <Label class="menu_button_label" text="something"/>
+                    </Panel>
+                    <Panel class="embeedingContent">
+                        <Label class="embeedingContentLabel" text="something"/>
+                    </Panel>
+                </Panel>
             </Panel>
         </Panel>
     </Panel>

@@ -3853,7 +3853,7 @@ function training_polygon_end( eventSourceIndex, args )
     useGameTime = false,
     endTime = 2, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
     callback = function()
-      SendToConsole("disconnect")
+      SendToServerConsole("disconnect")
     end
   })
   

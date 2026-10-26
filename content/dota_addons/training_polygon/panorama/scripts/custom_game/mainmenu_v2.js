@@ -20,7 +20,7 @@ function clearMenuContent(){
 		oPanel.DeleteAsync(0)
 	});
 }
-
+const client_lang = $.Language()
 var home_page = $.CreatePanel( "Panel", menuContent, "home_page" ); 
 home_page.BLoadLayout( "file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml", false, false );
 $('#menu_home').selected=true
@@ -121,7 +121,20 @@ function updateVersion(data){
 	let version=data.version
 	$('#tp_version_label').text="version "+version
 }
-
+GameEvents.SendCustomGameEventToServer (
+	"init_user",
+	{
+        data: {
+			language: client_lang
+		}
+	} 
+); 
+function onLoginDone(){
+	$('#tp_status_label').text="online"//localize in future
+	$('#tp_status_label').RemoveClass("statusOffline")
+	$('#tp_status_label').AddClass("statusOnline")
+}
+GameEvents.Subscribe("login_done", onLoginDone);
 GameEvents.Subscribe("version_to_ui", updateVersion);
 GameEvents.Subscribe("old_hud_mode", oldHudMode);
 GameEvents.Subscribe("new_hud_mode", newHudMode);

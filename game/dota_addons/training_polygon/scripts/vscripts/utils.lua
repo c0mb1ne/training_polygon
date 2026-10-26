@@ -248,3 +248,34 @@ function distanceBetweenTwoVec(vec1,vec2)
 	local len=vec1-vec2
 	return len:Length()
 end
+
+local charset = {}
+
+-- qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890
+for i = 48,  57 do table.insert(charset, string.char(i)) end
+for i = 65,  90 do table.insert(charset, string.char(i)) end
+for i = 97, 122 do table.insert(charset, string.char(i)) end
+
+function string.random(length)
+  math.randomseed(os.time())
+
+  if length > 0 then
+    return string.random(length - 1) .. charset[math.random(1, #charset)]
+  else
+    return ""
+  end
+end
+
+function generateRandomString(length)
+    local charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    local randomString = ""
+    local charsetLength = string.len(charset)
+
+    for i = 1, length do
+        local randomIndex = math.random(1, charsetLength)
+        local randomChar = string.sub(charset, randomIndex, randomIndex)
+        randomString = randomString .. randomChar
+    end
+
+    return randomString
+end

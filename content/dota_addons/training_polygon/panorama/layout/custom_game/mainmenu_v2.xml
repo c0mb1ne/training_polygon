@@ -12,7 +12,7 @@
 					<Panel class="fake_dota_buttons" id="fake_dota_menu"/>
 					<Panel class="fake_dota_buttons" id="fake_dota_settings"/>
 					<Button class="fake_dota_buttons" id="quit_button"/>
-				</Panel>
+				</Panel> 
 				<Panel id="menu_button_container">
 					
 					<RadioButton class="menu_button" id="menu_play">
