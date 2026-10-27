@@ -22,6 +22,7 @@ function Networking:Init()
   self.pollSecret=nil
   self.authKey=nil
   self.loginUrl=nil
+  self.loggingEnabled=false
   --[[ self.devSecret="67e54aqweqweqwece7e1f927c0437dd59997b" ]]
   CustomGameEventManager:RegisterListener("init_user", function(_, args)
       
@@ -100,7 +101,9 @@ function Networking:GetLeaderboard(args)
 end
 
 function Networking:DebugLog(data)
-  CustomGameEventManager:Send_ServerToAllClients("debug_output",{text=data})
+  if self.loggingEnabled then
+    CustomGameEventManager:Send_ServerToAllClients("debug_output",{text=data})
+  end
 end
 
 function Networking:GetUserConfig(steam)
@@ -187,7 +190,7 @@ function Networking:MakeRequest(data,route,jsCallback,networkingCallback,reqType
     req:SetHTTPRequestHeaderValue("X-Poll-Secret", self.pollSecret)
   end
   --[[ req:SetHTTPRequestHeaderValue("Dev-Secret", self.devSecret) ]]
-  if type(value) == "table" then
+  if type(data) == "table" then
     for k,v in pairs(data) do
       print(k,v)
       req:SetHTTPRequestGetOrPostParameter(tostring(k),tostring(v))

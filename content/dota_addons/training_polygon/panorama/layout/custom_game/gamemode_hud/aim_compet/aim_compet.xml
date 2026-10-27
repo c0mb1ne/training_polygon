@@ -1,0 +1,14 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/aim_compet/aim_compet.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/aim_compet/aim_compet.js" />
+    </scripts>
+    <Panel hittest="false" class="aim_compet_Main">
+        <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+            <Label class="menu_button_label" text="#trainingEnd"/>
+        </Button>
+    </Panel>
+</root>
