@@ -57,6 +57,8 @@ Other game/ data: `scripts/npc/` (npc_units_custom.txt, npc_abilities_override.t
 1. Mode is a class file `gamemodes/<name>/<name>.lua`: Init, Prepare(args), StartGame, Deactivate,
    PrepareDeactivate, plus optional hooks (OnNPCSpawned, OrderFilter, ModifierGained, DamageFilter,
    OnAbilityUsed, OnEntityKilled, OnEntityHurt).
+   Mode allso carries menu hud: `content\dota_addons\training_polygon\panorama\layout\custom_game\menu2snippets\gamemodes_hud\<name>\<name>.xml` for settings before launch,
+   and in-game hud `content\dota_addons\training_polygon\panorama\layout\custom_game\gamemode_hud\<name>\<name>.xml`
 2. File ends with `GamemodeManager:RegisterMode(name, class, type)` and is required in gamemode.lua.
 3. Menu sends client event `activate_game_mode` with `gameModeName` -> GameMode:activateGameMode ->
    GamemodeManager:SetActiveGamemode -> mode:Prepare(args) -> precache -> StartGame.
@@ -120,6 +122,4 @@ Then add `require('gamemodes/<name>/<name>')` in gamemode.lua and add strings to
 - Number switchers and small buttons follow the same hover/active states
 - Labels are centered, uppercase, with gradient text
 
-## Open TODO (todo.md)
-hoodwing ult in timing; Voodoo Switcheroo in dodge (maybe); coin sounds/vfx in lasthit training;
-random delay setting in dodge; shuffle mode in dodge.
+
