@@ -10,5 +10,48 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
         </Button>
+        <Panel class="statDisplay Row" id="statDisplay">
+            <Panel class="Col"><!-- descriptions, shown on hover -->
+                <Label text="#aimScore"/>
+                <Label text="#aimCombo"/>
+                <Label text="#aimHits"/>
+                <Label text="#missCounter"/>
+                <Label text="#aimHitRate"/>
+                <Label text="#aimAvgTime"/>
+                <Label text="#aimTimeLeft"/>
+            </Panel>
+            <Panel class="Col"><!-- icons -->
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="scoreIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="comboIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="hitsIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="missIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="hitRateIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="avgTimeIcon"/>
+                </Panel>
+                <Panel class="lhIconContainer">
+                    <Panel class="lhIcon" id="timeLeftIcon"/>
+                </Panel>
+            </Panel>
+            <Panel class="Col countersValue"><!-- values, ids match the keys of aim_compet_refresh_counters -->
+                <Label text="0" id="score"/>
+                <Label text="x1 (max x1)" id="combo"/>
+                <Label text="0" id="hits"/>
+                <Label text="0" id="misses"/>
+                <Label text="0%" id="hitRate"/>
+                <Label text="0.000s" id="avgTime"/>
+                <Label text="01:00" id="timeLeft"/>
+            </Panel>
+        </Panel>
     </Panel>
 </root>

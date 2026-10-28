@@ -82,8 +82,10 @@ function aim_compet:Init()
     self.combo = 1          -- was AIM_COMBO
     self.maxCombo = 1       -- was AIM_MAX_COMBO
     self.avgTime = 0        -- was AIM_AVG_TIME
+    self.hits = 0           -- wards killed by the player (shown on the HUD)
+    self.misses = 0         -- wards that died on their own (shown on the HUD)
     self.timeLeft = ROUND_TIME -- was WARD_TIMER
-    self.seed = nil         -- seed of the current round (same seed = same ward layout)
+    self.seed = nil        -- seed of the current round (same seed = same ward layout)
     self.spawnPlan = {}     -- ward offsets from the hero, generated from the seed
     self.useSeed = true     -- true: layout comes from a seed (custom or weekly), false: new random seed every round
     self.customSeed = nil   -- manually set seed, overrides the weekly one while useSeed is true
@@ -173,8 +175,11 @@ function aim_compet:StartGame(args)
     self.combo = 1
     self.maxCombo = 1
     self.avgTime = 0
+    self.hits = 0
+    self.misses = 0
     self.timeLeft = ROUND_TIME
     self.activated = true
+    self:SendCounters() -- resets the HUD on retry
 
     self.Player = PlayerResource:GetPlayer(playerID)
     local hero = self.Player:GetAssignedHero()
@@ -227,6 +232,7 @@ function aim_compet:StartTimeDisplay()
             end
 
             CustomGameEventManager:Send_ServerToAllClients("reaction_timer", {time = self.timeLeft})
+            self:SendCounters()
             self.timeLeft = self.timeLeft - 1
 
             if self.timeLeft == -1 then
@@ -356,6 +362,26 @@ function aim_compet:SendSeed()
     })
 end
 
+-- sends the stats shown on the HUD (score, combo, hits, misses, hit rate, avg reaction time, time left)
+function aim_compet:SendCounters()
+    local total = self.hits + self.misses
+    local hitRate = 0
+    if total > 0 then
+        hitRate = math.floor(self.hits / total * 100)
+    end
+
+    CustomGameEventManager:Send_ServerToAllClients("aim_compet_refresh_counters", {
+        score = self.score,
+        combo = self.combo,
+        maxCombo = self.maxCombo,
+        hits = self.hits,
+        misses = self.misses,
+        hitRate = hitRate,
+        avgTime = self.avgTime,
+        timeLeft = math.max(0, self.timeLeft)
+    })
+end
+
 -- Builds the offsets (relative to the hero) of every ward of the round, up front.
 -- It only depends on the seed, not on how fast the player kills wards, so the layout is identical
 -- for everyone. Wards are spaced from the last few planned wards instead of alive ones for the same reason.
@@ -476,6 +502,8 @@ function aim_compet:OnEntityKilled(keys)
         print("ward killed himself")
         -- sound can be emitted here (miss, was "sproing")
         self.combo = 1
+        self.misses = self.misses + 1
+        self:SendCounters()
         --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
             time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo,
             badx = killedUnit:GetAbsOrigin().x, bady = killedUnit:GetAbsOrigin().y
@@ -519,6 +547,8 @@ function aim_compet:OnWardHit(wardIndex)
         sum = sum + t
     end
     self.avgTime = sum / #self.results
+    self.hits = self.hits + 1
+    self:SendCounters()
 
     --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
         time = reactionTime, score = score, avg = self.avgTime,
@@ -544,6 +574,7 @@ function aim_compet:OnEntityHurt(keys)
         -- player got hit, combo is lost
         -- sound can be emitted here (miss, was "sproing")
         self.combo = 1
+        self:SendCounters()
         --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
             time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo
         }) ]]
