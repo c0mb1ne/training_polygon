@@ -1,0 +1,26 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+        <include src="file://{resources}/styles/custom_game/combo_tracker.css" />
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/images/custom_game/shatter/shatter_baked.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/combo_tracker.js" />
+    </scripts>
+    <Panel class="ComboTracker" hittest="false">
+        <Panel class="Col" id="debug">
+            <Button class="small_button" id="test" onactivate="test()">
+                <Label text="test"/>
+            </Button>
+            <Button class="small_button" id="test2" onactivate="reset()">
+                <Label text="reset"/>
+            </Button>
+        </Panel>
+        <Panel id="ComboContainer">
+            <!-- <Panel class="LabelContainer" id="ComboTextContainer">
+                <Label class="ComboLabel" id="ComboDisplay" text="x10"/>
+            </Panel> -->
+        </Panel>
+    </Panel>
+</root> 

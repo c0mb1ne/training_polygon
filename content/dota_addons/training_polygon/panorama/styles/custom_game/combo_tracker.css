@@ -1,0 +1,192 @@
+
+
+.ComboTracker{
+    width: 100%;
+    height: 100%;
+}
+#ComboContainer{
+    horizontal-align: left;
+    vertical-align: bottom;
+    width: 300px;
+    height: 300px;
+    /* background-color: bisque; */
+    margin-left: 15px;
+    margin-bottom: 200px;
+}
+#debug{
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.ComboLabel {
+    font-size: 82px;
+    font-family: titleFont;
+    font-weight: bold; 
+    vertical-align: center;
+    horizontal-align: center;
+    text-shadow: 0px 0px 1px 3.0 #333333;
+    color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) ); 
+}
+.ShatterPiece{
+    transition-property: transform, opacity;
+    transition-timing-function: cubic-bezier(0.06, 2, 0.3, 1), ease-in;
+    transition-duration: 2.5s, 1s;
+}
+.NoTransition{
+    transition-duration: 0s;
+}
+.LabelContainer{
+    /* width: 256px;
+    height: 256px; */
+    width: 100%;
+    height: 100%;
+    /* background-color: bisque; */
+    /* background-color: rgb(0, 0, 0); */
+}
+.piece1{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece1.svg");
+}
+.piece2{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece2.svg");
+}
+.piece3{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece3.svg");
+}
+.piece4{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece4.svg");
+}
+.piece5{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece5.svg");
+}
+.piece6{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece6.svg");
+}
+.piece7{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece7.svg");
+}
+.piece8{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece8.svg");
+}
+.piece9{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece9.svg");
+}
+.piece10{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece10.svg");
+}
+.piece11{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece11.svg");
+}
+.piece12{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece12.svg");
+}
+.piece13{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece13.svg");
+}
+.piece14{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece14.svg");
+}
+.piece15{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece15.svg");
+}
+.piece16{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece16.svg");
+}
+.piece17{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece17.svg");
+}
+.piece18{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece18.svg");
+}
+.piece19{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece19.svg");
+}
+.piece20{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece20.svg");
+}
+.piece21{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece21.svg");
+}
+.piece22{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece22.svg");
+}
+.piece23{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece23.svg");
+}
+.piece24{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece24.svg");
+}
+.piece25{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece25.svg");
+}
+.piece26{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece26.svg");
+}
+.piece27{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece27.svg");
+}
+.piece28{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece28.svg");
+}
+.piece29{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece29.svg");
+}
+.piece30{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece30.svg");
+}
+.piece31{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece31.svg");
+}
+.piece32{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece32.svg");
+}
+.piece33{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece33.svg");
+}
+.piece34{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece34.svg");
+}
+.piece35{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece35.svg");
+}
+.piece36{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece36.svg");
+}
+.piece37{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece37.svg");
+}
+.piece38{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece38.svg");
+}
+.piece39{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece39.svg");
+}
+.piece40{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece40.svg");
+}
+.piece41{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece41.svg");
+}
+.piece42{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece42.svg");
+}
+.piece43{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece43.svg");
+}
+.piece44{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece44.svg");
+}
+.piece45{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece45.svg");
+}
+.piece46{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece46.svg");
+}
+.piece47{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece47.svg");
+}
+.piece48{
+    opacity-mask: url( "file://{images}/custom_game/shatter/piece48.svg");
+}
+
+
+
