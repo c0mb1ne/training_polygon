@@ -8,7 +8,7 @@
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/template_mode/template_mode.js" />
     </scripts>
     <Panel class="template_mode_Main">
-        <Panel class="Col">
+        <Panel class="Col width100">
             <Label class="menu_button_label" text="#template_mode"/>
             <Label text="template gamemode for easy creation of file structures for future modes"/>
             

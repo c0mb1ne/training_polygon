@@ -72,7 +72,7 @@ function aim_compet:Init()
     self.playerHero = nil -- Reference to the player's hero
     self.trainingPlaceDefault = Vector(-5065,4226,128)
     self.trainingPlace = self.trainingPlaceDefault
-
+    self.startDelay=3
     -- round state (all of these used to be globals)
     self.results = {}       -- was RESULTS_TABLE, time-to-kill of every ward the player killed
     self.wardPool = {}      -- was WARD_POOL, {entindex, spawnTime} of alive wards
@@ -87,9 +87,9 @@ function aim_compet:Init()
     self.timeLeft = ROUND_TIME -- was WARD_TIMER
     self.seed = nil        -- seed of the current round (same seed = same ward layout)
     self.spawnPlan = {}     -- ward offsets from the hero, generated from the seed
-    self.useSeed = true     -- true: layout comes from a seed (custom or weekly), false: new random seed every round
+    self.useSeed = false     -- true: layout comes from a seed (custom or weekly), false: new random seed every round
     self.customSeed = nil   -- manually set seed, overrides the weekly one while useSeed is true
-
+    self.argsKeeper=nil
     -- Register listeners here
     --[[ CustomGameEventManager:RegisterListener("get_aim_compet_respawn_pos", function(_, event)
         aim_compet:SendRespawnPos()
@@ -100,12 +100,19 @@ function aim_compet:Init()
     CustomGameEventManager:RegisterListener("aim_compet_training_end", function(_, event)
         aim_compet:PrepareDeactivate()
     end)
+    CustomGameEventManager:RegisterListener("aim_compet_training_retry", function(_, event)
+        aim_compet.argsKeeper.retry=1
+        aim_compet:StartGame(aim_compet.argsKeeper)
+    end)
     -- seed controls (event.seed = number, event.value = 1/0 or true/false)
     CustomGameEventManager:RegisterListener("get_aim_compet_seed", function(_, event)
         aim_compet:SendSeed()
     end)
     CustomGameEventManager:RegisterListener("aim_compet_set_seed", function(_, event)
         aim_compet:SetSeed(event.seed)
+    end)
+    CustomGameEventManager:RegisterListener("aim_compet_show_miss", function(_, event)
+        aim_compet:ShowMiss(event.position)
     end)
     CustomGameEventManager:RegisterListener("aim_compet_set_use_seed", function(_, event)
         aim_compet:SetUseSeed(event.value == 1 or event.value == true)
@@ -156,6 +163,7 @@ end
 -- args.retry    : 1 to restart the round without re-creating hero / items
 function aim_compet:StartGame(args)
     args = args or {}
+    self.argsKeeper=args
     local retry = (args.retry == 1)
     local playerID = args.PlayerID or 0
 
@@ -213,7 +221,7 @@ function aim_compet:StartGame(args)
 
     self:StartTimeDisplay()
     self:StartWardCycle()
-
+    CustomGameEventManager:Send_ServerToAllClients("aim_compet_countdown_start", {})
     -- play area border
     local origin = hero:GetAbsOrigin()
     local minVec = origin - Vector(AREA_MIN_X, AREA_MIN_Y, 0)
@@ -228,7 +236,7 @@ end
 function aim_compet:StartTimeDisplay()
     Timers:CreateTimer(TIMER_DISPLAY, {
         useGameTime = true,
-        endTime = 4,
+        endTime = self.startDelay,
         callback = function()
             if not self.activated then
                 return nil
@@ -260,7 +268,7 @@ function aim_compet:OnRoundEnd()
     --   avg time = math.floor(self.avgTime * 1000) / 1000
     -- ping reading can be done here too
     -- logging can be stopped / saved here
-
+    self.activated==false
     print("wards_destroyed:", #self.results)
 end
 
@@ -271,7 +279,7 @@ function aim_compet:StartWardCycle()
 
     Timers:CreateTimer(TIMER_WARD_CYCLE, {
         useGameTime = true,
-        endTime = 4,
+        endTime = self.startDelay,
         callback = function()
             if not self.activated then
                 return nil
@@ -484,6 +492,12 @@ local function IsWardBase(unit)
     return name == "npc_dota_ward_base" or name == "npc_dota_ward_base_truesight"
 end
 
+function aim_compet:ShowMiss(position)
+    local vecPos=Vector(position['0'],position['1'],position['2'])
+    --[[ print(vecPos,position) ]]
+    ParticleMessage:ShowMissSignAtPosition(vecPos, Vector(0,0,30), ParticleMessage.colors.red)
+
+end
 function aim_compet:OnEntityKilled(keys)
     --keys.fires when entity got killed
     --keys.entindex_killed       victim entindex
@@ -524,13 +538,15 @@ function aim_compet:OnEntityKilled(keys)
 end
 
 function aim_compet:WardKilledHimself(ent)
-    print("ward killed himself")
+    --[[ print("ward killed himself") ]]
     -- sound can be emitted here (miss, was "sproing")
     self.combo = 1
     self.misses = self.misses + 1
     self:SendCounters()
     ComboTracker:Break()
     ComboTracker:Add()
+    ParticleMessage:ShowUnluckySign(ent,Vector(0,0,50),ParticleMessage.colors['red'])
+    Notifications:SoundOnly("bad")
 end
 
 function aim_compet:OnWardHit(wardIndex)
@@ -567,6 +583,10 @@ function aim_compet:OnWardHit(wardIndex)
     self.hits = self.hits + 1
     self:SendCounters()
     ComboTracker:Add()
+    local wardEnt=EntIndexToHScript(wardIndex)
+    local displayDelay=math.floor(reactionTime*1000)/1000
+    ParticleMessage:ShowNumber(wardEnt, Vector(0,0,50), displayDelay, ParticleMessage.colors.green, false)
+    Notifications:SoundOnly("good")
     --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
         time = reactionTime, score = score, avg = self.avgTime,
         totalscore = self.score, combo = self.combo
@@ -594,6 +614,9 @@ function aim_compet:OnEntityHurt(keys)
         self:SendCounters()
         ComboTracker:Break()
         ComboTracker:Add()
+        Notifications:SoundOnly("bad")
+        CustomGameEventManager:Send_ServerToAllClients("aim_compet_where_mouse", {})
+        --maybe take cursor position and display something here
         --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
             time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo
         }) ]]
@@ -613,7 +636,7 @@ function aim_compet:Clear()
     self.wardPool = {}
     self.score = 0
     self.combo = 1
-
+    ComboTracker:Deactivate()
     GridNav:DestroyTreesAroundPoint(self.trainingPlace, 1500, true)
 
     if self.box ~= nil then
@@ -643,7 +666,7 @@ function aim_compet:PrepareDeactivate()
 end
 
 function aim_compet:Deactivate()
-    ComboTracker:Deactivate()
+    
     self:Clear()
     self.activated = false
     self.deactivateCalled = false

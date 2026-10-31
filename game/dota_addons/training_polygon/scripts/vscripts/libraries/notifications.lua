@@ -84,6 +84,17 @@ function Notifications:Show(strColor,strText,strIcon)
   --[[ print('[Notifications] Playing sound:',soundToPlay) ]]
   CustomGameEventManager:Send_ServerToAllClients("show_notification",{color=strColor,text=strText,icon=strIcon,sound=soundToPlay})
 end
+function Notifications:SoundOnly(goodOrBad)
+  local sound 
+  if goodOrBad=="good" then
+    sound=self.goodSound
+  else
+    sound=self.badSound
+  end
+  local soundToPlay=self.notificationsSounds[sound].sounds[RandomInt(1,#self.notificationsSounds[sound].sounds)]
+  --[[ print('[Notifications] Playing sound:',soundToPlay) ]]
+  CustomGameEventManager:Send_ServerToAllClients("show_notification_only_sound",{sound=sound})
+end
 function Notifications:SendSounds()
   CustomGameEventManager:Send_ServerToAllClients("notifications_send_sounds", {data=self.notificationsSounds})
 end

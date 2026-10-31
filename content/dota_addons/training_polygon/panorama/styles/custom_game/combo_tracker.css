@@ -23,7 +23,7 @@
 #ComboShade{
     width: 100%;
     height: 100%;
-    background-color: gradient( radial, 50% 50%, 0% 0%, 50% 50%, from( #000000B3 ), color-stop( 0.55, #00000080 ), to( #00000000 ) );
+    background-color: gradient( radial, 50% 50%, 0% 0%, 30% 30%, from( #000000B3 ), color-stop( 0.55, #00000080 ), to( #00000000 ) );
     opacity: 0;
     transition-property: opacity;
     transition-duration: 0.8s;      /* fade out (also runs while the combo shatters) */

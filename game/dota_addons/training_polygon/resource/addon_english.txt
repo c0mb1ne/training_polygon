@@ -170,5 +170,12 @@
 		"stunDuration" "stun duration:"
 		"minRangeFromCenter" "minimal range from center:"
 		"maxRangeFromCenter" "maximum range from center:"
+		"aimScore" "score"
+		"aimCombo" "max combo"
+		"aimHits" "уничтожено вардов"
+		"aimHitRate" "precision"
+		"aimAvgTime" "average time"
+		"aimTimeLeft" "time left"
+		"retryButton" "retry"
 	}
 }

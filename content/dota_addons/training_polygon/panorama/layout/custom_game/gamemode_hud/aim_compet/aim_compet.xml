@@ -7,8 +7,12 @@
         <include src="file://{resources}/scripts/custom_game/gamemode_hud/aim_compet/aim_compet.js" />
     </scripts>
     <Panel hittest="false" class="aim_compet_Main">
+        <Label hittest="false" id="countdownLabel" class="countdown_number" text="" />
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
+        </Button>
+        <Button class="menu_button retry_button" id="menu_restart" onactivate="retryTraining()">
+            <Label class="menu_button_label" text="#retryButton"/>
         </Button>
         <Panel class="statDisplay Row" id="statDisplay">
             <Panel class="Col"><!-- descriptions, shown on hover -->
@@ -45,7 +49,7 @@
             </Panel>
             <Panel class="Col countersValue"><!-- values, ids match the keys of aim_compet_refresh_counters -->
                 <Label text="0" id="score"/>
-                <Label text="x1 (max x1)" id="combo"/>
+                <Label text="x1" id="combo"/>
                 <Label text="0" id="hits"/>
                 <Label text="0" id="misses"/>
                 <Label text="0%" id="hitRate"/>

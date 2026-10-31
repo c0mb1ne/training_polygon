@@ -10,6 +10,7 @@ function ParticleMessage:Init()
   self.luckyParticle="particles/tp_custom_msg_lucky.vpcf"
   self.unluckyParticle="particles/tp_custom_msg_unlucky.vpcf"
   self.goodParticle="particles/tp_custom_msg_good.vpcf"
+  self.missParticle="particles/tp_custom_msg_miss.vpcf"
   self.gapBetweenNumbers=12
   self.colors={
     yellow=Vector(255,215,0),
@@ -40,6 +41,26 @@ end
 --------------------------------------------------------------------------
 -- Low level: single glyph particles
 --------------------------------------------------------------------------
+function ParticleMessage:ShowUnluckySign(npc,vecOffset,color)
+  color = color or self.colors.yellow
+  local particleFX = ParticleManager:CreateParticle(self.unluckyParticle, PATTACH_ABSORIGIN_FOLLOW, npc)
+  ParticleManager:SetParticleControl(particleFX, 1, vecOffset)
+  ParticleManager:SetParticleControl(particleFX, 3, color)
+end
+function ParticleMessage:ShowMissSign(npc,vecOffset,color)
+  color = color or self.colors.yellow
+  local particleFX = ParticleManager:CreateParticle(self.missParticle, PATTACH_ABSORIGIN_FOLLOW, npc)
+  ParticleManager:SetParticleControl(particleFX, 1, vecOffset)
+  ParticleManager:SetParticleControl(particleFX, 3, color)
+end
+function ParticleMessage:ShowMissSignAtPosition(vecPos, vecOffset, color)
+  color = color or self.colors.yellow
+  local particleFX = ParticleManager:CreateParticle(self.missParticle, PATTACH_WORLDORIGIN, nil)
+  ParticleManager:SetParticleControl(particleFX, 0, vecPos)
+  ParticleManager:SetParticleControl(particleFX, 1, vecOffset)
+  ParticleManager:SetParticleControl(particleFX, 3, color)
+  ParticleManager:ReleaseParticleIndex(particleFX)
+end
 function ParticleMessage:ShowLuckySign(npc,vecOffset,color)
   color = color or self.colors.yellow
   local particleFX = ParticleManager:CreateParticle(self.luckyParticle, PATTACH_ABSORIGIN_FOLLOW, npc)

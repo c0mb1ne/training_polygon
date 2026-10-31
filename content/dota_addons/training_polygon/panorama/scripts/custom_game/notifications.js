@@ -65,5 +65,8 @@ function showNotification(panel){
 function showNotify(data){
 	createNotification(data.color,data.text,data.icon,data.sound)
 }
-
+function onlySound(data){
+	Game.EmitSound(data.sound)
+}
+ GameEvents.Subscribe("show_notification_only_sound", onlySound);
  GameEvents.Subscribe("show_notification", showNotify);

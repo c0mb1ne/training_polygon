@@ -64,7 +64,14 @@
     width: 150px;
     height: 50px;
 }
-
+.retry_button{
+    vertical-align: top;
+    horizontal-align: left;
+    margin-top: 20%;
+    margin-left: 1%;
+    width: 150px;
+    height: 50px;
+}
 /* stats hud, same look as lasthit_training: values always visible, descriptions on hover */
 .statDisplay{
 	padding: 15px;
@@ -72,6 +79,7 @@
 	margin-top: 6%;
 	margin-right: 1%;
 }
+
 .statDisplay Label{
 	opacity: 0;
 	font-family: defaultFont;
@@ -81,7 +89,7 @@
 	font-size: 23px;
 	height: 34px;
 	margin-top: 3px;
-	margin-bottom: 1px;
+	margin-bottom: 3px;
 	margin-left: 3px;
 	margin-right: 3px;
 	text-shadow: 0px 0px 6px 4.0 #000000;
@@ -131,24 +139,55 @@
 	border-radius: 50%;
 	margin: 2px;
 }
+
 #scoreIcon{
-	opacity-mask: url("s2r://panorama/images/control_icons/24px/unusual.vsvg");
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/graph.vsvg");
 }
 #comboIcon{
-	opacity-mask: url("s2r://panorama/images/control_icons/24px/kill_streak_effects.vsvg");
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/x_close.vsvg");
 }
 #hitsIcon{
-	opacity-mask: url("s2r://panorama/images/control_icons/24px/display.vsvg");
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/check.vsvg");
 }
 #missIcon{
 	opacity-mask: url("s2r://panorama/images/control_icons/24px/skull.vsvg");
 }
 #hitRateIcon{
-	opacity-mask: url("s2r://panorama/images/control_icons/24px/graph.vsvg");
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/emoticons.vsvg");
 }
 #avgTimeIcon{
 	opacity-mask: url("s2r://panorama/images/control_icons/24px/mirror_horizontal.vsvg");
 }
 #timeLeftIcon{
 	opacity-mask: url("s2r://panorama/images/control_icons/24px/timer.vsvg");
+}
+.countdown_number{
+	horizontal-align: center;
+	vertical-align: center;
+	width: 600px;
+	text-align: center;
+	font-family: titleFont;
+	font-weight: bold;
+	font-size: 220px;
+	letter-spacing: 4px;
+	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+	text-shadow: 0px 0px 12px 6.0 #000000;
+	/* start position: off-screen left, no transition so resetting is instant */
+	
+	transform: translateX(-1400px);
+	opacity: 0;
+}
+.countdown_number.countdown_center{
+	transform: translateX(0px);
+	opacity: 1;
+	transition-property: transform, opacity;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-out;
+}
+.countdown_number.countdown_exit{
+	transform: translateX(1400px);
+	opacity: 0;
+	transition-property: transform, opacity;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-in;
 }
