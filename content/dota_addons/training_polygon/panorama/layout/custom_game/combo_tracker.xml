@@ -10,17 +10,29 @@
     </scripts>
     <Panel class="ComboTracker" hittest="false">
         <Panel class="Col" id="debug">
-            <Button class="small_button" id="test" onactivate="test()">
-                <Label text="test"/>
+            <Button class="small_button" onactivate="dbgAdd()">
+                <Label text="+1"/>
             </Button>
-            <Button class="small_button" id="test2" onactivate="reset()">
-                <Label text="reset"/>
+            <Button class="small_button" onactivate="dbgBreak()">
+                <Label text="break"/>
+            </Button>
+            <Button class="small_button" onactivate="dbgMove()">
+                <Label text="move"/>
             </Button>
         </Panel>
-        <Panel id="ComboContainer">
-            <!-- <Panel class="LabelContainer" id="ComboTextContainer">
-                <Label class="ComboLabel" id="ComboDisplay" text="x10"/>
-            </Panel> -->
+
+        <!-- ComboAnchor is what gets moved around the screen -->
+        <Panel id="ComboAnchor" hittest="false">
+            <Panel id="ComboContainer" hittest="false">
+                <!-- round dark shade behind the number, faded in/out by the js -->
+                <Panel id="ComboShade" hittest="false"/>
+                <!-- solid label: appear / pop animations -->
+                <Panel class="LabelContainer ComboText ComboHidden" id="ComboTextContainer" hittest="false">
+                    <Label class="ComboLabel" id="ComboDisplay" text="x2" hittest="false"/>
+                </Panel>
+                <!-- shards are created here only while the combo is shattering -->
+                <Panel id="ShardsContainer" hittest="false"/>
+            </Panel>
         </Panel>
     </Panel>
-</root> 
+</root>

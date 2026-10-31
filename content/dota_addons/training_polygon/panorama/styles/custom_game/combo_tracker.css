@@ -1,17 +1,42 @@
-
-
 .ComboTracker{
     width: 100%;
     height: 100%;
 }
-#ComboContainer{
-    horizontal-align: left;
-    vertical-align: bottom;
+
+/* ---- movement: JS changes "position" (in % of the screen) and its transition-duration ---- */
+#ComboAnchor{
     width: 300px;
     height: 300px;
-    /* background-color: bisque; */
-    margin-left: 15px;
-    margin-bottom: 200px;
+    margin-left: -150px; /* position = centre of the panel */
+    margin-top: -150px;
+    position: 9% 68% 0px;
+    transition-property: position;
+    transition-duration: 0.6s;
+    transition-timing-function: ease-in-out;
+}
+#ComboContainer{
+    width: 100%;
+    height: 100%;
+    flow-children: none; /* children overlap */
+}
+/* soft round shade behind the number: dark in the middle, fading to transparent at the edge */
+#ComboShade{
+    width: 100%;
+    height: 100%;
+    background-color: gradient( radial, 50% 50%, 0% 0%, 50% 50%, from( #000000B3 ), color-stop( 0.55, #00000080 ), to( #00000000 ) );
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.8s;      /* fade out (also runs while the combo shatters) */
+    transition-timing-function: ease-out;
+}
+#ComboShade.ComboShadeVisible{
+    opacity: 1;
+    transition-duration: 0.25s;     /* fade in */
+}
+#ShardsContainer{
+    width: 100%;
+    height: 100%;
+    flow-children: none; /* all pieces overlap */
 }
 #debug{
     horizontal-align: center;
@@ -21,12 +46,75 @@
 .ComboLabel {
     font-size: 82px;
     font-family: titleFont;
-    font-weight: bold; 
+    font-weight: bold;
     vertical-align: center;
     horizontal-align: center;
     text-shadow: 0px 0px 1px 3.0 #333333;
-    color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) ); 
+    color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
 }
+
+/* ---- tiers ----
+   Tier 1 is the default ice look above. Which combo value reaches which tier is set from Lua
+   (tiers = { 5, 10, 20 } -> tier 2 at x5, tier 3 at x10, tier 4 at x20).
+   To add a look, copy a rule and change the number: .ComboTier5 ... up to .ComboTier8
+   (MAX_TIERS). A tier with no rule below just keeps the base look. */
+.ComboTier2 .ComboLabel {
+    text-shadow: 0px 0px 6px 2.0 rgba(255, 200, 60, 0.55);
+    color: gradient( linear, 10% 120%, 0% 0%, from( #FFC93C ), color-stop( 0.5, #FFE27A ), to( #FFF6D0 ) );
+}
+.ComboTier3 .ComboLabel {
+    text-shadow: 0px 0px 6px 2.5 rgba(255, 140, 40, 0.65);
+    color: gradient( linear, 10% 120%, 0% 0%, from( #FF8A2A ), color-stop( 0.5, #FFB566 ), to( #FFE6C2 ) );
+}
+.ComboTier4 .ComboLabel {
+    text-shadow: 0px 0px 6px 3.0 rgba(255, 50, 90, 0.75);
+    color: gradient( linear, 10% 120%, 0% 0%, from( #FF2E56 ), color-stop( 0.5, #FF7A92 ), to( #FFD2DA ) );
+}
+.ComboTier5 .ComboLabel {
+    text-shadow: 0px 0px 6px 3.0 rgba(190, 70, 255, 0.8);
+    color: gradient( linear, 10% 120%, 0% 0%, from( #A030FF ), color-stop( 0.5, #D08CFF ), to( #F2D9FF ) );
+}
+.ComboTier6 .ComboLabel {
+    text-shadow: 0px 0px 6px 3.5 rgba(60, 255, 200, 0.85);
+    color: gradient( linear, 10% 120%, 0% 0%, from( #20E0A8 ), color-stop( 0.5, #80FFD8 ), to( #E0FFF4 ) );
+}
+
+/* ---- solid label states (order matters: later rules win) ---- */
+.ComboText{
+    transform-origin: 50% 55%;
+    transform: scale3d(1, 1, 1) rotateZ(0deg);
+    opacity: 1;
+    transition-property: transform, opacity;
+    transition-duration: 0.5s, 0.2s;
+    transition-timing-function: cubic-bezier(0.3, 1.9, 0.5, 1), ease-out;
+}
+.ComboHidden{
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 1) rotateZ(0deg);
+    transition-duration: 0.2s, 0.2s;
+    transition-timing-function: ease-in, ease-in;
+}
+/* value change "pop": quick punch in, then the base transition springs it back */
+.ComboBumpA{
+    transform: scale3d(1.45, 1.45, 1) rotateZ(-4deg);
+    transition-duration: 0.07s, 0.07s;
+    transition-timing-function: ease-out, ease-out;
+}
+.ComboBumpB{
+    transform: scale3d(1.45, 1.45, 1) rotateZ(4deg);
+    transition-duration: 0.07s, 0.07s;
+    transition-timing-function: ease-out, ease-out;
+}
+.ComboBumpBig{
+    transform: scale3d(1.9, 1.9, 1) rotateZ(-8deg);
+    transition-duration: 0.09s, 0.09s;
+    transition-timing-function: ease-out, ease-out;
+}
+.ComboInstant{
+    transition-duration: 0s, 0s;
+}
+
+/* ---- shatter ---- */
 .ShatterPiece{
     transition-property: transform, opacity;
     transition-timing-function: cubic-bezier(0.06, 2, 0.3, 1), ease-in;
@@ -36,157 +124,55 @@
     transition-duration: 0s;
 }
 .LabelContainer{
-    /* width: 256px;
-    height: 256px; */
     width: 100%;
     height: 100%;
-    /* background-color: bisque; */
-    /* background-color: rgb(0, 0, 0); */
-}
-.piece1{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece1.svg");
-}
-.piece2{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece2.svg");
-}
-.piece3{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece3.svg");
-}
-.piece4{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece4.svg");
-}
-.piece5{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece5.svg");
-}
-.piece6{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece6.svg");
-}
-.piece7{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece7.svg");
-}
-.piece8{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece8.svg");
-}
-.piece9{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece9.svg");
-}
-.piece10{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece10.svg");
-}
-.piece11{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece11.svg");
-}
-.piece12{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece12.svg");
-}
-.piece13{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece13.svg");
-}
-.piece14{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece14.svg");
-}
-.piece15{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece15.svg");
-}
-.piece16{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece16.svg");
-}
-.piece17{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece17.svg");
-}
-.piece18{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece18.svg");
-}
-.piece19{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece19.svg");
-}
-.piece20{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece20.svg");
-}
-.piece21{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece21.svg");
-}
-.piece22{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece22.svg");
-}
-.piece23{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece23.svg");
-}
-.piece24{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece24.svg");
-}
-.piece25{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece25.svg");
-}
-.piece26{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece26.svg");
-}
-.piece27{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece27.svg");
-}
-.piece28{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece28.svg");
-}
-.piece29{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece29.svg");
-}
-.piece30{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece30.svg");
-}
-.piece31{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece31.svg");
-}
-.piece32{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece32.svg");
-}
-.piece33{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece33.svg");
-}
-.piece34{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece34.svg");
-}
-.piece35{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece35.svg");
-}
-.piece36{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece36.svg");
-}
-.piece37{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece37.svg");
-}
-.piece38{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece38.svg");
-}
-.piece39{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece39.svg");
-}
-.piece40{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece40.svg");
-}
-.piece41{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece41.svg");
-}
-.piece42{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece42.svg");
-}
-.piece43{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece43.svg");
-}
-.piece44{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece44.svg");
-}
-.piece45{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece45.svg");
-}
-.piece46{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece46.svg");
-}
-.piece47{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece47.svg");
-}
-.piece48{
-    opacity-mask: url( "file://{images}/custom_game/shatter/piece48.svg");
 }
 
-
-
+.piece1{ opacity-mask: url( "file://{images}/custom_game/shatter/piece1.svg"); }
+.piece2{ opacity-mask: url( "file://{images}/custom_game/shatter/piece2.svg"); }
+.piece3{ opacity-mask: url( "file://{images}/custom_game/shatter/piece3.svg"); }
+.piece4{ opacity-mask: url( "file://{images}/custom_game/shatter/piece4.svg"); }
+.piece5{ opacity-mask: url( "file://{images}/custom_game/shatter/piece5.svg"); }
+.piece6{ opacity-mask: url( "file://{images}/custom_game/shatter/piece6.svg"); }
+.piece7{ opacity-mask: url( "file://{images}/custom_game/shatter/piece7.svg"); }
+.piece8{ opacity-mask: url( "file://{images}/custom_game/shatter/piece8.svg"); }
+.piece9{ opacity-mask: url( "file://{images}/custom_game/shatter/piece9.svg"); }
+.piece10{ opacity-mask: url( "file://{images}/custom_game/shatter/piece10.svg"); }
+.piece11{ opacity-mask: url( "file://{images}/custom_game/shatter/piece11.svg"); }
+.piece12{ opacity-mask: url( "file://{images}/custom_game/shatter/piece12.svg"); }
+.piece13{ opacity-mask: url( "file://{images}/custom_game/shatter/piece13.svg"); }
+.piece14{ opacity-mask: url( "file://{images}/custom_game/shatter/piece14.svg"); }
+.piece15{ opacity-mask: url( "file://{images}/custom_game/shatter/piece15.svg"); }
+.piece16{ opacity-mask: url( "file://{images}/custom_game/shatter/piece16.svg"); }
+.piece17{ opacity-mask: url( "file://{images}/custom_game/shatter/piece17.svg"); }
+.piece18{ opacity-mask: url( "file://{images}/custom_game/shatter/piece18.svg"); }
+.piece19{ opacity-mask: url( "file://{images}/custom_game/shatter/piece19.svg"); }
+.piece20{ opacity-mask: url( "file://{images}/custom_game/shatter/piece20.svg"); }
+.piece21{ opacity-mask: url( "file://{images}/custom_game/shatter/piece21.svg"); }
+.piece22{ opacity-mask: url( "file://{images}/custom_game/shatter/piece22.svg"); }
+.piece23{ opacity-mask: url( "file://{images}/custom_game/shatter/piece23.svg"); }
+.piece24{ opacity-mask: url( "file://{images}/custom_game/shatter/piece24.svg"); }
+.piece25{ opacity-mask: url( "file://{images}/custom_game/shatter/piece25.svg"); }
+.piece26{ opacity-mask: url( "file://{images}/custom_game/shatter/piece26.svg"); }
+.piece27{ opacity-mask: url( "file://{images}/custom_game/shatter/piece27.svg"); }
+.piece28{ opacity-mask: url( "file://{images}/custom_game/shatter/piece28.svg"); }
+.piece29{ opacity-mask: url( "file://{images}/custom_game/shatter/piece29.svg"); }
+.piece30{ opacity-mask: url( "file://{images}/custom_game/shatter/piece30.svg"); }
+.piece31{ opacity-mask: url( "file://{images}/custom_game/shatter/piece31.svg"); }
+.piece32{ opacity-mask: url( "file://{images}/custom_game/shatter/piece32.svg"); }
+.piece33{ opacity-mask: url( "file://{images}/custom_game/shatter/piece33.svg"); }
+.piece34{ opacity-mask: url( "file://{images}/custom_game/shatter/piece34.svg"); }
+.piece35{ opacity-mask: url( "file://{images}/custom_game/shatter/piece35.svg"); }
+.piece36{ opacity-mask: url( "file://{images}/custom_game/shatter/piece36.svg"); }
+.piece37{ opacity-mask: url( "file://{images}/custom_game/shatter/piece37.svg"); }
+.piece38{ opacity-mask: url( "file://{images}/custom_game/shatter/piece38.svg"); }
+.piece39{ opacity-mask: url( "file://{images}/custom_game/shatter/piece39.svg"); }
+.piece40{ opacity-mask: url( "file://{images}/custom_game/shatter/piece40.svg"); }
+.piece41{ opacity-mask: url( "file://{images}/custom_game/shatter/piece41.svg"); }
+.piece42{ opacity-mask: url( "file://{images}/custom_game/shatter/piece42.svg"); }
+.piece43{ opacity-mask: url( "file://{images}/custom_game/shatter/piece43.svg"); }
+.piece44{ opacity-mask: url( "file://{images}/custom_game/shatter/piece44.svg"); }
+.piece45{ opacity-mask: url( "file://{images}/custom_game/shatter/piece45.svg"); }
+.piece46{ opacity-mask: url( "file://{images}/custom_game/shatter/piece46.svg"); }
+.piece47{ opacity-mask: url( "file://{images}/custom_game/shatter/piece47.svg"); }
+.piece48{ opacity-mask: url( "file://{images}/custom_game/shatter/piece48.svg"); }

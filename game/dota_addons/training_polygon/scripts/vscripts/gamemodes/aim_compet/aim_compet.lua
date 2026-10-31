@@ -219,6 +219,9 @@ function aim_compet:StartGame(args)
     local minVec = origin - Vector(AREA_MIN_X, AREA_MIN_Y, 0)
     local maxVec = origin + Vector(AREA_MAX_X, AREA_MAX_Y, 0)
     self.box = CreateParticleBox(minVec, maxVec, "particles/custom/range_display_line_red.vpcf", self.Player)
+    --combo tracker
+    ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 10, 25, 50, 75, 100, 120 } })
+    ComboTracker:Add()
 end
 
 -- countdown shown on the HUD, ends the round when it reaches 0
@@ -425,13 +428,14 @@ function aim_compet:StartWardDecay(ward)
         useGameTime = false,
         endTime = WARD_DECAY_TICK,
         callback = function()
-            if not self.activated or ward:IsNull() then
+            if not self.activated or ward:IsNull() or not ward:IsAlive() then
                 return nil
             end
 
             local newHp = ward:GetHealth()
             if newHp - WARD_HP_DECAY <= 0 then
                 ward:ForceKill(false)
+                self:WardKilledHimself(ward)
             else
                 ward:ModifyHealth(newHp - WARD_HP_DECAY, nil, true, 0)
             end
@@ -489,6 +493,7 @@ function aim_compet:OnEntityKilled(keys)
     --keys.entindex_inflictor        entindex of ability killed with (not exist if autoattack)
     --keys.damagebits        no idea always 0
     --keys.game_event_listener       never used
+    --[[ DeepPrintTable(keys) ]]
     if not self.activated then return end
 
     local killedUnit = EntIndexToHScript(keys.entindex_killed)
@@ -496,14 +501,16 @@ function aim_compet:OnEntityKilled(keys)
 
     local killerEntity = keys.entindex_attacker and EntIndexToHScript(keys.entindex_attacker) or nil
     local killedByWard = (killerEntity == nil) or killerEntity:IsNull() or IsWardBase(killerEntity)
-
+    
     if killedByWard then
+        --doesnt work
         -- ward died on its own (player was too slow)
-        print("ward killed himself")
+        --[[ print("ward killed himself")
         -- sound can be emitted here (miss, was "sproing")
         self.combo = 1
         self.misses = self.misses + 1
         self:SendCounters()
+        ComboTracker:Break() ]]
         --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
             time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo,
             badx = killedUnit:GetAbsOrigin().x, bady = killedUnit:GetAbsOrigin().y
@@ -514,6 +521,16 @@ function aim_compet:OnEntityKilled(keys)
     end
 
     killedUnit:RemoveSelf()
+end
+
+function aim_compet:WardKilledHimself(ent)
+    print("ward killed himself")
+    -- sound can be emitted here (miss, was "sproing")
+    self.combo = 1
+    self.misses = self.misses + 1
+    self:SendCounters()
+    ComboTracker:Break()
+    ComboTracker:Add()
 end
 
 function aim_compet:OnWardHit(wardIndex)
@@ -549,7 +566,7 @@ function aim_compet:OnWardHit(wardIndex)
     self.avgTime = sum / #self.results
     self.hits = self.hits + 1
     self:SendCounters()
-
+    ComboTracker:Add()
     --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
         time = reactionTime, score = score, avg = self.avgTime,
         totalscore = self.score, combo = self.combo
@@ -575,6 +592,8 @@ function aim_compet:OnEntityHurt(keys)
         -- sound can be emitted here (miss, was "sproing")
         self.combo = 1
         self:SendCounters()
+        ComboTracker:Break()
+        ComboTracker:Add()
         --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
             time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo
         }) ]]
@@ -624,6 +643,7 @@ function aim_compet:PrepareDeactivate()
 end
 
 function aim_compet:Deactivate()
+    ComboTracker:Deactivate()
     self:Clear()
     self.activated = false
     self.deactivateCalled = false

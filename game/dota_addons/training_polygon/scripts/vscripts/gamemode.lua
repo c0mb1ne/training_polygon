@@ -46,6 +46,7 @@ require('libraries/main_menu_communicator') --class for loading menu pages
 require('libraries/ping_reader') --class for fetching ping from ui and sending it to lua
 require('libraries/precache') --class for precaching resources before gamemode starts to avoid crashes and error models
 require('libraries/timebar') --class for controlling timebar useful for timing stuff
+require('libraries/combo_tracker') --class for controlling combo/streak hud
 require('libraries/notifications') --class for notification display
 require('libraries/place_picker') --class for picking place for training
 require('libraries/creep_controller') --class for spawning lanecreeps, maybe even jungle ones in future
