@@ -10,14 +10,33 @@
     <Panel class="aim_compet_Main">
         <Panel class="Col width100">
             <Label class="menu_button_label" text="#aim_compet"/>
-            <!-- <Label text="template gamemode for easy creation of file structures for future modes"/> -->
-            
-            <Panel class="RowNoFill">
-                
-                
-            </Panel>
 
-            
+            <Panel class="RowNoFill">
+                <Panel class="Col">
+                    <Panel class="RowNoFill">
+                        <Label class="itemSetupDesc" text="#aimSetupDesc"/>
+                        <DOTAItemImage itemname="item_topor" class="AimItemPreview"/>
+                    </Panel>
+                    <Panel class="RowNoFill AimSetupRow">
+                        <Panel class="ColNoFill">
+                            
+                        </Panel>
+                        <Panel class="ColNoFill AimGridContainer">
+                            <Label class="AimGridLabel" text="Abilities"/>
+                            <Panel id="aim_abilities_grid" class="RowNoFill">
+                                <!-- cells are created by aim_compet.js -->
+                            </Panel>
+                        </Panel>
+
+                        <Panel class="ColNoFill AimGridContainer">
+                            <Label class="AimGridLabel" text="Items"/>
+                            <Panel id="aim_items_grid" class="ColNoFill">
+                                <!-- rows and cells are created by aim_compet.js -->
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                </Panel>
+            </Panel>
 
             <Panel class="RowNoFill">
                 <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">

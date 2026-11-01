@@ -207,8 +207,8 @@ function aim_compet:StartGame(args)
     if not retry then
         local topor = CreateItem("item_topor", hero, hero)
         hero:AddItem(topor)
-        local gem = CreateItem("item_gem", hero, hero)
-        hero:AddItem(gem)
+        --[[ local gem = CreateItem("item_gem", hero, hero)
+        hero:AddItem(gem) ]]
         --[[ getConfigAndApply(hero, 'aim') ]]
     end
 
