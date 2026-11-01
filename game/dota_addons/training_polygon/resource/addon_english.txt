@@ -172,6 +172,8 @@
 		"kunkkaTarget" "Target:"
 		"kunkkaStr" "Strength:"
 		"kunkkaSR" "Status resist:"
+		"alchemist" "Alchemist concoction"
+		"alchemistHint" "Cast Unstable Concoction and use Manta Style to disjoint it."
 		"BotMS"	"bot movespeed:"
 		"BotAS" "bot attack speed:"
 		"BotAD" "bot attack damage:"

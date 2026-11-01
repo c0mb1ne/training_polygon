@@ -1,0 +1,33 @@
+.alchemistHudRoot {
+    width: 100%;
+    height: 100%;
+}
+
+.alchemistHudPanel {
+    align: right center;
+    margin-right: 24px;
+    flow-children: down;
+    padding: 12px;
+    background-color: #18181A;
+    border: 1px solid #3a3a3a;
+    box-shadow: #000000 0px 0px 12px;
+}
+
+.alchemistHudTitle {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    font-weight: semi-bold;
+    color: #9CDBEE;
+}
+
+.alchemistHudHint {
+    font-family: RadianceM;
+    color: #7d8688;
+    margin: 6px 0 4px 0;
+    max-width: 240px;
+}
+
+.alchemistHudPanel .exit_button {
+    margin-top: 8px;
+    horizontal-align: center;
+}

@@ -65,6 +65,7 @@ require('gamemodes/test_sandbox/test_sandbox')--for testing stuff, not actual ga
 require('gamemodes/aim_compet/aim_compet')
 require('gamemodes/armlet/armlet')
 require('gamemodes/kunkka/kunkka')
+require('gamemodes/alchemist/alchemist')
 
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])

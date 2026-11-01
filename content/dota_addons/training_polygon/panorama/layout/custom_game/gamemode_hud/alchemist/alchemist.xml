@@ -1,0 +1,18 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/alchemist/alchemist.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/alchemist/alchemist.js" />
+    </scripts>
+    <Panel hittest="false" class="alchemistHudRoot">
+        <Panel hittest="true" class="alchemistHudPanel">
+            <Label class="alchemistHudTitle" text="#alchemist"/>
+            <Label class="alchemistHudHint" text="#alchemistHint"/>
+            <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+                <Label class="menu_button_label" text="#trainingEnd"/>
+            </Button>
+        </Panel>
+    </Panel>
+</root>
