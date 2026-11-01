@@ -1,0 +1,18 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/glimpse/glimpse.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/glimpse/glimpse.js" />
+    </scripts>
+    <Panel hittest="false" class="glimpseHudRoot">
+        <Panel hittest="true" class="glimpseHudPanel">
+            <Label class="glimpseHudTitle" text="#glimpse"/>
+            <Label class="glimpseHudHint" text="#glimpseHint"/>
+            <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+                <Label class="menu_button_label" text="#trainingEnd"/>
+            </Button>
+        </Panel>
+    </Panel>
+</root>

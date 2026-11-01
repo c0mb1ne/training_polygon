@@ -1,0 +1,54 @@
+.glimpseMenuMain {
+    width: 100%;
+}
+
+.glimpseTypeGrid {
+    flow-children: right-wrap;
+    margin-top: 10px;
+}
+
+.glimpseTypeButton {
+    flow-children: down;
+    margin: 4px;
+    padding: 6px;
+    border: 1px solid #3a3a3a;
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#101115), to(#0E0F11));
+    transition: border 200ms ease-in-out;
+}
+
+.glimpseTypeButton:hover {
+    border: 1px solid #ADD9E6;
+}
+
+.glimpseTypeButton DOTAHeroImage {
+    width: 64px;
+    height: 64px;
+    horizontal-align: center;
+}
+
+.glimpseTypeLabel {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    horizontal-align: center;
+    margin-top: 4px;
+}
+
+.glimpseTypeSelected {
+    border: 1px solid #9CDBEE;
+    box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+
+.glimpseMantaIcon {
+    width: 64px;
+    height: 64px;
+    horizontal-align: center;
+    background-size: 56px 56px;
+    background-image: url("s2r://panorama/images/items/manta_png.vtex");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.Hidden {
+    visibility: collapse;
+}

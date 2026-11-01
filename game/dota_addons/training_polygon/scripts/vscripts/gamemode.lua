@@ -66,6 +66,7 @@ require('gamemodes/aim_compet/aim_compet')
 require('gamemodes/armlet/armlet')
 require('gamemodes/kunkka/kunkka')
 require('gamemodes/alchemist/alchemist')
+require('gamemodes/glimpse/glimpse')
 
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
