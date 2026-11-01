@@ -117,9 +117,14 @@ $('#quit_button').SetPanelEvent (
 function QuitGame() {
 	GameEvents.SendCustomGameEventToServer( "training_polygon_end", {} );
 }
+$('#need_upd_label').style['visibility']='collapse'
+function updateRequired(data){
+	$('#need_upd_label').style['visibility']='visible'
+	$('#need_upd_label').text=$.Localize("#updateAvailable")+" "+data.new_version
+}
 function updateVersion(data){
 	let version=data.version
-	$('#tp_version_label').text="version "+version
+	$('#tp_version_label').text=$.Localize("#versionLabel")+" "+version
 }
 GameEvents.SendCustomGameEventToServer (
 	"init_user",
@@ -130,10 +135,12 @@ GameEvents.SendCustomGameEventToServer (
 	} 
 ); 
 function onLoginDone(){
-	$('#tp_status_label').text="online"//localize in future
+	$('#tp_status_label').text=$.Localize("#onlineLabel")//localize in future
 	$('#tp_status_label').RemoveClass("statusOffline")
 	$('#tp_status_label').AddClass("statusOnline")
 }
+
+GameEvents.Subscribe("update_required", updateRequired);
 GameEvents.Subscribe("login_done", onLoginDone);
 GameEvents.Subscribe("version_to_ui", updateVersion);
 GameEvents.Subscribe("old_hud_mode", oldHudMode);

@@ -2,7 +2,7 @@
 --anyway only thing that used from barebones is a timer library
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
-TP_VERSION="0.4.2"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
+TP_VERSION="0.5.0"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
 --so it will be possible to see version on screenshots
 --in mainmenu_v2 js we gonna grab version
 CMB_SERVER="https://combine.isgood.host/"

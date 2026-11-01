@@ -177,5 +177,17 @@
 		"aimAvgTime" "average time"
 		"aimTimeLeft" "time left"
 		"retryButton" "retry"
+		"LoginRequest" "confirm your identity through Steam to gain access to online features, such as:
+		<br>•settings saving
+		<br>•results saving
+		<br>by confirming, you agree to let me keep such information as:
+		<br>•steam id
+		<br>•analytics data
+		<br>•interface language
+		<br>i dont keep your IP in any case"
+		"loginGeneral" "login"
+		"LoginDescription" "choose the browser you want to login from"
+		"loginInGame" "ingame"
+		"loginExternal" "external browser"
 	}
 }

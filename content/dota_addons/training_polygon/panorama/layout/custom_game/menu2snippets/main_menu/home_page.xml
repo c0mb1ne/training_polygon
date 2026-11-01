@@ -63,13 +63,21 @@
                                         <Panel class="RowNoFill">
                                             <Label class="embeedingContentLabel" text="#connectDesc"/>
                                         </Panel>
-                                        <Panel class="RowNoFill">
+                                        <Panel class="horCenter RowNoFill">
                                             <Panel class="smolIcon pcIcon"/>
                                             <Panel class="Loader">
                                                 <Panel class="LoaderBar" />
                                             </Panel>
                                             <Panel class="smolIcon serverIcon"/>
                                         </Panel>
+                                    </Panel>
+                                </Panel>
+                                <Panel id="loginRequest">
+                                    <Panel class="ColWFill">
+                                        <Label class="loginGeneralDesc" html="true" text="#LoginRequest"/>
+                                        <Button id="loginGeneral" class="small_button horCenter" onactivate="playerWantsLogin()">
+                                            <Label class="mode_play_label" text="#loginGeneral"/>
+                                        </Button>
                                     </Panel>
                                 </Panel>
                                 <Panel id="loginForm">

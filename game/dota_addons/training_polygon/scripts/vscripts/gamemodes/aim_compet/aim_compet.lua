@@ -268,7 +268,7 @@ function aim_compet:OnRoundEnd()
     --   avg time = math.floor(self.avgTime * 1000) / 1000
     -- ping reading can be done here too
     -- logging can be stopped / saved here
-    self.activated==false
+    self.activated=false
     print("wards_destroyed:", #self.results)
 end
 

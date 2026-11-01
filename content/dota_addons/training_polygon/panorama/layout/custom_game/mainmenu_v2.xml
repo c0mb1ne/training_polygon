@@ -65,8 +65,11 @@
 						<Image id="tp_background" src="file://{images}/custom_game/icons.jpg" />
 					</Panel>
 					<Label id="tp_header_label" text="Training polygon"/>
-					<Label id="tp_version_label" text="version 1.0"/>
-					<Label id="tp_status_label" class="statusOffline" text="offline"/>
+					<Panel class="Row versionMsg">
+						<Label id="tp_version_label" text="version 1.0"/>
+						<Label id="need_upd_label" text="need upd"/>
+					</Panel>
+					<Label id="tp_status_label" class="statusOffline" text="#offlineLabel"/>
 				</Panel>
 				<Panel id="menu_content">
 					

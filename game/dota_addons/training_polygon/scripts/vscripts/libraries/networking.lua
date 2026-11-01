@@ -23,6 +23,8 @@ function Networking:Init()
   self.authKey=nil
   self.loginUrl=nil
   self.loggingEnabled=false
+  self.loginState=""
+  self.clientLanguage=""
   --[[ self.devSecret="67e54aqweqweqwece7e1f927c0437dd59997b" ]]
   CustomGameEventManager:RegisterListener("init_user", function(_, args)
       
@@ -34,11 +36,17 @@ function Networking:Init()
   CustomGameEventManager:RegisterListener("get_leaderboard", function(_, args)
       Networking:GetLeaderboard(args)
   end)
-  CustomGameEventManager:RegisterListener("get_login_url", function(_, args)
-      Networking:LoginUrlSet(args)
+  CustomGameEventManager:RegisterListener("get_login_state", function(_, args)
+      Networking:LoginState()
+  end)
+  CustomGameEventManager:RegisterListener("start_login", function(_, args)
+      Networking:StartLogin()
   end)
   CustomGameEventManager:RegisterListener("start_polling", function(_, args)
       Networking:StartPolling()
+  end)
+  CustomGameEventManager:RegisterListener("get_login_link", function(_, args)
+      Networking:LoginUrlSet()
   end)
   --[[ CustomGameEventManager:RegisterListener("init_user", Dynamic_Wrap(Networking, "InitUser")) ]]
 end
@@ -59,23 +67,50 @@ function Networking:handlePoll(body)
   if response.status=="ok" then
     self.authKey=response.token
     --do something on ui
+    self.loginState="login_done"
     CustomGameEventManager:Send_ServerToAllClients("login_done",{})
   end
 end
+function Networking:LoginState()
+  CustomGameEventManager:Send_ServerToAllClients("login_state",{state=self.loginState})
 
+end
 function Networking:InitUser(args)
   local route="auth/init"
   local language=args['data']['language']
+  self.clientLanguage=language
   local body=json.encode({steamid=self.steamId,key=self.secretKey,language=language})
   --[[ DeepPrintTable(args) ]]
   self:MakeRequest(body,route,nil,"handleInit")
 end
 function Networking:LoginUrlSet(args)
   if self.loginUrl~=nil then
+    self.loginState="link_ready"
     CustomGameEventManager:Send_ServerToAllClients("login_link_set",{link=self.loginUrl})
   end
 end
 function Networking:handleInit(body)
+  --[[ print('handling init')
+  print('init response:',body) ]]
+  local responseJson=json.decode(body)
+  if responseJson.version then
+    if responseJson.version~=TP_VERSION then
+      CustomGameEventManager:Send_ServerToAllClients("update_required",{new_version=responseJson.version})
+    end
+    self.loginState="server_alive"
+    CustomGameEventManager:Send_ServerToAllClients("server_alive",{})
+  end
+  
+end
+
+function Networking:StartLogin()
+  local route="auth/start"
+  local language=self.clientLanguage
+  local body=json.encode({steamid=self.steamId,key=self.secretKey,language=language})
+  self:MakeRequest(body,route,nil,"handleLogin")
+end
+
+function Networking:handleLogin(body)
   --[[ print('handling init')
   print('init response:',body) ]]
   local responseJson=json.decode(body)
@@ -94,7 +129,6 @@ function Networking:handleInit(body)
   self:LoginUrlSet()
   self:StartPolling()
 end
-
 function Networking:GetLeaderboard(args)
   local route='get_leaderboard'
   self:MakeRequest(args['data'],route,'leaderboard_response')
