@@ -164,6 +164,7 @@
 		"pickHero" "pick hero:"
 		"enemyBot" "enemy bot"
 		"lasthit_training" "lasthit training"
+		"armlet" "Armlet training"
 		"BotMS"	"bot movespeed:"
 		"BotAS" "bot attack speed:"
 		"BotAD" "bot attack damage:"

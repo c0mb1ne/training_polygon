@@ -1,0 +1,42 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/armlet/armlet.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/armlet/armlet.js" />
+    </scripts>
+    <Panel hittest="false" class="armletHudRoot">
+        <Panel hittest="true" class="armletHudPanel">
+            <Label class="armletHudTitle" text="#armEnemy"/>
+            <Panel class="armletHudRow">
+                <Label class="armletHudLabel" text="#armAttackSpeed"/>
+                <Button class="armletHudButton" onactivate="changeAttackSpeed(-10)">
+                    <Label text="-"/>
+                </Button>
+                <Label id="asField" class="armletHudValue" text="--"/>
+                <Button class="armletHudButton" onactivate="changeAttackSpeed(10)">
+                    <Label text="+"/>
+                </Button>
+            </Panel>
+            <Panel class="armletHudRow">
+                <Label class="armletHudLabel" text="#armDamage"/>
+                <Button class="armletHudButton" onactivate="changeAttackDamage(-10)">
+                    <Label text="-"/>
+                </Button>
+                <Label id="dmgField" class="armletHudValue" text="--"/>
+                <Button class="armletHudButton" onactivate="changeAttackDamage(10)">
+                    <Label text="+"/>
+                </Button>
+            </Panel>
+            <Panel class="armletHudRow">
+                <ToggleButton id="fakeModToggle" class="armletHudToggle" onactivate="toggleFakeMod()">
+                    <Label text="#armFakeMode"/>
+                </ToggleButton>
+            </Panel>
+            <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+                <Label class="menu_button_label" text="#trainingEnd"/>
+            </Button>
+        </Panel>
+    </Panel>
+</root>

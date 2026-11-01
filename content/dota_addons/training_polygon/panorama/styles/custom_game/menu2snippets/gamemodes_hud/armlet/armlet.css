@@ -1,0 +1,39 @@
+.armletMenuMain {
+    width: 100%;
+}
+
+.armletUnitGrid {
+    flow-children: right-wrap;
+    width: 1100px;
+    margin-top: 10px;
+}
+
+.armletUnitSelector {
+    margin: 2px;
+    border: 1px solid #3a3a3a;
+    transition: border 200ms ease-in-out;
+}
+
+.armletUnitSelector:hover {
+    border: 1px solid #ADD9E6;
+    pre-transform-scale2d: 1.05;
+}
+
+.armletUnitSelector DOTAHeroImage {
+    width: 64px;
+    height: 64px;
+}
+
+.armletUnitSelected {
+    border: 1px solid #9CDBEE;
+    box-shadow: #5FA5BA26 0px 0px 18px 0px;
+}
+
+.armletTowerThumb {
+    width: 64px;
+    height: 64px;
+    background-size: 64px 64px;
+    background-image: url("file://{images}/custom_game/towericon.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}

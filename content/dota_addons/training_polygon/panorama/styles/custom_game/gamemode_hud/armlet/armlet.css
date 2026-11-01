@@ -1,0 +1,93 @@
+.armletHudRoot {
+    width: 100%;
+    height: 100%;
+}
+
+.armletHudPanel {
+    align: right center;
+    margin-right: 24px;
+    flow-children: down;
+    padding: 12px;
+    background-color: #18181A;
+    border: 1px solid #3a3a3a;
+    box-shadow: #000000 0px 0px 12px;
+}
+
+.armletHudTitle {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    font-weight: semi-bold;
+    color: #9CDBEE;
+    margin-bottom: 8px;
+}
+
+.armletHudRow {
+    flow-children: right;
+    margin: 3px 0;
+    vertical-align: center;
+}
+
+.armletHudLabel {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    color: #7d8688;
+    width: 110px;
+    vertical-align: center;
+}
+
+.armletHudValue {
+    font-family: RadianceM;
+    color: #FFFFFF;
+    width: 48px;
+    text-align: center;
+    vertical-align: center;
+}
+
+.armletHudButton {
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#101115), to(#0E0F11));
+    border: 1px solid #3a3a3a;
+    width: 30px;
+    height: 26px;
+    margin: 0 3px;
+    transition: border 200ms ease-in-out;
+}
+
+.armletHudButton:hover {
+    border: 1px solid #ADD9E6;
+}
+
+.armletHudButton Label {
+    font-family: RadianceM;
+    color: #FFFFFF;
+    align: center center;
+}
+
+.armletHudToggle {
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#101115), to(#0E0F11));
+    border: 1px solid #3a3a3a;
+    padding: 4px 10px;
+    transition: border 200ms ease-in-out;
+}
+
+.armletHudToggle:hover {
+    border: 1px solid #ADD9E6;
+}
+
+.armletHudToggle Label {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    color: #FFFFFF;
+}
+
+.armletHudToggle:checked {
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#8EBDCB));
+}
+
+.armletHudToggle:checked Label {
+    color: #101115;
+}
+
+.armletHudPanel .exit_button {
+    margin-top: 10px;
+    horizontal-align: center;
+}

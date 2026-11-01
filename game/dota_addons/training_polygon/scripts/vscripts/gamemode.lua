@@ -63,6 +63,7 @@ require('gamemodes/dream_coil_escape/dream_coil_escape')
 require('gamemodes/lasthit_training/lasthit_training')
 require('gamemodes/test_sandbox/test_sandbox')--for testing stuff, not actual gamemode, visivle only in tools
 require('gamemodes/aim_compet/aim_compet')
+require('gamemodes/armlet/armlet')
 
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
