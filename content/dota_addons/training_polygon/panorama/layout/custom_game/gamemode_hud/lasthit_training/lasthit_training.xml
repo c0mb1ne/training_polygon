@@ -5,6 +5,7 @@
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/gamemode_hud/lasthit_training/lasthit_training.js" />
+        <include src="file://{resources}/scripts/custom_game/graph.js" />
     </scripts>
     <Panel hittest="false" class="lasthit_training_Main">
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
@@ -13,6 +14,9 @@
         <Button class="ShowSettings" id="unHideSettings" onactivate="tempShow()">
 			<Panel class="ShowIcon"/>
 		</Button>
+        <Panel id="graphContainer">
+
+        </Panel>
         <Panel class="additionalSettings" id="additionalSettings">
             <Panel class="HideButton" id="HideButton"/>
             <Panel class="padding"/>

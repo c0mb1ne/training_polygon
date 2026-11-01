@@ -152,7 +152,8 @@ function dodge:Init()
         "modifier_medusa_stone_gaze_stone",
         "modifier_axe_berserkers_call",
         "modifier_kunkka_torrent",
-        "modifier_dark_willow_debuff_fear"
+        "modifier_dark_willow_debuff_fear",
+        "modifier_magnataur_reverse_polarity_stun"
     }
     self.type="sandbox" -- Define the type of mode
     self.name="dodge" -- Name of the gamemode

@@ -1,0 +1,279 @@
+/* graph.css - styles for the reusable graph widget (menu2snippets/graph.xml + graph.js).
+   Self-contained on purpose (like hero_picker.css) so it works in the main menu AND in
+   in-game HUD layouts, which do not include mainmenu_v2.css.
+   Look = mainmenu_v2.css: noise + #101115 -> #0E0F11 gradient, #212121 borders, cyan accent. */
+@define titleFont: Reaver,Goudy Trajan Medium,FZKai-Z03,TH Sarabun New,YDYGO 540;
+@define numberFont: RadianceM,Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+
+/* ---------- widget frame ---------- */
+.GraphWidget{
+	flow-children: down;
+	width: fit-children;
+	height: fit-children;
+	padding: 12px 14px 8px 8px;
+}
+.GraphSkin{
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #101115 ), color-stop( 0.00156, #101115), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	box-shadow: #000000 0px 0px 12px;
+}
+/* autoSize: widget fills its container, plot takes the remaining space (declared after .GraphWidget on purpose) */
+.GraphAuto{
+	width: 100%;
+	height: 100%;
+}
+.GraphAuto .GraphBody{
+	width: 100%;
+	height: fill-parent-flow(1);
+}
+.GraphAuto .GraphYCol{
+	height: 100%;
+}
+.GraphAuto .GraphYAxis{
+	height: fill-parent-flow(1);
+}
+.GraphAuto .GraphPlotCol{
+	width: fill-parent-flow(1);
+	height: 100%;
+}
+.GraphAuto .GraphPlot{
+	width: 100%;
+	height: fill-parent-flow(1);
+}
+
+/* ---------- title ---------- */
+.GraphTitle{
+	horizontal-align: left;
+	margin-left: 8px;
+	margin-bottom: 6px;
+	font-size: 22px;
+	text-align: left;
+	text-transform: uppercase;
+	font-family: titleFont;
+	font-weight: semi-bold;
+	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+}
+
+/* ---------- body: [y axis] [plot / x axis] ---------- */
+.GraphBody{
+	flow-children: right;
+	width: fit-children;
+	height: fit-children;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.GraphYCol{
+	flow-children: down;
+	width: 72px;
+	height: fit-children;
+}
+.GraphYAxis{
+	width: 100%;
+	overflow: noclip;
+}
+.GraphXSpacer{
+	width: 100%;
+	height: 24px;
+}
+.GraphPlotCol{
+	flow-children: down;
+	width: fit-children;
+	height: fit-children;
+}
+.GraphPlot{
+	overflow: clip;
+	background-color: #00000055;
+	border: 1px solid #212121;
+}
+.GraphXAxis{
+	width: 100%;
+	height: 24px;
+	overflow: noclip;
+}
+
+/* axis labels */
+.GraphYLabel{
+	width: 100%;
+	height: 18px;
+	horizontal-align: left;
+	vertical-align: top;
+	text-align: right;
+	padding-right: 8px;
+	font-family: numberFont;
+	font-size: 14px;
+	line-height: 18px;
+	letter-spacing: 0.5px;
+	color: #7d8688;
+	white-space: nowrap;
+}
+.GraphXLabel{
+	width: 80px;
+	height: 18px;
+	horizontal-align: left;
+	vertical-align: top;
+	margin-top: 5px;
+	text-align: center;
+	font-family: numberFont;
+	font-size: 14px;
+	line-height: 18px;
+	letter-spacing: 0.5px;
+	color: #7d8688;
+	white-space: nowrap;
+}
+
+/* grid */
+.GraphGrid{
+	width: 100%;
+	height: 100%;
+}
+.GraphGridH{
+	width: 100%;
+	height: 1px;
+	horizontal-align: left;
+	vertical-align: top;
+	background-color: #ffffff12;
+}
+.GraphGridV{
+	width: 1px;
+	height: 100%;
+	horizontal-align: left;
+	vertical-align: top;
+	background-color: #ffffff0c;
+}
+.GraphGridBase{
+	background-color: #ffffff30;
+}
+
+/* ---------- series geometry (positioned/rotated from graph.js) ---------- */
+.GraphScroll{
+	width: 100%;
+	height: 100%;
+	overflow: noclip;
+}
+.GraphScrollSmooth{
+	transition-property: transform;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+}
+.GraphSeriesLayer{
+	width: 100%;
+	height: 100%;
+	overflow: noclip;
+}
+/* a line segment = thin panel, pivoting around its left end; width/position/rotation set in JS */
+.GraphSeg{
+	width: 0px;
+	height: 2px;
+	horizontal-align: left;
+	vertical-align: top;
+	transform-origin: 0% 50%;
+	background-color: #9CDBEE;
+}
+.GraphDot{
+	width: 6px;
+	height: 6px;
+	horizontal-align: left;
+	vertical-align: top;
+	border-radius: 3px;
+	background-color: #9CDBEE;
+}
+
+/* ---------- legend ---------- */
+.GraphLegend{
+	flow-children: right-wrap;
+	width: fit-children;
+	height: fit-children;
+}
+.GraphLegendInside{
+	flow-children: down;
+	horizontal-align: left;
+	vertical-align: top;
+	margin-top: 6px;
+	margin-left: 8px;
+}
+.GraphLegendTop{
+	horizontal-align: left;
+	margin-left: 8px;
+	margin-bottom: 2px;
+}
+.GraphLegendBottom{
+	horizontal-align: left;
+	margin-left: 8px;
+}
+.GraphLegendEntry{
+	flow-children: right;
+	width: fit-children;
+	height: 22px;
+	margin: 1px 6px 1px 0px;
+	padding: 0px 6px 0px 4px;
+	border: 1px solid transparent;
+	transition-property: border, opacity;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.GraphLegendEntry:hover{
+	border: 1px solid #ADD9E6;
+}
+.GraphLegendEntry:active{
+	sound: "ui_generic_button_click";
+}
+.GraphLegendSwatch{
+	width: 16px;
+	height: 3px;
+	vertical-align: center;
+	margin-right: 6px;
+}
+.GraphLegendName{
+	vertical-align: center;
+	font-family: numberFont;
+	font-size: 15px;
+	color: #d2d6d1;
+	white-space: nowrap;
+}
+.GraphLegendValue{
+	vertical-align: center;
+	margin-left: 8px;
+	font-family: numberFont;
+	font-size: 15px;
+	color: #7d8688;
+	white-space: nowrap;
+}
+.GraphLegendOff{
+	opacity: 0.4;
+}
+
+/* ---------- show/hide switches (toggled on the widget by graph.js) ---------- */
+.GraphNoTitle .GraphTitle{
+	visibility: collapse;
+}
+.GraphNoGrid .GraphGrid{
+	visibility: collapse;
+}
+.GraphNoYAxis .GraphYCol{
+	visibility: collapse;
+}
+.GraphNoXAxis .GraphXAxis{
+	visibility: collapse;
+}
+.GraphNoXAxis .GraphXSpacer{
+	visibility: collapse;
+}
+.GraphNoLegend .GraphLegend{
+	visibility: collapse;
+}
+.GraphNoLegendValues .GraphLegendValue{
+	visibility: collapse;
+}
+
+/* ---------- in-game HUD variant: no frame, readable on top of the game ---------- */
+.GraphHud .GraphPlot{
+	background-color: #00000066;
+	border: 1px solid #ffffff14;
+}
+.GraphHud Label{
+	text-shadow: 0px 0px 6px 4.0 #000000;
+}
+.GraphHud .GraphLegendEntry:hover{
+	border: 1px solid transparent;
+}

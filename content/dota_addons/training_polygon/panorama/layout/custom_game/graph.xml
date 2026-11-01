@@ -1,0 +1,24 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/graph.css" />
+	</styles>
+	<Panel class="GraphWidget GraphSkin">
+		<Label class="GraphTitle" text="" />
+		<Panel class="GraphLegend GraphLegendTop" />
+		<Panel class="GraphBody">
+			<Panel class="GraphYCol">
+				<Panel class="GraphYAxis" hittest="false" />
+				<Panel class="GraphXSpacer" hittest="false" />
+			</Panel>
+			<Panel class="GraphPlotCol">
+				<Panel class="GraphPlot">
+					<Panel class="GraphGrid" hittest="false" hittestchildren="false" />
+					<Panel class="GraphScroll" hittest="false" hittestchildren="false" />
+					<Panel class="GraphLegend GraphLegendInside" />
+				</Panel>
+				<Panel class="GraphXAxis" hittest="false" />
+			</Panel>
+		</Panel>
+		<Panel class="GraphLegend GraphLegendBottom" />
+	</Panel>
+</root>
