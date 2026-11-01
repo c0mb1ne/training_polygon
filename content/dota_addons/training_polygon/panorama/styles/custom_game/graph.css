@@ -147,9 +147,10 @@
 
 /* ---------- series geometry (positioned/rotated from graph.js) ---------- */
 .GraphScroll{
-	width: 100%;
-	height: 100%;
-	overflow: noclip;
+    width: 3000px;
+    height: 100%;
+    horizontal-align: left;
+    overflow: noclip;
 }
 .GraphScrollSmooth{
 	transition-property: transform;

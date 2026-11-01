@@ -4,9 +4,9 @@
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/gamemode_hud/lasthit_training/lasthit_training.js" />
         <include src="file://{resources}/scripts/custom_game/graph.js" />
-    </scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/lasthit_training/lasthit_training.js" />
+    </scripts> 
     <Panel hittest="false" class="lasthit_training_Main">
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
@@ -14,8 +14,12 @@
         <Button class="ShowSettings" id="unHideSettings" onactivate="tempShow()">
 			<Panel class="ShowIcon"/>
 		</Button>
-        <Panel id="graphContainer">
+        <Panel id="graphMainContainer">
+            <Panel class="graphControlRow">
 
+            </Panel>
+            <Panel class="graphContainer" id="accGraphContainer"/>
+            <Panel class="graphContainer" id="delayGraphContainer"/>
         </Panel>
         <Panel class="additionalSettings" id="additionalSettings">
             <Panel class="HideButton" id="HideButton"/>

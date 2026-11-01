@@ -79,7 +79,7 @@ function Networking:InitUser(args)
   local route="auth/init"
   local language=args['data']['language']
   self.clientLanguage=language
-  local body=json.encode({steamid=self.steamId,key=self.secretKey,language=language})
+  local body=json.encode({steamid=self.steamId,key=self.secretKey,language=language,version=TP_VERSION})
   --[[ DeepPrintTable(args) ]]
   self:MakeRequest(body,route,nil,"handleInit")
 end

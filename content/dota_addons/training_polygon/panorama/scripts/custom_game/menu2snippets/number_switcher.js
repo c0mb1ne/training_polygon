@@ -8,7 +8,7 @@ var placeholder=parseFloat($.GetContextPanel().GetAttributeString("placeholder",
 var onClickEvent=$.GetContextPanel().GetAttributeString("onClickEvent", "")
 /* numberSwitcherFieldValue.text=placeholder */
 /* $.GetContextPanel().SetAttributeString("value", numberSwitcherFieldValue.text) */
-$.Msg(step)
+/* $.Msg(step) */
 
 function countDecimals(value) {
     if (Math.floor(value) === value) return 0

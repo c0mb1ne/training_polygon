@@ -72,7 +72,7 @@ const GRAPH_ROTATE_SIGN = 1;
 
 const GRAPH_COLORS = ['#9CDBEE', '#D1B560', '#36ab00', '#db0028', '#8EBDCB', '#7d8688'];
 const GRAPH_NICE_STEPS = [1, 2, 2.5, 4, 5, 10];
-const GRAPH_MAX_COORD = 20000; // live: re-base x before panel coordinates grow too large
+// live: x is re-based every ~2 windows, so panel coordinates never exceed ~2 plot widths
 const GRAPH_X_LABEL_HALF_WIDTH = 40; // half of .GraphXLabel width in graph.css
 const GRAPH_Y_LABEL_HALF_HEIGHT = 9; // half of .GraphYLabel height in graph.css
 
@@ -150,7 +150,8 @@ function CreateGraph(parentPanel, opts) {
 	const find = function (cls) {
 		return root.FindChildrenWithClassTraverse(cls)[0];
 	};
-	const widget = find('GraphWidget');
+	/* const widget = find('GraphWidget'); */
+	const widget = root;
 	const titleLabel = find('GraphTitle');
 	const yCol = find('GraphYCol');
 	const yAxis = find('GraphYAxis');
@@ -188,11 +189,15 @@ function CreateGraph(parentPanel, opts) {
 		capacity = isLive() ? visibleSamples() + 2 : visibleSamples();
 		step = plotW / (visibleSamples() - 1);
 	}
+	function rebaseLimit() {
+		return (visibleSamples() * 2 + 2) * step;
+	}
 	function valueAt(s, k) {
 		const v = s.values[k - firstIdx];
 		return (typeof v === 'number' && isFinite(v)) ? v : null;
 	}
 	function normalize(v) {
+		if (typeof v === 'string' && v.trim() !== '') { v = Number(v); }
 		return (typeof v === 'number' && isFinite(v)) ? v : null;
 	}
 	function yPx(v) {
@@ -484,6 +489,7 @@ function CreateGraph(parentPanel, opts) {
 	function relayoutAll() {
 		recalcCapacity();
 		trimToCapacity();
+		scroll.style.width = Math.ceil(rebaseLimit() + 4 * step + 100) + 'px';
 		if (!o.autoSize) {
 			plot.style.width = plotW + 'px';
 			plot.style.height = plotH + 'px';
@@ -705,7 +711,7 @@ function CreateGraph(parentPanel, opts) {
 		trimToCapacity();
 
 		let rebased = false;
-		if ((count - 1 - xBase) * step > GRAPH_MAX_COORD) {
+		if ((count - 1 - xBase) * step > rebaseLimit()) {
 			xBase = firstIdx;
 			rebased = true;
 		}

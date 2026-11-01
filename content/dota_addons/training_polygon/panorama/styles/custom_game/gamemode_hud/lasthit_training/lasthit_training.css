@@ -289,3 +289,19 @@
         box-shadow: #000000 0px 0px 12px;
     }
 }
+#graphMainContainer{
+	vertical-align: bottom;
+	horizontal-align: right;
+	margin-bottom: 90px;
+	width: 500px;
+	height: 320px;
+	flow-children: down;
+}
+.graphControlRow{
+	width: 100%;
+	height: 80px;
+}
+.graphContainer{
+	width: 100%;
+	height: 100%;
+}

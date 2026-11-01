@@ -27,6 +27,7 @@ function refreshCounters(data) {
             value = formatTime(value);
         }
         if (key === "lasthitToMissPrecent") {
+            accGraph.Push({acc: Number(value.toFixed(1))})
             value = value.toFixed(1) + "%";
         }
         if (key === "avgDelayCounter") {
@@ -103,6 +104,15 @@ $('#additionalSettings').style.visibility="collapse"
 function showSettings(){
     $('#additionalSettings').style.visibility="visible"
 }
+$('#graphMainContainer').style['visibility']="collapse"//todo: make controls to graphs, hide/unhide
+const accGraphParent=$('#accGraphContainer')
+var accGraph = CreateGraph(accGraphParent, {
+    mode: 'live', windowSize: 60, hud: true,
+    yMin: 0, yMax: 100, yUnit: '%', legendValues: true,
+    series: [ { id: 'acc', name: 'Accuracy' } ],
+    autoSize: true
+});
+
 GameEvents.Subscribe("lasthit_show_settings", showSettings);
 GameEvents.Subscribe("lasthit_training_bot_stats", botStatsRefresh);
 GameEvents.Subscribe("lasthit_refresh_counters", refreshCounters);
