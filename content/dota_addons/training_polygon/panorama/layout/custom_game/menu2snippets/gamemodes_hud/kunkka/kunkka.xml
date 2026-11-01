@@ -1,0 +1,29 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/kunkka/kunkka.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/kunkka/kunkka.js" />
+    </scripts>
+    <Panel class="kunkkaMenuMain">
+        <Panel class="Col">
+            <Label class="menu_button_label" text="#kunkka"/>
+            <Label class="embeedingContentLabel" text="#kunkkaInfo"/>
+            <Panel class="RowNoFill">
+                <RadioButton group="kunkkaProcast" id="kunkkaProcast1" class="customCheckbox" text="#kunkkaProcast1" checked="true"/>
+                <RadioButton group="kunkkaProcast" id="kunkkaProcast2" class="customCheckbox" text="#kunkkaProcast2"/>
+            </Panel>
+            <Panel class="RowNoFill">
+                <ToggleButton checked="true" id="timebarToggle" class="customCheckbox" text="#menuTimebar"/>
+            </Panel>
+            <Panel class="RowNoFill">
+                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
+                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                </Button>
+                <Label id="errorMsg"></Label>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

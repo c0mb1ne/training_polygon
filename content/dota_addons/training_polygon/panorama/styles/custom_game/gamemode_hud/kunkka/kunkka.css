@@ -1,0 +1,49 @@
+.kunkkaHudRoot {
+    width: 100%;
+    height: 100%;
+}
+
+.kunkkaHudPanel {
+    align: right center;
+    margin-right: 24px;
+    flow-children: down;
+    padding: 12px;
+    background-color: #18181A;
+    border: 1px solid #3a3a3a;
+    box-shadow: #000000 0px 0px 12px;
+}
+
+.kunkkaHudTitle {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    font-weight: semi-bold;
+    color: #9CDBEE;
+    margin-bottom: 8px;
+}
+
+.kunkkaHudRow {
+    flow-children: right;
+    margin: 3px 0;
+    vertical-align: center;
+}
+
+.kunkkaHudLabel {
+    font-family: RadianceM;
+    text-transform: uppercase;
+    color: #7d8688;
+    width: 130px;
+    vertical-align: center;
+}
+
+.kunkkaHudValue {
+    font-family: RadianceM;
+    color: #FFFFFF;
+    width: 60px;
+    text-align: center;
+    vertical-align: center;
+}
+
+.kunkkaHudPanel .exit_button {
+    margin-top: 10px;
+    horizontal-align: center;
+}

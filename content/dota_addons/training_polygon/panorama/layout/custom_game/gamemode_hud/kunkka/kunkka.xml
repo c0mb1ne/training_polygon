@@ -1,0 +1,25 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/gamemode_hud/kunkka/kunkka.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/gamemode_hud/kunkka/kunkka.js" />
+    </scripts>
+    <Panel hittest="false" class="kunkkaHudRoot">
+        <Panel hittest="true" class="kunkkaHudPanel">
+            <Label class="kunkkaHudTitle" text="#kunkkaTarget"/>
+            <Panel class="kunkkaHudRow">
+                <Label class="kunkkaHudLabel" text="#kunkkaStr"/>
+                <Label id="strField" class="kunkkaHudValue" text="--"/>
+            </Panel>
+            <Panel class="kunkkaHudRow">
+                <Label class="kunkkaHudLabel" text="#kunkkaSR"/>
+                <Label id="srField" class="kunkkaHudValue" text="--"/>
+            </Panel>
+            <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
+                <Label class="menu_button_label" text="#trainingEnd"/>
+            </Button>
+        </Panel>
+    </Panel>
+</root>

@@ -64,6 +64,7 @@ require('gamemodes/lasthit_training/lasthit_training')
 require('gamemodes/test_sandbox/test_sandbox')--for testing stuff, not actual gamemode, visivle only in tools
 require('gamemodes/aim_compet/aim_compet')
 require('gamemodes/armlet/armlet')
+require('gamemodes/kunkka/kunkka')
 
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
