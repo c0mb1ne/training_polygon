@@ -1,125 +1,245 @@
-# training_polygon
+# AGENTS.md — training_polygon
 
-Dota 2 custom game (addon) with practice modes: dodge, timing, last-hit, aim, dream coil escape.
-Server logic is Lua (Dota VScript). UI is Panorama (XML + JS + CSS). Windows dev, PowerShell.
+Guidance for AI coding agents working in this repository. Read this fully before
+editing; the project has no conventional build system, no package manager and no
+automated tests, so most "obvious" assumptions do not apply here.
 
-## Hard rules
-- NEVER read gamemode.lua (~7.9K lines), casting.lua (~5.7K lines) or dodge_skills.lua (~1.1K lines) in full.
-  Search first: grep "function name" and read only a small range around the match.
-- Do not edit generated or binary files: `*_c` (compiled panorama), `*.vpk`, `tools_*`, `server_log.txt`, `demoheader.tmp`.
-- Edit UI sources only under `content/` (xml/js/css). Compiled output in `game/.../panorama` is built by Workshop Tools.
-- New features go in `gamemodes/<mode>/`. Do not refactor the legacy code in gamemode.lua / casting.lua.
-- Make the smallest change that works. Ask before touching more than 3 files.
-- There are no automated tests. Changes are verified by running the addon in Dota 2 Tools.
+## Project overview
 
-## Layout
-Two top-level folders mirror Dota's: `game/dota_addons/training_polygon/` and `content/dota_addons/training_polygon/`
-(linked into the Dota install with junctions, see CONTRIBUTING.md).
+**Training Polygon** is a single-player Dota 2 custom game (addon) — a practice
+tool for grinding mechanics: last-hitting, spell dodging, cast-timing, aim and
+dream-coil escape drills, plus legacy exercises (eul's, manta, invoker combos,
+skillshot, glimpse, armlet toggling). Published on the Steam Workshop
+(id `813598504`), 1M+ subscribers. License: MIT.
 
-Lua root: `game/dota_addons/training_polygon/scripts/vscripts/` (below: "vscripts/")
-- addon_game_mode.lua: Precache() and Activate(); creates GameRules.GameMode.
-- gamemode.lua: barebones-derived hub. Top of file: TP_VERSION (bump per workshop push), LEGACY_SWITCH
-  (1 unless map is "dota"). Has the `require` list; a `-- gamemodes:` block near line 58 requires each mode.
-  Also holds OLD training handlers as global functions with
-  `CustomGameEventManager:RegisterListener(...)` at line ~4293+ (euls, manta, invoker, skillshot, glimpse, aim,
-  armlet, lasthit...), and event hooks (OnNPCSpawned, OrderFilter, OnAbilityUsed, OnEntityHurt, DamageFilter...)
-  that forward to the active mode.
-- casting.lua: legacy spell-cast helpers (casterAbilityTarget/Position/Self/Notarget, evasionChecker*, one function per spell).
-- events.lua, settings.lua, internal/ (barebones plumbing), utils.lua, utils/, json.lua.
-- libraries/: gamemode_manager (mode registry), timebar, precache, creep_controller, tower_controller,
-  notifications, place_picker, particle_message, announce_message, dota_database (DotaDB: reads Dota KV values),
-  networking, timers, modifiers/ (custom modifiers, linked via LinkLuaModifier in gamemode.lua).
-- gamemodes/<name>/<name>.lua: one folder per mode: dodge, timing, lasthit_training, aim_compet,
-  dream_coil_escape, test_sandbox (tools only), template_mode (copy source for new modes).
+The codebase has **two parallel generations** running side by side:
 
-## Quick answers
-If a question about where something is can be answered from this section, ANSWER IMMEDIATELY from it.
-Do not open or search files to double-check unless the user asks to edit or show code.
-Full paths (relative to the repo root, use these exactly):
-- Dodge spell list: `self.spellTable` in `dodge:Init()` in
-  `game/dota_addons/training_polygon/scripts/vscripts/gamemodes/dodge/dodge.lua` (lines ~10-88),
-  keyed by dodge type (item_manta, plus aliases like puck_phase_shift = item_manta).
-- Timing spell list: `self.spellTable` in `timing:Init()` in
-  `game/dota_addons/training_polygon/scripts/vscripts/gamemodes/timing/timing.lua` (starts ~line 17).
-- `.../gamemodes/dodge/dodge_skills.lua` (59KB) is NOT a list. It holds one cast-handler function per spell:
-  `dodge:<spell_name>(entry)`. Open it only to change one spell: grep `function dodge:<spell_name>`, read ~30 lines.
-- `.../gamemodes/timing/timing_timebar_skills.lua`: one `timing:timebar_<spell_name>()` function per spell, same rule.
-- Other tables in dodge.lua Init: unitTable, modifierTable (unused), dodgeCastPointTable.
-- Cast helpers in dodge.lua: doTargetCast, doPointCast, doNoTargetCast, doSelfCast, doCast.
-- Spell table is sent to the UI by `dodge:SendSpellTable()` as event `dodge_spell_table`.
-- Reading files: search with search_files first, then read only a line range around the match.
+- **Legacy** — active on the `template_map` map (the default). Old menu
+  (`mainmenu.xml`) and old trainers implemented as global functions in
+  `gamemode.lua` / `casting.lua`. Selected when `LEGACY_SWITCH = 1`.
+- **New (WIP)** — active on the `dota` map. New menu (`mainmenu_v2.xml`) and
+  modular gamemodes registered in `libraries/gamemode_manager.lua`. Selected
+  when `LEGACY_SWITCH = 0` (see the top of `gamemode.lua`).
 
-Other game/ data: `scripts/npc/` (npc_units_custom.txt, npc_abilities_override.txt, npc_items_custom.txt),
-`resource/addon_english.txt` (+ russian, schinese, german, turkish, romanian) for strings, `addoninfo.txt`
-(maps: `template_map` = legacy/default, `dota` = new WIP), `maps/`, `particles/`, `soundevents/`.
+Both generations share the same `GameMode` class and the same UI sources;
+which one runs is decided by `GetMapName()` at `gamemode.lua:13`.
 
-## How a new-style mode works
-1. Mode is a class file `gamemodes/<name>/<name>.lua`: Init, Prepare(args), StartGame, Deactivate,
-   PrepareDeactivate, plus optional hooks (OnNPCSpawned, OrderFilter, ModifierGained, DamageFilter,
-   OnAbilityUsed, OnEntityKilled, OnEntityHurt).
-   Mode allso carries menu hud: `content\dota_addons\training_polygon\panorama\layout\custom_game\menu2snippets\gamemodes_hud\<name>\<name>.xml` for settings before launch,
-   and in-game hud `content\dota_addons\training_polygon\panorama\layout\custom_game\gamemode_hud\<name>\<name>.xml`
-2. File ends with `GamemodeManager:RegisterMode(name, class, type)` and is required in gamemode.lua.
-3. Menu sends client event `activate_game_mode` with `gameModeName` -> GameMode:activateGameMode ->
-   GamemodeManager:SetActiveGamemode -> mode:Prepare(args) -> precache -> StartGame.
-4. StartGame sends `load_hud {name=...}` to the client. Deactivate sends `clear_hud` / `show_main_menu`.
-   Only used for loading hud for gamemodes placed in gamemodes folders in content directory, do not use it for any other hud.
-5. gamemode.lua hooks forward events to `GamemodeManager.activeGameMode` if the mode defines them.
+**Current focus — refactoring (read first):** the legacy trainers
+(euls, manta, invoker, skillshot, glimpse, armlet, alchemist, ...) are being
+ported one by one out of `gamemode.lua` / `casting.lua` into the new
+`gamemodes/<name>/` structure. Until a given legacy mode is fully moved,
+`gamemode.lua` and `casting.lua` are **frozen — do not edit them at all**,
+not for features, fixes or cleanup. If a task seems to require touching them,
+stop and ask the user first. All new work happens inside the new structure:
+mode code in `gamemodes/<name>/<name>.lua`, UI in the two per-mode panorama
+folders.
 
-To add a mode: run `create_gamemode.bat` (calls New-GameMode.ps1, copies template_mode lua/xml/js/css, renaming).
-Then add `require('gamemodes/<name>/<name>')` in gamemode.lua and add strings to resource/addon_*.txt.
+## Repository layout
 
-## Panorama UI (all under content/dota_addons/training_polygon/panorama/)
-- layout/custom_game/*.xml, scripts/custom_game/*.js, styles/custom_game/*.css
-- Main menu: mainmenu_v2.xml/.js and menu2snippets/main_menu/ (home_page, play_menu, settings_page).
-  mainmenu.xml / eul / manta / armlet are the old menu and old trainers.
-- Per mode, two folders named after the mode:
-  - menu2snippets/gamemodes_hud/<mode>/: the mode's settings page in the menu (e.g. dodge.xml + dodge_type.xml)
-  - gamemode_hud/<mode>/: the in-game HUD
-  - dynamic_hud_loader.xml/.js loads the HUD when `load_hud` arrives.
-- Shared widgets: menu2snippets/ (hero_picker, mode_button, number_switcher), timebar.xml, notifications.xml,
-  place_picker.xml, precache_modal.xml, debug_panel.xml.
+The repo mirrors Dota 2's two addon directories and is linked into the Dota
+install with junctions/symlinks (one-time setup, see `CONTRIBUTING.md`):
 
-## Run / test
-- Setup junctions once: see CONTRIBUTING.md (`mklink /j` for both game/ and content/).
-- In Dota 2 Tools console: `dota_launch_custom_game training_polygon dota` (new) or `... template_map` (legacy).
-- Dev console commands: tp_test, tp_test2, tp_hide_menu, tp_show_menu, tp_print_place, tp_start_glimpse.
+```
+game/dota_addons/training_polygon/     server logic + compiled resources
+content/dota_addons/training_polygon/  UI sources, maps, materials, sounds
+```
 
-## Gitignored (do not commit): dev_secret.lua, CLAUDE.md, .claude/, *.vpk, *_c, *.sqlite3, tools_*.bin
+- `game/.../scripts/vscripts/` — all server-side Lua (see below).
+- `game/.../scripts/npc/` — KV data files: `npc_units_custom.txt`,
+  `npc_abilities_custom.txt`, `npc_abilities_override.txt`,
+  `npc_heroes_custom.txt`, `npc_items_custom.txt`.
+- `game/.../resource/` — localization `addon_<lang>.txt` (english, russian,
+  schinese, german, turkish, romanian), `flash3/` (UI images), `overviews/`.
+- `game/.../addoninfo.txt` — addon manifest: maps `template_map` (default) and
+  `dota`, `MinPlayers = MaxPlayers = 1`.
+- `game/.../panorama/` — **compiled** Panorama output (`*_c` files). Never edit;
+  Workshop Tools generates it from `content/`.
+- `content/.../panorama/` — Panorama sources (XML/JS/CSS). Only edit here.
+- `content/.../maps/` — Hammer maps: `template_map.vmap`, `piggy.vmap`.
+- `content/.../particles/`, `soundevents/`, `sounds/`, `materials/`,
+  `resource/overviews/` — assets; mirrored in `game/`.
+- Root: `create_gamemode.bat` + `New-GameMode.ps1` (new-mode scaffolding),
+  `docs/gifs/` (README demo images), `todo.md` (informal pending-features list).
 
-## Visual Design Guidelines (Panorama CSS)
+## Technology stack
 
-### Primary Colors
-- **Background dark**: `#18181A` (main container), `#101115` → `#0E0F11` gradient (side bars/buttons)
-- **Accent cyan**: `#9CDBEE` → `#FFFFFF` gradient (text, hover effects)
-  - Key stops: `#B4D4DE`, `#C1E1EB`, `#CBE8F1`, `#BCDCE6`, `#A8D0DC`, `#D0E5EB`
-- **Hover accent**: `#ADD9E6` (cyan-blue)
-- **Selected/active bg**: `#FFFFFF` → `#8EBDCB` gradient
-- **Text**: `#FFFFFF` (default), `#7d8688` (secondary), `#D1B560` (version/status)
-- **Status colors**: `#db0028` (offline/error), `#36ab00` (online/success)
+- **Server:** Lua on Dota 2 VScript, built on a trimmed "Barebones" framework
+  (`internal/`). There is no Lua build step or linter.
+- **Client UI:** Valve Panorama — XML layouts, JavaScript (Panorama's JS API,
+  not a browser), CSS. Valve's tools compile these to `*.vxml_c / *.vjs_c /
+  *.vcss_c` automatically when running in Tools mode.
+- **Data:** Dota KV/KV3 text files for units/abilities/items and localization.
+- **No `package.json`, `pyproject.toml`, `Cargo.toml` or similar exists.** The
+  only "build" is Dota 2 Workshop Tools asset compilation, and the only codegen
+  is `New-GameMode.ps1` (PowerShell, Windows).
 
-### Gradients
-- **Main button gradient**: `linear(0% 0%, 0% 100%), from(#101115) to(#0E0F11)`
-- **Selected button gradient**: `linear(0% 0%, 0% 100%), from(#FFFFFF) to(#8EBDCB)`
-- **Text gradient**: `linear(10% 120%, 0% 0%), from(#9CDBEE) to(#FFFFFF)` with stops at 0.12, 0.31, 0.4, 0.52, 0.79
+## Server-side architecture (`scripts/vscripts/`)
 
-### Typography
-- **Title font**: `Reaver,Goudy Trajan Medium,FZKai-Z03,TH Sarabun New,YDYGO 540`
-- **Body font**: `RadianceM`
-- **Text transform**: `uppercase` for buttons/labels
-- **Font weights**: `semi-bold` for headers, `thin` for secondary text
+- `addon_game_mode.lua` — entry point. `Precache(context)` declares shared
+  sounds/particles/models; `Activate()` creates `GameRules.GameMode = GameMode()`
+  and calls `GameMode:_InitGameMode()`.
+- `gamemode.lua` (~7.9K lines, largest file) — the `GameMode` class. Top of file
+  holds `TP_VERSION` (**bump on every Workshop push** — there is a bug where the
+  old version stays playable, so the version must be visible on screenshots; the
+  menu displays it via the `get_version` / `version_to_ui` events), the
+  `LEGACY_SWITCH` logic, and the `require` list for all libraries and gamemodes
+  (the `--gamemodes:` block, ~line 59). It also contains:
+  - the `activate_game_mode` listener → `GamemodeManager:SetActiveGamemode`
+    → `mode:Prepare(args)` (~line 67),
+  - event hooks (`OnNPCSpawned`, `OrderFilter`, `ModifierGained`,
+    `DamageFilter`, `OnAbilityUsed`, `OnEntityKilled`, `OnEntityHurt`,
+    `OnNonPlayerUsedAbility`, `AbilityTuning`) that forward to
+    `GamemodeManager.activeGameMode` **only if the active mode defines them** —
+    this is how modes hook game events without touching gamemode.lua,
+  - the **legacy trainers** as global functions with
+    `CustomGameEventManager:RegisterListener(...)` (~line 4294 onward: euls,
+    manta, invoker, skillshot, glimpse, armlet, alchemist, ...),
+  - dev console commands (~line 201): `tp_test`, `tp_test2`, `tp_hide_menu`,
+    `tp_show_menu`, `tp_print_place`, `tp_start_glimpse`.
+- `casting.lua` (~5.7K lines) — legacy spell-cast helpers, one function per
+  spell (e.g. `casterAbilityTarget`, `evasionChecker*`, per-spell wrappers).
+- `events.lua`, `settings.lua` (game-rule constants), `utils.lua`,
+  `json.lua`, `utils/` (misc helpers, e.g. `item_topor*` used by aim mode).
+- `internal/` — Barebones plumbing (`events.lua`, `gamemode.lua`, `util.lua`);
+  the comment at the top of gamemode.lua says only the timer library is really
+  wanted from Barebones.
+- `libraries/` — shared singletons: `gamemode_manager` (mode registry + the
+  `get_gamemodes_for_menu` listener), `timers`, `precache` (unit/particle
+  precache with a completion callback — modes call `precache:doPrecache(cb)`
+  in `Prepare` and start the game in `cb`), `timebar`, `notifications`,
+  `place_picker`, `particle_message`, `announce_message`, `creep_controller`,
+  `tower_controller`, `dota_database` (KV reader), `networking` (leaderboard
+  server comms), `main_menu_communicator`, `ping_reader`, `combo_tracker`,
+  `action_logging`, `debug_var`, `user_config`, `modifiers/` (custom
+  modifiers).
+- `gamemodes/<name>/<name>.lua` — one folder per new-style mode:
+  - `dodge/` — `dodge.lua` + `dodge_skills.lua` (~1.1K lines; one cast handler
+    per spell, `function dodge:<spell_name>(entry)`).
+  - `timing/` — `timing.lua` + `timing_timebar_skills.lua` (~735 lines; one
+    `timing:timebar_<spell_name>()` per spell).
+  - `lasthit_training/` — main file + `lasthit_training_bot_balance.lua` +
+    `modifier_attack_tracker.lua`.
+  - `aim_compet/`, `dream_coil_escape/` — single-file modes.
+  - `test_sandbox/` — dev-only mode, visible in Tools mode.
+  - `template_mode/` — copy source for new modes (see below).
 
-### Effects
-- **Noise texture**: Applied to backgrounds via `file://{images}/custom_game/noise.png`
-- **Box shadows**: `#000000 0px 0px 12px` (buttons), `#5FA5BA26 0px 0px 18px 0px` (selected)
-- **Border on hover**: `1px solid #ADD9E6`
-- **Saturation**: Disabled (`0`) for muted elements, `1` for active
-- **Scale on hover**: `pre-transform-scale2d: 1.05`
+### Mode lifecycle (new-style modes)
 
-### Common UI Patterns
-- Buttons have 200ms transitions with `ease-in-out` timing
-- Checked checkboxes use cyan gradient background with black border
-- Number switchers and small buttons follow the same hover/active states
-- Labels are centered, uppercase, with gradient text
+1. Mode file defines `if <name> == nil then <name> = class({}) end`, sets
+   `self.name` / `self.type` (`"sandbox"` or `"compet"`) in `Init()`, and ends
+   with `<name>:Init()` + `GamemodeManager:RegisterMode(<name>.name, <name>,
+   <name>.type)`.
+2. Menu client sends `activate_game_mode { gameModeName, ... }` →
+   `GameMode:activateGameMode` → `GamemodeManager:SetActiveGamemode` →
+   `mode:Prepare(args)`.
+3. `Prepare` builds the precache list and calls `precache:doPrecache(cb)`;
+   `cb` calls `mode:StartGame(args)`.
+4. `StartGame` sets up units/abilities and sends
+   `CustomGameEventManager:Send_ServerToAllClients("load_hud", {name=self.name})`
+   so the client loads the in-game HUD. It usually also sends a
+   `<mode>_spell_table` event with `self.spellTable`.
+5. Deactivation: `PrepareDeactivate` / `Deactivate` clean up and send
+   `clear_hud` / `show_main_menu`.
+6. Optional event hooks: `OnNPCSpawned`, `OrderFilter`, `ModifierGained`,
+   `DamageFilter`, `OnAbilityUsed`, `OnEntityKilled`, `OnEntityHurt`,
+   `OnNonPlayerUsedAbility`, `AbilityTuning`.
 
+Key per-mode data tables (see `dodge:Init()` / `timing:Init()`): `spellTable`
+(list of castable spells keyed by dodge/timing type; entries carry
+`spell_name`, `hero_name`, `level`, `aghs`, `shard`, `is_ability`,
+`cast_func`/`need_helper`), `unitTable` (dodge type → player hero), and mode
+variants aliasing the shared `item_manta`/`item_cyclone` list.
 
+### Adding a new gamemode
+
+1. Run `create_gamemode.bat` (calls `New-GameMode.ps1`): copies `template_mode`
+   across all seven locations (Lua folder + menu-settings XML/CSS/JS + in-game
+   HUD XML/CSS/JS under panorama), renaming files and contents.
+2. Add `require('gamemodes/<name>/<name>')` to the `--gamemodes:` block in
+   `gamemode.lua`.
+3. Add UI strings to `resource/addon_*.txt` (all six languages, or at least
+   english + russian).
+
+## Client UI architecture (`content/.../panorama/`)
+
+Sources live under `layout/custom_game/`, `scripts/custom_game/`,
+`styles/custom_game/` (XML / JS / CSS respectively). `custom_ui_manifest.xml`
+registers the always-on HUD elements, notably `dynamic_hud_loader.xml` and
+`mainmenu_v2.xml`.
+
+- **New menu:** `mainmenu_v2.xml/js` + `menu2snippets/main_menu/`
+  (`home_page`, `play_menu`, `settings_page`). `play_menu.js` sends
+  `get_gamemodes_for_menu` and draws one button per entry from the
+  `gamemodes_to_draw` event, splitting by `type` into sandbox vs competitive
+  containers. `menu2snippets/mode_button.js` loads the mode's settings page
+  from `menu2snippets/gamemodes_hud/<mode>/<mode>.xml` and eventually sends
+  `activate_game_mode`.
+- **Legacy menu/trainers:** `mainmenu.xml/js`, `eul.xml/js`, `manta.xml/js`,
+  `armlet.xml/js` — paired with the legacy listeners in `gamemode.lua`.
+- **Per-mode UI — two XMLs, both loaded dynamically at runtime** (never
+  register per-mode layouts in `custom_ui_manifest.xml`):
+  - `menu2snippets/gamemodes_hud/<mode>/<mode>.xml` — the mode's settings page
+    inside the menu (e.g. `dodge.xml` + `dodge_type.xml`); loaded on demand when
+    the mode's button is picked (`menu2snippets/mode_button.js`).
+  - `gamemode_hud/<mode>/` — the in-game HUD (`<mode>.xml` + `<mode>.js` +
+    `<mode>.css`); `dynamic_hud_loader.js` listens for `load_hud {name}` /
+    `clear_hud` and loads
+    `layout/custom_game/gamemode_hud/<name>/<name>.xml` into its container.
+- **Shared widgets** (reuse these instead of reinventing): `hero_picker`,
+  `mode_button`, `number_switcher` (menu2snippets), `timebar`, `notifications`,
+  `place_picker`, `precache_modal`, `debug_panel`, `announce_message`,
+  `ping_reader`, `graph`, `combo_tracker`, `action_logging`.
+- Localization: XML/JS reference tokens like `#trainingEnd`; add them to
+  `game/.../resource/addon_<lang>.txt`.
+
+## Build, run, test
+
+- **There are no automated tests.** Verification = launching the addon in
+  Dota 2 Workshop Tools and playing the mode.
+- One-time setup: link the repo into the Dota install (`mklink /j` junctions on
+  Windows, `ln -s` elsewhere) — full instructions in `CONTRIBUTING.md`.
+- Launch from the Tools console:
+  - `dota_launch_custom_game training_polygon template_map` (legacy/default)
+  - `dota_launch_custom_game training_polygon dota` (new WIP)
+- Lua changes take effect on map restart; Panorama sources are recompiled by
+  the tools (a `_c` file refresh may be needed).
+- `test_sandbox` mode and the `tp_*` console commands exist for poking at
+  things in Tools mode.
+- Workshop release: bump `TP_VERSION` in `gamemode.lua` (the menu version label
+  and the update-available check rely on it) and publish through Workshop Tools.
+
+## Development conventions and gotchas
+
+- **Never read the giant files in full.** `gamemode.lua` (~7.9K lines),
+  `casting.lua` (~5.7K lines), `dodge_skills.lua` (~1.1K lines) and
+  `timing_timebar_skills.lua` (~735 lines) should be searched, not read: grep
+  for `function <name>` and read only a small range around the match.
+- **Never edit compiled or generated files:** `*_c` (compiled Panorama),
+  `*.vpk`, `tools_*` caches, `server_log.txt`, `demoheader.tmp`. Edit Panorama
+  sources under `content/` only.
+- **`gamemode.lua` / `casting.lua` are frozen during the refactor** (see
+  "Current focus" above): no edits, no matter how small, until the legacy
+  trainers are ported into `gamemodes/<mode>/`. All new work goes into the new
+  structure; make the smallest change that works there.
+- Keep the mode's `self.name` consistent everywhere — it is the key used for
+  `RegisterMode`, HUD loading (`gamemode_hud/<name>/<name>.xml`), and the
+  settings page path.
+- Lua style in this repo: global singleton objects via `class({})`, informal
+  English comments with `--TODO:` markers, `print`/`DebugPrint` for logging
+  (visible in the Tools console), no linting. Match the surrounding file.
+- Windows-first workflow (batch + PowerShell scaffolding); the game itself runs
+  on the Dota 2 (Source 2) runtime.
+- `todo.md` at the repo root tracks pending feature ideas; check it before
+  starting new work.
+
+## Security considerations
+
+- `dev_secret.lua` (gitignored) holds local dev secrets — never commit it or
+  copy its contents anywhere.
+- `CMB_SERVER` / `DEVBUG_SERVER` URLs at the top of `gamemode.lua` point at the
+  author's leaderboard/stats backend; `libraries/networking.lua` talks to it.
+  Don't add new external calls or exfiltrate data; keep any server
+  communication going through the existing `networking` class.
+- The addon is single-player and client-authoritative in places by design
+  (custom-game event payloads from the menu are trusted); still, validate
+  event payloads server-side in new modes the way `dodge:Prepare` does.

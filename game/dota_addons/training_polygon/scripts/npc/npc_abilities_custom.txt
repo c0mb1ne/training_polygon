@@ -3,7 +3,80 @@
 "DOTAAbilities"
 {
 
+    //=================================================================================================================
+    // topor ability (same behavior as item_topor)
+    //=================================================================================================================
+    "topor_ability"
+    {
+        // General
+        //-------------------------------------------------------------------------------------------------------------
+        "ID"                            "2030"
+        "BaseClass"                     "ability_lua"
+        "ScriptFile"                    "utils/topor_ability.lua"
+        "AbilityTextureName"            "obs_blade"
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "MaxLevel"                      "1"
+        // Stats
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
 
+    }
+    //=================================================================================================================
+    // copies 2-4: same script file, separate names so a hero can hold several at once
+    //=================================================================================================================
+    "topor_ability_2"
+    {
+        "ID"                            "2031"
+        "BaseClass"                     "ability_lua"
+        "ScriptFile"                    "utils/topor_ability.lua"
+        "AbilityTextureName"            "obs_blade"
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "MaxLevel"                      "1"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+
+    }
+    "topor_ability_3"
+    {
+        "ID"                            "2032"
+        "BaseClass"                     "ability_lua"
+        "ScriptFile"                    "utils/topor_ability.lua"
+        "AbilityTextureName"            "obs_blade"
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "MaxLevel"                      "1"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+
+    }
+    "topor_ability_4"
+    {
+        "ID"                            "2033"
+        "BaseClass"                     "ability_lua"
+        "ScriptFile"                    "utils/topor_ability.lua"
+        "AbilityTextureName"            "obs_blade"
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "MaxLevel"                      "1"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+
+    }
 
 }
 

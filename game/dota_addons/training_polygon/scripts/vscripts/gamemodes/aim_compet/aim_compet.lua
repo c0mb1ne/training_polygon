@@ -205,8 +205,7 @@ function aim_compet:StartGame(args)
     hero:SetBaseHealthRegen(10)
 
     if not retry then
-        local topor = CreateItem("item_topor", hero, hero)
-        hero:AddItem(topor)
+        self:SetupTopor(hero, args)
         --[[ local gem = CreateItem("item_gem", hero, hero)
         hero:AddItem(gem) ]]
         --[[ getConfigAndApply(hero, 'aim') ]]
@@ -230,6 +229,67 @@ function aim_compet:StartGame(args)
     --combo tracker
     ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 10, 25, 50, 75, 100, 120 } })
     ComboTracker:Add()
+end
+
+-- Places topor according to the slots picked in the menu (args.aimAbilitySlots / args.aimItemSlots).
+-- Ability slots get the topor_ability ability, item slots get the item_topor item.
+-- Panorama sends js arrays as lua tables with string keys "0".."n", so index by tostring(i).
+-- If nothing was picked (e.g. args missing), falls back to the old behavior: one item_topor.
+function aim_compet:SetupTopor(hero, args)
+    local ITEM = "item_topor"
+
+    local function slotsArray(arg, count)
+        local result = {}
+        if type(arg) == "table" then
+            for i = 0, count - 1 do
+                result[i + 1] = arg[tostring(i)]
+            end
+        end
+        return result
+    end
+
+    local abilitySlots = slotsArray(args and args.aimAbilitySlots, 4)
+    local itemSlots = slotsArray(args and args.aimItemSlots, 6)
+
+    local anyPicked = false
+
+    -- every picked ability slot gets its own topor copy (abilities are keyed by name,
+    -- so 4 separate KV names are needed for 4 slots; all share utils/topor_ability.lua)
+    local ABILITY_NAMES = {"topor_ability", "topor_ability_2", "topor_ability_3", "topor_ability_4"}
+    for i = 1, 4 do
+        if abilitySlots[i] == ITEM then
+            anyPicked = true
+            local abil = hero:AddAbility(ABILITY_NAMES[i])
+            abil:SetLevel(1)
+            local desired = i - 1
+            local current = abil:GetAbilityIndex()
+            if current >= 0 and current ~= desired then
+                local target = hero:GetAbilityByIndex(desired)
+                if target then
+                    hero:SwapAbilities(abil:GetAbilityName(), target:GetAbilityName(), true, true)
+                end
+            end
+        end
+    end
+
+    -- items: one item_topor per picked slot, swapped into place if AddItem put it elsewhere
+    for i = 1, 6 do
+        if itemSlots[i] == ITEM then
+            anyPicked = true
+            local topor = CreateItem(ITEM, hero, hero)
+            hero:AddItem(topor)
+            local desired = i - 1
+            local current = topor:GetItemSlot()
+            if current >= 0 and current ~= desired then
+                hero:SwapItems(current, desired)
+            end
+        end
+    end
+
+    if not anyPicked then
+        local topor = CreateItem(ITEM, hero, hero)
+        hero:AddItem(topor)
+    end
 end
 
 -- countdown shown on the HUD, ends the round when it reaches 0
