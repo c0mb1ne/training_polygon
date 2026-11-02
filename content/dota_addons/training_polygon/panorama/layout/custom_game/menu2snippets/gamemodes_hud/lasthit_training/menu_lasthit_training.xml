@@ -1,13 +1,13 @@
 <root>
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
-        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/lasthit_training/lasthit_training.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/lasthit_training/menu_lasthit_training.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
-        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/lasthit_training/lasthit_training.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/lasthit_training/menu_lasthit_training.js" />
     </scripts>
     <Panel class="lasthit_training_Main">
         <Panel class="Col width100">

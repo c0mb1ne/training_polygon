@@ -34,7 +34,7 @@ $.GetContextPanel().SetPanelEvent(
 		GameEvents.SendCustomGameEventToServer (
 			"main_menu_load_page_request",
 				{
-					page:"file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/"+mode+".xml"
+					page:"file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/"+mode+"/menu_"+mode+".xml"
 				}
 		);
 	}

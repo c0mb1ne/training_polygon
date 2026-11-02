@@ -3,7 +3,7 @@
         <!-- Reference all dynamically loaded layouts here -->
         <!-- <Panel id="PreloadHomePage" layoutfile="file://{resources}/layout/custom_game/menu2snippets/main_menu/home_page.xml" />
         <Panel id="PreloadPlayMenu" layoutfile="file://{resources}/layout/custom_game/menu2snippets/main_menu/play_menu.xml" /> -->
-        <Panel id="PreloadPlayMenu" layoutfile="file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/timing/timing.xml" />
+        <Panel id="PreloadPlayMenu" layoutfile="file://{resources}/layout/custom_game/menu2snippets/gamemodes_hud/timing/menu_timing.xml" />
         <!-- Add other dynamic layouts here -->
     </Panel>
 </root>

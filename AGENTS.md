@@ -154,7 +154,11 @@ variants aliasing the shared `item_manta`/`item_cyclone` list.
 
 1. Run `create_gamemode.bat` (calls `New-GameMode.ps1`): copies `template_mode`
    across all seven locations (Lua folder + menu-settings XML/CSS/JS + in-game
-   HUD XML/CSS/JS under panorama), renaming files and contents.
+   HUD XML/CSS/JS under panorama), renaming files and contents. The bat also
+   offers **clone** (copy any existing mode instead of the template) and
+   **delete** (remove a mode's seven folders, with confirmation; it refuses
+   to delete `template_mode`). After delete/clone, hand-edit the leftovers the
+   script prints (the `require` in `gamemode.lua`, localization tokens).
 2. Add `require('gamemodes/<name>/<name>')` to the `--gamemodes:` block in
    `gamemode.lua`.
 3. Add UI strings to `resource/addon_*.txt` (all six languages, or at least
@@ -178,8 +182,10 @@ registers the always-on HUD elements, notably `dynamic_hud_loader.xml` and
   `armlet.xml/js` — paired with the legacy listeners in `gamemode.lua`.
 - **Per-mode UI — two XMLs, both loaded dynamically at runtime** (never
   register per-mode layouts in `custom_ui_manifest.xml`):
-  - `menu2snippets/gamemodes_hud/<mode>/<mode>.xml` — the mode's settings page
-    inside the menu (e.g. `dodge.xml` + `dodge_type.xml`); loaded on demand when
+  - `menu2snippets/gamemodes_hud/<mode>/menu_<mode>.xml` — the mode's settings page
+    inside the menu (core files carry a `menu_` prefix, e.g. `menu_dodge.xml` +
+    `menu_dodge.js/css`, to tell them apart from the in-game HUD; extra snippets like
+    `dodge_type.xml` stay unprefixed); loaded on demand when
     the mode's button is picked (`menu2snippets/mode_button.js`).
   - `gamemode_hud/<mode>/` — the in-game HUD (`<mode>.xml` + `<mode>.js` +
     `<mode>.css`); `dynamic_hud_loader.js` listens for `load_hud {name}` /

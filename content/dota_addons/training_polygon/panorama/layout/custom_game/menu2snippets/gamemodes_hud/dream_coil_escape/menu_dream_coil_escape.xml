@@ -1,13 +1,13 @@
 <root>
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
-        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/dream_coil_escape/dream_coil_escape.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/dream_coil_escape/menu_dream_coil_escape.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
-        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dream_coil_escape/dream_coil_escape.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dream_coil_escape/menu_dream_coil_escape.js" />
         
     </scripts> 
     <Panel class="dream_coil_escape_Main">
