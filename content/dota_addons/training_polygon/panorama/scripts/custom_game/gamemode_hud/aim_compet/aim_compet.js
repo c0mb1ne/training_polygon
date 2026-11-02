@@ -68,6 +68,7 @@ function playCountdownStep(step, token) {
 function startCountdown(data) {
     countdownToken++;
     var token = countdownToken;
+    hideRoundResults(); // a new round starts (retry), close the popup if it was open
     var label = $("#countdownLabel");
     label.RemoveClass("countdown_center");
     label.RemoveClass("countdown_exit");
@@ -90,6 +91,71 @@ function cancelCountdown() {
     countdownToken++; // invalidates all pending schedules
     $("#countdownLabel").text = "";
 }
+
+// ---------------------------------------------------------------------------
+// Round results popup: stats + a graph of reaction time per hit.
+// Server sends aim_compet_round_results from OnRoundEnd (see aim_compet.lua).
+// ---------------------------------------------------------------------------
+
+// lua arrays arrive as objects with string keys ("0".."n" or "1".."n") - normalize
+function toNumberArray(t) {
+    var arr = [];
+    if (t === null || t === undefined) return arr;
+    if (Array.isArray(t)) return t.map(Number);
+    var keys = [];
+    for (var k in t) {
+        var n = Number(k);
+        if (!isNaN(n)) keys.push(n);
+    }
+    keys.sort(function (a, b) { return a - b; });
+    keys.forEach(function (k) { arr.push(Number(t[k])); });
+    return arr;
+}
+
+var resultsGraph = null;
+
+function showRoundResults(data) {
+    $('#resultsScore').text = data.score;
+    $('#resultsCombo').text = 'x' + data.maxCombo;
+    $('#resultsHits').text = data.hits;
+    $('#resultsMisses').text = data.misses;
+    $('#resultsHitRate').text = data.hitRate + '%';
+    $('#resultsAvgTime').text = Number(data.avgTime).toFixed(3) + 's';
+
+    if (resultsGraph === null) {
+        resultsGraph = CreateGraph($('#resultsGraphContainer'), {
+            title: '#aimResultsGraphTitle',
+            plotWidth: 460,
+            plotHeight: 180,
+            yMin: 0,
+            yMax: 'auto',
+            yUnit: 's',
+            xStart: 1,
+            xStep: 1,
+            showLegend: false,
+            series: [{ id: 'rt', name: 'reaction', color: '#9CDBEE', thickness: 2 }]
+        });
+    }
+    resultsGraph.SetData({ rt: toNumberArray(data.reactionTimes) });
+
+    $('#roundResults').RemoveClass('Hidden');
+}
+
+function hideRoundResults() {
+    $('#roundResults').AddClass('Hidden');
+}
+
+function retryFromResults() {
+    hideRoundResults();
+    retryTraining();
+}
+
+function endFromResults() {
+    hideRoundResults();
+    stopTraining();
+}
+
+GameEvents.Subscribe("aim_compet_round_results", showRoundResults);
 
 //Game.ScreenXYToWorld( integer nX, integer nY )
 function sendMousePos(){

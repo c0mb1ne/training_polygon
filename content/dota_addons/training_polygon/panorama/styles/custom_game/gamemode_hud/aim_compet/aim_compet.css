@@ -191,3 +191,70 @@
 	transition-duration: 0.25s;
 	transition-timing-function: ease-in;
 }
+
+/* round results popup */
+.RoundResults{
+	width: 100%;
+	height: 100%;
+	background-color: #000000b0;
+	z-index: 50;
+}
+
+.RoundResultsPanel{
+	horizontal-align: center;
+	vertical-align: middle;
+	flow-children: down;
+	padding: 24px 28px 20px 28px;
+	background-image: url( "file://{images}/custom_game/noise.png");
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #18181A ), to( #0E0F11 ) );
+	border: 1px solid #212121;
+	box-shadow: #000000 0px 0px 24px;
+}
+
+.RoundResultsTitle{
+	horizontal-align: center;
+	font-family: titleFont;
+	font-weight: semi-bold;
+	font-size: 28px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	color: gradient( linear, 10% 120%, 0% 0%, from( #9CDBEE ), color-stop( 0.12, #B4D4DE ), color-stop( 0.31, #C1E1EB ), color-stop( 0.4, #CBE8F1 ), color-stop( 0.52, #BCDCE6 ), color-stop( 0.52, #A8D0DC ), color-stop( 0.79, #D0E5EB ), to( #FFFFFF ) );
+	margin-bottom: 12px;
+}
+
+.RoundResultsStats{
+	horizontal-align: center;
+	margin-bottom: 12px;
+}
+
+.RoundResultsStats Label{
+	font-size: 18px;
+	color: #7d8688;
+	letter-spacing: 1px;
+	height: 26px;
+	vertical-align: center;
+	margin-right: 12px;
+}
+
+.RoundResultsValues Label{
+	color: #FFFFFF;
+	font-family: titleFont;
+	font-weight: bold;
+	width: 110px;
+}
+
+.RoundResultsButtons{
+	horizontal-align: center;
+	margin-top: 14px;
+}
+
+.results_button{
+	width: 150px;
+	height: 50px;
+	margin: 0px 8px;
+}
+
+.Hidden{
+	opacity: 0;
+	visibility: collapse;
+}

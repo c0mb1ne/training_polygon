@@ -83,7 +83,7 @@ function test_sandbox:StartGame(args)
     DebugPanelShow()
     local abilCount=self.playerHero:GetAbilityCount()
     DebugVar("abilCount",abilCount)
-    Timers:CreateTimer(0,function()
+    --[[ Timers:CreateTimer(0,function()
         for i=0,abilCount-1,1 do
             local ability=self.playerHero:GetAbilityByIndex(i)
             if ability~=nil then
@@ -91,7 +91,36 @@ function test_sandbox:StartGame(args)
             end
         end
         return FrameTime()
-    end)
+    end) ]]
+    -- precache "particles/ui_mouseactions/bounding_area_view.vpcf" in your addon first!
+    -- c1 -> c2 -> c3 -> c4 -> back to c1 forms a closed loop around the perimeter
+    local function DrawSpawnBox(c1, c2, c3, c4)  -- 4 corner Vectors, in order
+        local fx = ParticleManager:CreateParticle(
+            "particles/ui_mouseactions/bounding_area_view.vpcf",
+            PATTACH_WORLDORIGIN, nil)
+
+        ParticleManager:SetParticleControl(fx, 0, c1)
+        ParticleManager:SetParticleControl(fx, 1, c2)
+        ParticleManager:SetParticleControl(fx, 2, c3)
+        ParticleManager:SetParticleControl(fx, 3, c4)
+
+        ParticleManager:SetParticleControl(fx, 15, Vector(75,0,130))  -- color (RGB)
+        ParticleManager:SetParticleControl(fx, 16, Vector(1, 0, 0))      -- color scale (x)
+    end
+    --[[ local vec1=Vector(1396.9956054688,-372.26477050781,128)
+    local vec2=Vector(-1404.6982421875,685.05108642578,0) ]]
+    local vec1=Vector(1396.9956054688,-372.26477050781,128)
+    local vec2=Vector(-1404.6982421875,685.05108642578,128)
+    -- c1 -> c2 -> c3 -> c4 -> back to c1 forms a closed loop around the perimeter
+    local c1 = vec1
+    local c2 = Vector(vec1.x, vec2.y, vec1.z)
+    local c3 = vec2
+    local c4 = Vector(vec2.x, vec1.y, vec2.z)
+    DrawSpawnBox(c1, c2, c3, c4)
+    --[[ local particleFX = ParticleManager:CreateParticle("particles/ground_line.vpcf", PATTACH_WORLDORIGIN, nil)
+    ParticleManager:SetParticleControl(particleFX, 0, vec1)
+    ParticleManager:SetParticleControl(particleFX, 1, vec2)
+    ParticleManager:SetParticleControl(particleFX, 4, Vector(0.2,0,0)) ]]
     --[[ local modifier=self.playerHero:FindModifierByName("modifier_ringmaster_dark_carnival_souvenirs")
     Timers:CreateTimer(5,function()
         local stacks=self.playerHero:GetModifierStackCount("modifier_ringmaster_dark_carnival_souvenirs",self.playerHero)

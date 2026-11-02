@@ -279,3 +279,30 @@ function generateRandomString(length)
 
     return randomString
 end
+
+function CreateParticleBox(min_a, max_a, particle_name, hPlayer)
+  local particles = {}
+  local particle
+  particle = CreateParticleLine(Vector(min_a.x, min_a.y, 0), Vector(min_a.x, max_a.y, 0), particle_name, hPlayer)
+  table.insert(particles, particle)
+  particle = CreateParticleLine(Vector(min_a.x, min_a.y, 0), Vector(max_a.x, min_a.y, 0), particle_name, hPlayer)
+  table.insert(particles, particle)
+  particle = CreateParticleLine(Vector(max_a.x, min_a.y, 0), Vector(max_a.x, max_a.y, 0), particle_name, hPlayer)
+  table.insert(particles, particle)
+  particle = CreateParticleLine(Vector(max_a.x, max_a.y, 0), Vector(min_a.x, max_a.y, 0), particle_name, hPlayer)
+  table.insert(particles, particle)
+  return particles
+end
+
+function CreateParticleLine(a, b, particle_name, hPlayer)
+  local particle
+  if hPlayer == nil then
+      particle = ParticleManager:CreateParticle(particle_name, PATTACH_WORLDORIGIN, nil)
+  else
+      particle = ParticleManager:CreateParticleForPlayer(particle_name, PATTACH_WORLDORIGIN, nil, hPlayer)
+  end
+  ParticleManager:SetParticleControl(particle, 0, a)
+  ParticleManager:SetParticleControl(particle, 1, b)
+  ParticleManager:SetParticleControl(particle, 4, Vector(0.2,0,0))
+  return particle
+end

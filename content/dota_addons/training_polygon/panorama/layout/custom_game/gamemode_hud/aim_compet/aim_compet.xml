@@ -4,6 +4,7 @@
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/graph.js" />
         <include src="file://{resources}/scripts/custom_game/gamemode_hud/aim_compet/aim_compet.js" />
     </scripts>
     <Panel hittest="false" class="aim_compet_Main">
@@ -55,6 +56,40 @@
                 <Label text="0%" id="hitRate"/>
                 <Label text="0.000s" id="avgTime"/>
                 <Label text="01:00" id="timeLeft"/>
+            </Panel>
+        </Panel>
+
+        <!-- round results popup, shown by aim_compet_round_results -->
+        <Panel id="roundResults" class="RoundResults Hidden" hittest="true">
+            <Panel class="RoundResultsPanel">
+                <Label class="RoundResultsTitle" text="#aimRoundResults"/>
+                <Panel class="Row RoundResultsStats">
+                    <Panel class="Col">
+                        <Label text="#aimScore"/>
+                        <Label text="#aimCombo"/>
+                        <Label text="#aimHits"/>
+                        <Label text="#missCounter"/>
+                        <Label text="#aimHitRate"/>
+                        <Label text="#aimAvgTime"/>
+                    </Panel>
+                    <Panel class="Col RoundResultsValues">
+                        <Label id="resultsScore" text="0"/>
+                        <Label id="resultsCombo" text="x1"/>
+                        <Label id="resultsHits" text="0"/>
+                        <Label id="resultsMisses" text="0"/>
+                        <Label id="resultsHitRate" text="0%"/>
+                        <Label id="resultsAvgTime" text="0.000s"/>
+                    </Panel>
+                </Panel>
+                <Panel id="resultsGraphContainer"/>
+                <Panel class="Row RoundResultsButtons">
+                    <Button class="menu_button results_button" id="resultsRetry" onactivate="retryFromResults()">
+                        <Label class="menu_button_label" text="#retryButton"/>
+                    </Button>
+                    <Button class="menu_button results_button" id="resultsEnd" onactivate="endFromResults()">
+                        <Label class="menu_button_label" text="#trainingEnd"/>
+                    </Button>
+                </Panel>
             </Panel>
         </Panel>
     </Panel>

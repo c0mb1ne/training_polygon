@@ -10,15 +10,55 @@ local HERO_NAME = "npc_dota_hero_pangolier"
 local TIMER_DISPLAY = "aim_compet_time_display"
 local TIMER_WARD_CYCLE = "aim_compet_ward_cycle"
 
-local ROUND_TIME = 60      -- seconds, was WARD_TIMER
-local MAX_WARDS = 107      -- total wards spawned per round
+-- round settings, overridable from the menu (StartGame args, see ReadRoundSettings)
+local DEFAULT_ROUND_TIME = 60  -- seconds
+local MIN_ROUND_TIME, MAX_ROUND_TIME = 10, 600
+local MIN_INTERVAL, MAX_INTERVAL = 0.1, 3   -- seconds between wards
+local MIN_EXPONENT, MAX_EXPONENT = 0.2, 5
+local CLASSIC_DECAY = 0.08                  -- classic curve: interval shrinks by this after every spawn
+local WARD_CAP = 500                        -- absolute safety cap on wards per round
 local WARD_HP = 200
-local WARD_HP_DECAY = 10   -- hp lost every WARD_DECAY_TICK seconds
 local WARD_DECAY_TICK = 0.1
+-- ward lifetime is a menu setting: the hp decay per tick is derived from it, so a
+-- ward always has WARD_HP hp and lives wardLifetime seconds (legacy default: 2.0)
+local DEFAULT_WARD_LIFETIME = 2.0
+local MIN_WARD_LIFETIME, MAX_WARD_LIFETIME = 0.5, 5
 
--- play area relative to the hero (was hardcoded in aim_training_start)
-local AREA_MIN_X, AREA_MIN_Y = 750, 350
-local AREA_MAX_X, AREA_MAX_Y = 750, 650
+-- play area relative to the hero (legacy defaults; the menu's area picker can
+-- redefine the box, stored as offsets from the training place)
+local AREA_DEFAULT_MIN_X, AREA_DEFAULT_MIN_Y = -750, -350
+local AREA_DEFAULT_MAX_X, AREA_DEFAULT_MAX_Y = 750, 650
+local AREA_MIN_SIDE = 400    -- smallest box side the picker accepts
+local AREA_MAX_EXTENT = 1600 -- picked corners are clamped to this distance from the anchor
+
+-- area border drawing. The shared CreateParticleBox from utils.lua rebuilds every
+-- point with z=0, which is under the terrain (the training place sits at z=128),
+-- so the lines end up buried. This draws one bounding_area_view particle instead:
+-- CP0-CP3 = the four corners in loop order, CP15 = color (RGB), CP16 = color scale.
+local BOUNDING_AREA_PARTICLE = "particles/ui_mouseactions/bounding_area_view.vpcf"
+
+local function GroundPoint(x, y)
+    return GetGroundPosition(Vector(x, y, 0), nil)
+end
+
+-- returns a 1-element table with the particle index, so the cleanup code that
+-- expects CreateParticleBox's table keeps working
+local function DrawGroundBox(minVec, maxVec)
+    -- c1 -> c2 -> c3 -> c4 -> back to c1 forms a closed loop around the perimeter
+    local c1 = GroundPoint(minVec.x, minVec.y)
+    local c2 = GroundPoint(minVec.x, maxVec.y)
+    local c3 = GroundPoint(maxVec.x, maxVec.y)
+    local c4 = GroundPoint(maxVec.x, minVec.y)
+
+    local fx = ParticleManager:CreateParticle(BOUNDING_AREA_PARTICLE, PATTACH_WORLDORIGIN, nil)
+    ParticleManager:SetParticleControl(fx, 0, c1)
+    ParticleManager:SetParticleControl(fx, 1, c2)
+    ParticleManager:SetParticleControl(fx, 2, c3)
+    ParticleManager:SetParticleControl(fx, 3, c4)
+    ParticleManager:SetParticleControl(fx, 15, Vector(75, 0, 130)) -- color (RGB)
+    ParticleManager:SetParticleControl(fx, 16, Vector(1, 0, 0))     -- color scale (x)
+    return {fx}
+end
 
 -- ward placement rules
 local HERO_MIN_RANGE = 350       -- wards never spawn closer than this to the hero
@@ -64,7 +104,8 @@ end
 
 
 function aim_compet:Init()
-    self.type = "compet" -- Define the type of mode
+    --[[ self.type = "compet" ]] -- Define the type of mode
+    self.type = "sandbox"
     self.name = "aim_compet" -- Name of the gamemode (must match the key used to register it)
     self.activated = false -- Whether the mode is activated (replaces REACTION_TRAINING)
     self.Player = nil -- Reference to the player
@@ -84,7 +125,18 @@ function aim_compet:Init()
     self.avgTime = 0        -- was AIM_AVG_TIME
     self.hits = 0           -- wards killed by the player (shown on the HUD)
     self.misses = 0         -- wards that died on their own (shown on the HUD)
-    self.timeLeft = ROUND_TIME -- was WARD_TIMER
+    self.timeLeft = DEFAULT_ROUND_TIME -- was WARD_TIMER
+    self.roundTime = DEFAULT_ROUND_TIME -- round duration in seconds (menu setting)
+    self.spawnCurve = nil    -- ward spawn speed curve (menu setting), filled by ReadRoundSettings
+    self.spawnSchedule = {}  -- spawn times in seconds from round start, from ComputeSpawnSchedule
+    self.wardLifetime = DEFAULT_WARD_LIFETIME -- seconds a ward stays alive (menu setting)
+    self.wardHpDecay = WARD_HP * WARD_DECAY_TICK / DEFAULT_WARD_LIFETIME -- hp lost per decay tick
+    -- play area as offsets from the training place (area picker in the menu)
+    self.area = {minX = AREA_DEFAULT_MIN_X, minY = AREA_DEFAULT_MIN_Y, maxX = AREA_DEFAULT_MAX_X, maxY = AREA_DEFAULT_MAX_Y}
+    self.areaPicking = false   -- true while the area picker overlay is open
+    self.areaPickCorner1 = nil -- picked corners, world coords, already clamped
+    self.areaPickCorner2 = nil
+    self.areaPreview = {}      -- preview particles drawn while picking
     self.seed = nil        -- seed of the current round (same seed = same ward layout)
     self.spawnPlan = {}     -- ward offsets from the hero, generated from the seed
     self.useSeed = false     -- true: layout comes from a seed (custom or weekly), false: new random seed every round
@@ -116,6 +168,22 @@ function aim_compet:Init()
     end)
     CustomGameEventManager:RegisterListener("aim_compet_set_use_seed", function(_, event)
         aim_compet:SetUseSeed(event.value == 1 or event.value == true)
+    end)
+    -- area picker (overlay with two corner buttons + done)
+    CustomGameEventManager:RegisterListener("aim_compet_area_pick_start", function(_, event)
+        aim_compet:StartAreaPick()
+    end)
+    CustomGameEventManager:RegisterListener("aim_compet_area_set_corner", function(_, event)
+        aim_compet:SetAreaCorner(event)
+    end)
+    CustomGameEventManager:RegisterListener("aim_compet_area_done", function(_, event)
+        aim_compet:FinishAreaPick()
+    end)
+    CustomGameEventManager:RegisterListener("aim_compet_area_reset", function(_, event)
+        aim_compet:ResetArea()
+    end)
+    CustomGameEventManager:RegisterListener("get_aim_compet_area", function(_, event)
+        aim_compet:SendArea()
     end)
     -- TODO: add a listener for this mode's own spell table request, e.g.
     -- CustomGameEventManager:RegisterListener("get_aim_compet_spell_table", function(_, event)
@@ -167,6 +235,8 @@ function aim_compet:StartGame(args)
     local retry = (args.retry == 1)
     local playerID = args.PlayerID or 0
 
+    self:ReadRoundSettings(args)
+
     CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
     --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_start",{type='aim'}) ]]
 
@@ -185,7 +255,7 @@ function aim_compet:StartGame(args)
     self.avgTime = 0
     self.hits = 0
     self.misses = 0
-    self.timeLeft = ROUND_TIME
+    self.timeLeft = self.roundTime
     self.activated = true
     self:SendCounters() -- resets the HUD on retry
 
@@ -214,8 +284,9 @@ function aim_compet:StartGame(args)
     -- logging can be started here
 
     self.seed = self:ResolveSeed(args)
-    self.spawnPlan = self:GenerateSpawnPlan(self.seed)
-    print("[aim_compet] seed:", self.seed)
+    self.spawnSchedule = self:ComputeSpawnSchedule()
+    self.spawnPlan = self:GenerateSpawnPlan(self.seed, #self.spawnSchedule)
+    print("[aim_compet] seed:", self.seed, "wards planned:", #self.spawnSchedule)
     self:SendSeed()
 
     self:StartTimeDisplay()
@@ -223,9 +294,9 @@ function aim_compet:StartGame(args)
     CustomGameEventManager:Send_ServerToAllClients("aim_compet_countdown_start", {})
     -- play area border
     local origin = hero:GetAbsOrigin()
-    local minVec = origin - Vector(AREA_MIN_X, AREA_MIN_Y, 0)
-    local maxVec = origin + Vector(AREA_MAX_X, AREA_MAX_Y, 0)
-    self.box = CreateParticleBox(minVec, maxVec, "particles/custom/range_display_line_red.vpcf", self.Player)
+    local minVec = origin + Vector(self.area.minX, self.area.minY, 0)
+    local maxVec = origin + Vector(self.area.maxX, self.area.maxY, 0)
+    self.box = DrawGroundBox(minVec, maxVec)
     --combo tracker
     ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 10, 25, 50, 75, 100, 120 } })
     ComboTracker:Add()
@@ -329,13 +400,107 @@ function aim_compet:OnRoundEnd()
     -- ping reading can be done here too
     -- logging can be stopped / saved here
     self.activated=false
+
+    -- remove wards that are still alive: decay stops with the round, so without this
+    -- they would freeze on the map. They spawned less than wardLifetime before the end
+    -- (or died in the same frame), so they were never counted as hit or miss.
+    for _, ward in pairs(self.wards) do
+        if not ward:IsNull() and ward:IsAlive() then
+            ward:RemoveSelf()
+        end
+    end
+    self.wardPool = {}
+
+    -- round results popup on the HUD: stats + reaction time of every hit
+    local total = self.hits + self.misses
+    local hitRate = 0
+    if total > 0 then
+        hitRate = math.floor(self.hits / total * 100)
+    end
+    CustomGameEventManager:Send_ServerToAllClients("aim_compet_round_results", {
+        score = self.score,
+        maxCombo = self.maxCombo,
+        hits = self.hits,
+        misses = self.misses,
+        hitRate = hitRate,
+        avgTime = self.avgTime,
+        reactionTimes = self.results,
+    })
+
     print("wards_destroyed:", #self.results)
 end
 
--- spawns wards, interval between them shrinks so they appear faster and faster
+-- reads and validates the round settings sent by the menu, so a bad payload can't break the round
+local CURVE_TYPES = { classic = true, constant = true, linear = true, power = true }
+
+local function ClampNumber(v, lo, hi)
+    v = tonumber(v)
+    if v == nil or v ~= v then return nil end -- nil / NaN
+    return math.min(hi, math.max(lo, v))
+end
+
+-- args.roundTime        : round duration in seconds
+-- args.spawnCurveType   : "classic" | "constant" | "linear" | "power"
+-- args.spawnStartInterval / args.spawnEndInterval : seconds between wards at round start / end
+-- args.spawnExponent    : steepness of the "power" curve
+-- args.wardLifetime     : seconds a ward stays alive
+function aim_compet:ReadRoundSettings(args)
+    args = args or {}
+    self.roundTime = ClampNumber(args.roundTime, MIN_ROUND_TIME, MAX_ROUND_TIME) or DEFAULT_ROUND_TIME
+    local curveType = tostring(args.spawnCurveType or "classic")
+    if not CURVE_TYPES[curveType] then curveType = "classic" end
+    self.spawnCurve = {
+        type = curveType,
+        startInterval = ClampNumber(args.spawnStartInterval, MIN_INTERVAL, MAX_INTERVAL) or 2.0,
+        endInterval = ClampNumber(args.spawnEndInterval, MIN_INTERVAL, MAX_INTERVAL) or 0.4,
+        exponent = ClampNumber(args.spawnExponent, MIN_EXPONENT, MAX_EXPONENT) or 2,
+    }
+    self.wardLifetime = ClampNumber(args.wardLifetime, MIN_WARD_LIFETIME, MAX_WARD_LIFETIME) or DEFAULT_WARD_LIFETIME
+    self.wardHpDecay = WARD_HP * WARD_DECAY_TICK / self.wardLifetime
+end
+
+-- Turns the spawn curve into a list of spawn times (seconds from round start).
+-- First ward spawns at t = 0 (right after the countdown), the rest follow interval(progress).
+-- Pure math, no RNG: the timing depends only on the settings, the layout only on the seed.
+-- Classic reproduces the old behavior exactly: interval starts at startInterval, shrinks by
+-- CLASSIC_DECAY after every spawn and never goes below endInterval.
+function aim_compet:ComputeSpawnSchedule()
+    local curve = self.spawnCurve
+    local duration = self.roundTime
+    local times = {0}
+    local t = 0
+    local classicInterval = curve.startInterval
+
+    while #times < WARD_CAP do
+        local dt
+        if curve.type == "classic" then
+            dt = classicInterval
+            classicInterval = math.max(curve.endInterval, classicInterval - CLASSIC_DECAY)
+        else
+            local progress = math.min(1, t / duration)
+            if curve.type == "constant" then
+                dt = curve.startInterval
+            elseif curve.type == "power" then
+                dt = curve.startInterval + (curve.endInterval - curve.startInterval) * progress ^ curve.exponent
+            else -- linear
+                dt = curve.startInterval + (curve.endInterval - curve.startInterval) * progress
+            end
+        end
+        dt = math.max(0.05, dt)
+        t = t + dt
+        -- a ward needs its whole lifetime inside the round, or it could never
+        -- be killed/counted before the timer ends
+        if t > duration - self.wardLifetime then break end
+        table.insert(times, t)
+    end
+
+    return times
+end
+
+-- spawns wards at the times precomputed from the menu's spawn-speed curve
 function aim_compet:StartWardCycle()
-    local interval = 2
-    local wardsCount = 0
+    local schedule = self.spawnSchedule
+    local idx = 0
 
     Timers:CreateTimer(TIMER_WARD_CYCLE, {
         useGameTime = true,
@@ -345,22 +510,18 @@ function aim_compet:StartWardCycle()
                 return nil
             end
 
-            if interval > 0.4 then
-                interval = interval - 0.08
-            end
-
-            local pos = self.playerHero:GetAbsOrigin() + self.spawnPlan[wardsCount + 1]
+            idx = idx + 1
+            local pos = self.playerHero:GetAbsOrigin() + self.spawnPlan[idx]
             local ward = CreateUnitByName(WARD_NAME, pos, true, nil, nil, DOTA_TEAM_BADGUYS)
             ward:SetDeathXP(0)
             ward:SetMaxHealth(WARD_HP)
             ward:SetHealth(WARD_HP)
             table.insert(self.wards, ward)
 
-            wardsCount = wardsCount + 1
-            if wardsCount == MAX_WARDS then
+            if idx >= #schedule then
                 return nil
             end
-            return interval
+            return schedule[idx + 1] - schedule[idx]
         end
     })
 end
@@ -433,6 +594,135 @@ function aim_compet:SendSeed()
     })
 end
 
+-- ============================ area picker ============================
+-- The menu's "set area" button hides the menu and shows an overlay with three
+-- buttons (corner 1 / corner 2 / done). Corners are world positions under the
+-- screen center, clamped to a sane distance from the training place. On confirm
+-- the training place moves to the box center (the hero stands in the middle of
+-- the box) and the area is stored as offsets from it. Preview particles are
+-- drawn as corners get placed.
+
+-- js arrays arrive as tables with string keys "0".."2"
+local function EventPos(pos)
+    if type(pos) ~= "table" then return nil end
+    local x = tonumber(pos['0'] or pos[0])
+    local y = tonumber(pos['1'] or pos[1])
+    if x == nil or y == nil then return nil end
+    return Vector(x, y, 0)
+end
+
+local function ClampToAnchor(anchor, pos)
+    local dx = math.max(-AREA_MAX_EXTENT, math.min(AREA_MAX_EXTENT, pos.x - anchor.x))
+    local dy = math.max(-AREA_MAX_EXTENT, math.min(AREA_MAX_EXTENT, pos.y - anchor.y))
+    return anchor + Vector(dx, dy, 0)
+end
+
+function aim_compet:StartAreaPick()
+    if self.activated then return end -- menu only, never mid-round
+    self.areaPicking = true
+    self.areaPickCorner1 = nil
+    self.areaPickCorner2 = nil
+    GameMode:HideMenu()
+    CustomGameEventManager:Send_ServerToAllClients("area_picker_begin", {
+        ax = self.trainingPlace.x,
+        ay = self.trainingPlace.y,
+        az = self.trainingPlace.z
+    })
+end
+
+function aim_compet:ClearAreaPreview()
+    for _, p in pairs(self.areaPreview) do
+        ParticleManager:DestroyParticle(p, true)
+        ParticleManager:ReleaseParticleIndex(p)
+    end
+    self.areaPreview = {}
+end
+
+-- corner 1 only: small marker box; both corners: the full rectangle
+function aim_compet:DrawAreaPreview()
+    self:ClearAreaPreview()
+    local c1, c2 = self.areaPickCorner1, self.areaPickCorner2
+    if c1 ~= nil and c2 ~= nil then
+        local minVec = Vector(math.min(c1.x, c2.x), math.min(c1.y, c2.y), 0)
+        local maxVec = Vector(math.max(c1.x, c2.x), math.max(c1.y, c2.y), 0)
+        self.areaPreview = DrawGroundBox(minVec, maxVec)
+    elseif c1 ~= nil then
+        self.areaPreview = DrawGroundBox(c1 - Vector(32, 32, 0), c1 + Vector(32, 32, 0))
+    end
+end
+
+function aim_compet:SetAreaCorner(event)
+    if not self.areaPicking then return end
+    local pos = EventPos(event and event.pos)
+    if pos == nil then return end
+    if event.corner == 1 or event.corner == "1" then
+        self.areaPickCorner1 = ClampToAnchor(self.trainingPlace, pos)
+    else
+        self.areaPickCorner2 = ClampToAnchor(self.trainingPlace, pos)
+    end
+    self:DrawAreaPreview()
+end
+
+function aim_compet:FinishAreaPick()
+    if not self.areaPicking then return end
+
+    local c1, c2 = self.areaPickCorner1, self.areaPickCorner2
+    -- done without both corners = cancel, keep the old area
+    if c1 == nil or c2 == nil then
+        self:EndAreaPick(false)
+        return
+    end
+
+    local minX, maxX = math.min(c1.x, c2.x), math.max(c1.x, c2.x)
+    local minY, maxY = math.min(c1.y, c2.y), math.max(c1.y, c2.y)
+    if maxX - minX < AREA_MIN_SIDE or maxY - minY < AREA_MIN_SIDE then
+        -- overlay stays open and shows the error
+        CustomGameEventManager:Send_ServerToAllClients("area_picker_error", {})
+        return
+    end
+
+    -- the hero stands in the center of the picked box: the training place moves to
+    -- the box center and the offsets become symmetric around it
+    local center = GetGroundPosition(Vector((minX + maxX) / 2, (minY + maxY) / 2, 0), nil)
+    self.trainingPlace = center
+    self.area = {
+        minX = minX - center.x,
+        minY = minY - center.y,
+        maxX = maxX - center.x,
+        maxY = maxY - center.y,
+    }
+    self:EndAreaPick(true)
+end
+
+function aim_compet:EndAreaPick(saved)
+    self.areaPicking = false
+    self.areaPickCorner1 = nil
+    self.areaPickCorner2 = nil
+    self:ClearAreaPreview()
+    CustomGameEventManager:Send_ServerToAllClients("area_picker_end", {})
+    GameMode:ShowMenu()
+    if saved then
+        self:SendArea()
+    end
+end
+
+-- back to the legacy box and training place (menu's "default" button)
+function aim_compet:ResetArea()
+    self.trainingPlace = self.trainingPlaceDefault
+    self.area = {minX = AREA_DEFAULT_MIN_X, minY = AREA_DEFAULT_MIN_Y, maxX = AREA_DEFAULT_MAX_X, maxY = AREA_DEFAULT_MAX_Y}
+    self:SendArea()
+end
+
+-- current area offsets -> menu (updates the "play area" row)
+function aim_compet:SendArea()
+    CustomGameEventManager:Send_ServerToAllClients("aim_compet_area_result", {
+        minX = self.area.minX,
+        minY = self.area.minY,
+        maxX = self.area.maxX,
+        maxY = self.area.maxY
+    })
+end
+
 -- sends the stats shown on the HUD (score, combo, hits, misses, hit rate, avg reaction time, time left)
 function aim_compet:SendCounters()
     local total = self.hits + self.misses
@@ -457,15 +747,15 @@ end
 -- It only depends on the seed, not on how fast the player kills wards, so the layout is identical
 -- for everyone. Wards are spaced from the last few planned wards instead of alive ones for the same reason.
 -- The loop is capped: if no ideal spot is found, the best candidate seen is used.
-function aim_compet:GenerateSpawnPlan(seed)
+function aim_compet:GenerateSpawnPlan(seed, count)
     local rng = NewRng(seed)
     local plan = {}
 
-    for i = 1, MAX_WARDS do
+    for i = 1, count do
         local best, bestGap = nil, -1
 
         for _ = 1, MAX_PLACE_ATTEMPTS do
-            local offset = Vector(rng:Int(-AREA_MIN_X, AREA_MAX_X), rng:Int(-AREA_MIN_Y, AREA_MAX_Y), 0)
+            local offset = Vector(rng:Int(self.area.minX, self.area.maxX), rng:Int(self.area.minY, self.area.maxY), 0)
 
             if offset:Length2D() > HERO_MIN_RANGE then
                 local gap = math.huge
@@ -491,6 +781,7 @@ function aim_compet:GenerateSpawnPlan(seed)
 end
 
 -- ward loses hp over time, if it would die from that it is killed by itself (counts as a miss)
+-- decay per tick comes from the ward lifetime setting, so a ward always lives wardLifetime seconds
 function aim_compet:StartWardDecay(ward)
     Timers:CreateTimer({
         useGameTime = false,
@@ -501,11 +792,11 @@ function aim_compet:StartWardDecay(ward)
             end
 
             local newHp = ward:GetHealth()
-            if newHp - WARD_HP_DECAY <= 0 then
+            if newHp - self.wardHpDecay <= 0 then
                 ward:ForceKill(false)
                 self:WardKilledHimself(ward)
             else
-                ward:ModifyHealth(newHp - WARD_HP_DECAY, nil, true, 0)
+                ward:ModifyHealth(newHp - self.wardHpDecay, nil, true, 0)
             end
             return WARD_DECAY_TICK
         end

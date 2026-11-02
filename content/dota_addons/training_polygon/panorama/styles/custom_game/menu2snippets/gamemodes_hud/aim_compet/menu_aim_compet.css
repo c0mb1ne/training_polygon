@@ -67,3 +67,53 @@
 .itemSetupDesc{
 	width: 250px;
 }
+
+.AimSettingsRow{
+	margin-top: 24px;
+	margin-left: 10px;
+	flow-children: right;
+}
+
+.AimSettingsCol{
+	flow-children: down;
+	margin-right: 40px;
+}
+
+.AimSettingLine{
+	flow-children: right;
+	margin-bottom: 8px;
+}
+
+.AimSettingLine .settingLabel{
+	width: 180px;
+	margin-left: 0px;
+}
+
+#curveTypeRow{
+	horizontal-align: left;
+}
+
+.AimDefaultsButton{
+	margin: 0px 0px 0px 16px;
+	padding: 4px 14px;
+	vertical-align: center;
+}
+
+.AimDefaultsButton Label{
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: #b8d6df;
+}
+
+.AimEstimateValue{
+	color: #ADD9E6;
+	font-size: 16px;
+	vertical-align: center;
+	margin-left: 8px;
+}
+
+.AimCurveGraphCol{
+	flow-children: down;
+	margin-top: 20px;
+}

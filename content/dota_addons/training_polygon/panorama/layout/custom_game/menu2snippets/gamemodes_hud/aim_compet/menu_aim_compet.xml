@@ -5,6 +5,7 @@
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/graph.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/aim_compet/menu_aim_compet.js" />
     </scripts>
     <Panel class="aim_compet_Main">
@@ -35,6 +36,77 @@
                             </Panel>
                         </Panel>
                     </Panel>
+                </Panel>
+            </Panel>
+
+            <Panel class="RowNoFill AimSettingsRow">
+                <Panel class="ColNoFill AimSettingsCol">
+                    <Panel class="RowNoFill">
+                        <Label class="AimGridLabel" text="#aimRoundSettings"/>
+                        <Button class="small_button AimDefaultsButton" id="defaultsButton" onactivate="resetDefaults()">
+                            <Label text="#aimDefaults"/>
+                        </Button>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine">
+                        <Label class="settingLabel" text="#aimRoundDuration"/>
+                        <Panel id="roundTimeSwitcher"/>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine">
+                        <Label class="settingLabel" text="#aimSpawnCurve"/>
+                        <Panel class="radioRow" id="curveTypeRow">
+                            <RadioButton group="aimCurveType" id="curveClassic" class="radioRowButton" checked="true">
+                                <Label text="#aimCurveClassic"/>
+                            </RadioButton>
+                            <RadioButton group="aimCurveType" id="curveConstant" class="radioRowButton">
+                                <Label text="#aimCurveConstant"/>
+                            </RadioButton>
+                            <RadioButton group="aimCurveType" id="curveLinear" class="radioRowButton">
+                                <Label text="#aimCurveLinear"/>
+                            </RadioButton>
+                            <RadioButton group="aimCurveType" id="curvePower" class="radioRowButton">
+                                <Label text="#aimCurvePower"/>
+                            </RadioButton>
+                        </Panel>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine">
+                        <Label class="settingLabel" text="#aimStartInterval"/>
+                        <Panel id="startIntervalSwitcher"/>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine" id="endIntervalRow">
+                        <Label class="settingLabel" text="#aimEndInterval"/>
+                        <Panel id="endIntervalSwitcher"/>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine Hidden" id="exponentRow">
+                        <Label class="settingLabel" text="#aimCurveExponent"/>
+                        <Panel id="exponentSwitcher"/>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine">
+                        <Label class="settingLabel" text="#aimWardLifetime"/>
+                        <Panel id="wardLifetimeSwitcher"/>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine">
+                        <Label class="settingLabel" text="#aimPlayArea"/>
+                        <Label id="areaSizeValue" class="AimEstimateValue" text="1500 × 1000"/>
+                        <Button class="small_button AimDefaultsButton" id="areaPickButton" onactivate="pickArea()">
+                            <Label text="#aimSetArea"/>
+                        </Button>
+                    </Panel>
+
+                    <Panel class="RowNoFill AimSettingLine">
+                        <Label class="settingLabel" text="#aimWardEstimate"/>
+                        <Label id="wardEstimateValue" class="AimEstimateValue" text=""/>
+                    </Panel>
+                </Panel>
+
+                <Panel class="ColNoFill AimCurveGraphCol">
+                    <Panel id="curveGraphContainer"/>
                 </Panel>
             </Panel>
 

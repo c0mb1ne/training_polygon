@@ -63,7 +63,7 @@ require('gamemodes/dream_coil_escape/dream_coil_escape')
 require('gamemodes/lasthit_training/lasthit_training')
 require('gamemodes/test_sandbox/test_sandbox')--for testing stuff, not actual gamemode, visivle only in tools
 require('gamemodes/aim_compet/aim_compet')
-
+--[[ require('gamemodes/aim_legacy/aim_legacy') ]]
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
   GamemodeManager.activeGameMode:Prepare(args)
@@ -5503,31 +5503,7 @@ end
 
 
 
-function CreateParticleBox(min_a, max_a, particle_name, hPlayer)
-  local particles = {}
-  local particle
-  particle = CreateParticleLine(Vector(min_a.x, min_a.y, 0), Vector(min_a.x, max_a.y, 0), particle_name, hPlayer)
-  table.insert(particles, particle)
-  particle = CreateParticleLine(Vector(min_a.x, min_a.y, 0), Vector(max_a.x, min_a.y, 0), particle_name, hPlayer)
-  table.insert(particles, particle)
-  particle = CreateParticleLine(Vector(max_a.x, min_a.y, 0), Vector(max_a.x, max_a.y, 0), particle_name, hPlayer)
-  table.insert(particles, particle)
-  particle = CreateParticleLine(Vector(max_a.x, max_a.y, 0), Vector(min_a.x, max_a.y, 0), particle_name, hPlayer)
-  table.insert(particles, particle)
-  return particles
-end
 
-function CreateParticleLine(a, b, particle_name, hPlayer)
-  local particle
-  if hPlayer == nil then
-      particle = ParticleManager:CreateParticle(particle_name, PATTACH_WORLDORIGIN, nil)
-  else
-      particle = ParticleManager:CreateParticleForPlayer(particle_name, PATTACH_WORLDORIGIN, nil, hPlayer)
-  end
-  ParticleManager:SetParticleControl(particle, 0, a)
-  ParticleManager:SetParticleControl(particle, 1, b)
-  return particle
-end
 
 function chargingBara(hero,id_string,delay,start_interval)
   local start_interval=5

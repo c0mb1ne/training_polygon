@@ -102,6 +102,7 @@ function ParticleMessage:ShowSinglePlus(npc,vecOffset,color)
   ParticleManager:SetParticleControl(particleFX, 3, color)
 end
 
+
 --------------------------------------------------------------------------
 -- High level: show a full number (handles sign, int part, up to 3 decimals)
 --------------------------------------------------------------------------

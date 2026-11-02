@@ -1,0 +1,24 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/area_picker.css" />
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/area_picker.js" />
+    </scripts>
+    <Panel class="areaPicker Hidden" hittest="false">
+        <Label class="areaPickerHint" text="#aimAreaHint"/>
+        <Label class="areaPickerSize" id="areaPickerSize" text=""/>
+        <Panel class="areaPickerButtons" hittest="true">
+            <Button class="small_button areaPickerButton" id="areaCorner1Button" onactivate="setAreaCorner(1)">
+                <Label text="#aimAreaCorner1"/>
+            </Button>
+            <Button class="small_button areaPickerButton" id="areaCorner2Button" onactivate="setAreaCorner(2)">
+                <Label text="#aimAreaCorner2"/>
+            </Button>
+            <Button class="small_button areaPickerButton" id="areaDoneButton" onactivate="finishAreaPick()">
+                <Label text="#aimAreaDone"/>
+            </Button>
+        </Panel>
+    </Panel>
+</root>
