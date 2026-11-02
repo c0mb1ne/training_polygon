@@ -11,5 +11,6 @@ panorama_debugger.cfg
 *.sqlite3
 nul
 .claude/
+.agents/
 CLAUDE.md
 dev_secret.lua

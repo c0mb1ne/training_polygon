@@ -1,0 +1,69 @@
+.aim_legacy_Main{
+	width: 100%;
+	height: 100%;
+}
+
+.AimSetupRow{
+	margin-top: 10px;
+	margin-left: 10px;
+	flow-children: right;
+}
+
+.AimItemPreview{
+	width: 64px;
+	height: 64px;
+	margin-right: 16px;
+	vertical-align: bottom;
+}
+
+.AimGridContainer{
+	margin-right: 24px;
+	flow-children: down;
+}
+
+.AimGridLabel{
+	color: #7d8688;
+	font-size: 16px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-bottom: 4px;
+	horizontal-align: left;
+}
+
+.AimSlot{
+	width: 64px;
+	height: 52px;
+	background-color: #101115;
+	border: 1px solid #3a3f44;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	transition-property: border, box-shadow, pre-transform-scale2d;
+	transition-duration: 0.2s;
+	transition-timing-function: ease-in-out;
+}
+
+.AimSlot:hover{
+	border: 1px solid #ADD9E6;
+	box-shadow: #5FA5BA26 0px 0px 18px 0px;
+	/* pre-transform-scale2d: 1.05; */
+}
+
+.AimSlotFilled{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #18181A ), to( #0E0F11 ) );
+	border: 1px solid #9CDBEE;
+}
+
+.AimSlotItemImage{
+	width: 100%;
+	height: 100%;
+}
+
+#errorMsg{
+	color: #db0028;
+	font-size: 16px;
+	vertical-align: center;
+	margin-left: 10px;
+}
+.itemSetupDesc{
+	width: 250px;
+}
