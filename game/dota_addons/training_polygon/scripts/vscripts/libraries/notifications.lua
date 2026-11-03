@@ -1,10 +1,12 @@
 if Notifications == nil then
   Notifications = class({})
 end
+
 --TODO: add icons to sounds to make them look cute, but i havent figure out how i can display emoticons properly without extracting them and putting in custom game files
 --add some localization workaround
 function Notifications:Init()
   self.notificationsSounds={
+    none={sounds={},icon="todo",displayName="no_sound"},
     frog={sounds={"soundboard.frog"},icon="todo",displayName="frog"},
     sproing={sounds={"sproing"},icon="todo",displayName="sproing"},
     pain1={sounds={
@@ -69,41 +71,98 @@ function Notifications:Init()
   end)
   self.goodSound="frog"
   self.badSound="sproing"
+  self.modeSounds={} --gamemode name -> {good=..., bad=...}; filled per mode by RegisterSoundSettingsForMode
+  --persisted via UserConfig; watchers overwrite the fallbacks above once the saved config loads
+  UserConfig:RegisterDefaults("general","notif_good_sound","frog")
+  UserConfig:RegisterDefaults("general","notif_bad_sound","sproing")
+  UserConfig:Watch("general","notif_good_sound",function(value)
+    if Notifications.notificationsSounds[value]~=nil then
+      Notifications.goodSound=value
+    end
+  end)
+  UserConfig:Watch("general","notif_bad_sound",function(value)
+    if Notifications.notificationsSounds[value]~=nil then
+      Notifications.badSound=value
+    end
+  end)
+end
+
+--registers per-gamemode sound settings; called by GamemodeManager:RegisterMode for every mode
+function Notifications:RegisterSoundSettingsForMode(modeName)
+  UserConfig:RegisterDefaults(modeName,"notif_good_sound","frog")
+  UserConfig:RegisterDefaults(modeName,"notif_bad_sound","sproing")
+  self.modeSounds[modeName]={good="frog",bad="sproing"}
+  UserConfig:Watch(modeName,"notif_good_sound",function(value)
+    if Notifications.notificationsSounds[value]~=nil then
+      Notifications.modeSounds[modeName].good=value
+    end
+  end)
+  UserConfig:Watch(modeName,"notif_bad_sound",function(value)
+    if Notifications.notificationsSounds[value]~=nil then
+      Notifications.modeSounds[modeName].bad=value
+    end
+  end)
+end
+
+--returns the good/bad sound ids for the current context: per-gamemode if a new-style
+--mode is active, general otherwise (menu, legacy trainers)
+function Notifications:GetSoundIds()
+  local good=self.goodSound
+  local bad=self.badSound
+  local activeMode=GamemodeManager.activeGameMode
+  if activeMode~=nil and activeMode.name~=nil then
+    local modeSounds=self.modeSounds[activeMode.name]
+    if modeSounds~=nil then
+      good=modeSounds.good
+      bad=modeSounds.bad
+    end
+  end
+  return good,bad
 end
 function Notifications:Show(strColor,strText,strIcon)
   --color can be 'green' 'red'
   --text can be whatever, but would be nice to add support of localize string
   --icon can be 'none' 'pepega' 'pogchamp' or ability icon by name, for ex: 'axe_berserkers_call'
-  local sound 
+  local goodSoundId,badSoundId=self:GetSoundIds()
+  local sound
   if strColor=="green" or strColor=="yellow" then
-    sound=self.goodSound
+    sound=goodSoundId
   else
-    sound=self.badSound
+    sound=badSoundId
   end
-  local soundToPlay=self.notificationsSounds[sound].sounds[RandomInt(1,#self.notificationsSounds[sound].sounds)]
+  local soundToPlay="" --"none" means no sound; the client plays nothing for an empty sound
+  if sound~="none" then
+    soundToPlay=self.notificationsSounds[sound].sounds[RandomInt(1,#self.notificationsSounds[sound].sounds)]
+  end
   --[[ print('[Notifications] Playing sound:',soundToPlay) ]]
   CustomGameEventManager:Send_ServerToAllClients("show_notification",{color=strColor,text=strText,icon=strIcon,sound=soundToPlay})
 end
 function Notifications:SoundOnly(goodOrBad)
-  local sound 
+  local goodSoundId,badSoundId=self:GetSoundIds()
+  local sound
   if goodOrBad=="good" then
-    sound=self.goodSound
+    sound=goodSoundId
   else
-    sound=self.badSound
+    sound=badSoundId
   end
-  local soundToPlay=self.notificationsSounds[sound].sounds[RandomInt(1,#self.notificationsSounds[sound].sounds)]
+  local soundToPlay="" --"none" means no sound; the client plays nothing for an empty sound
+  if sound~="none" then
+    soundToPlay=self.notificationsSounds[sound].sounds[RandomInt(1,#self.notificationsSounds[sound].sounds)]
+  end
   --[[ print('[Notifications] Playing sound:',soundToPlay) ]]
-  CustomGameEventManager:Send_ServerToAllClients("show_notification_only_sound",{sound=sound})
+  CustomGameEventManager:Send_ServerToAllClients("show_notification_only_sound",{sound=soundToPlay})
 end
 function Notifications:SendSounds()
   CustomGameEventManager:Send_ServerToAllClients("notifications_send_sounds", {data=self.notificationsSounds})
 end
 function Notifications:SetSound(args)
+  --routes through UserConfig so the choice is validated, saved and pushed to the backend;
+  --the watchers registered in Init apply it to goodSound/badSound
   if args.type=="bad" then
-    self.badSound=args.id
+    UserConfig:Set("general","notif_bad_sound",args.id)
   end
   if args.type=="good" then
-    self.goodSound=args.id
+    UserConfig:Set("general","notif_good_sound",args.id)
   end
   --[[ DeepPrintTable(args) ]]
 end

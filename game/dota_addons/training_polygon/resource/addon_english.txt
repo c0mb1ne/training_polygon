@@ -224,5 +224,16 @@
 		"DOTA_Tooltip_Ability_topor_ability_3_SummaryDescription" "once upon a time it was breaking wards"
 		"DOTA_Tooltip_ability_topor_ability_4" "Topor"
 		"DOTA_Tooltip_Ability_topor_ability_4_SummaryDescription" "once upon a time it was breaking wards"
+			"settingsNotifications"		"notifications"
+			"settingsGamemode"		"gamemode:"
+			"settingsGoodSound"		"good sound:"
+			"settingsBadSound"		"bad sound:"
+			"settingsScopeGeneral"		"general"
+			"no_sound"		"no sound"
+			"frog"		"frog"
+			"sproing"		"sproing"
+			"pain1_pack"		"pain1_pack"
+			"oof_pack"		"oof_pack"
+			"aaah_pack"		"aaah_pack"
 	}
 }

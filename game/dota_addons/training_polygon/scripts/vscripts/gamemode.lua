@@ -2,7 +2,7 @@
 --anyway only thing that used from barebones is a timer library
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
-TP_VERSION="0.5.0"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
+TP_VERSION="0.5.1"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
 --so it will be possible to see version on screenshots
 --in mainmenu_v2 js we gonna grab version
 CMB_SERVER="https://combine.isgood.host/"
@@ -43,16 +43,18 @@ require('libraries/announce_message')--to display some messages in center of scr
 require('libraries/networking') -- class for leaderboard sever communications
 require('libraries/action_logging') --class for action logging but not needed for now
 require('libraries/main_menu_communicator') --class for loading menu pages
-require('libraries/ping_reader') --class for fetching ping from ui and sending it to lua
+--require('libraries/ping_reader') --class for fetching ping from ui and sending it to lua
 require('libraries/precache') --class for precaching resources before gamemode starts to avoid crashes and error models
 require('libraries/timebar') --class for controlling timebar useful for timing stuff
 require('libraries/combo_tracker') --class for controlling combo/streak hud
+require('libraries/user_config')--user config handler
 require('libraries/notifications') --class for notification display
 require('libraries/place_picker') --class for picking place for training
 require('libraries/creep_controller') --class for spawning lanecreeps, maybe even jungle ones in future
 require('libraries/particle_message') --class for showing particle numbers in world
 require('libraries/tower_controller') --class for controlling towers like invul or attack capability, dont wanna search for them every time
 require('libraries/debug_var')--debug panel
+
 --tower controller inited in OnFirstPlayerLoaded
 
 

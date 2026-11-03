@@ -12,5 +12,8 @@ panorama_debugger.cfg
 nul
 .claude/
 .agents/
+server/
+external_ref/
 CLAUDE.md
 dev_secret.lua
+

@@ -883,3 +883,11 @@ height: 100%;
 .loginGeneralDesc{
 	text-align: left;
 }
+.modeSelectorRow{
+	flow-children: right-wrap;
+	padding: 10px;
+	horizontal-align: left;
+}
+.modeSelectorRow .radioRowButton{
+	margin: 4px;
+}

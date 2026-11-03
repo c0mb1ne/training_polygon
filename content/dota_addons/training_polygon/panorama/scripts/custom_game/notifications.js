@@ -10,17 +10,19 @@ function createNotification(color,text,icon,sound){
 	var teamColorBar=$.CreatePanel('Panel',slashContainer,'TeamColorBar')
 	var eventLabel=$.CreatePanel('Label',notification,'EventLabel')
 	eventLabel.AddClass('EventListLabel')
+	//empty sound = the "no sound" option is selected
+	var playSound=(sound!==undefined && sound!=="")
 	if (color=='red'){
 		notification.AddClass('EnemyEvent')
-		Game.EmitSound(sound)
+		if (playSound){Game.EmitSound(sound)}
 	}
 	if (color=='green'){
 		notification.AddClass('AllyEvent')
-		Game.EmitSound(sound)
+		if (playSound){Game.EmitSound(sound)}
 	}
 	if (color=='yellow'){
 		notification.AddClass('NeutralEvent')
-		Game.EmitSound(sound)
+		if (playSound){Game.EmitSound(sound)}
 	}
 	eventLabel.text=text
 	if (icon!='none'){
@@ -66,7 +68,9 @@ function showNotify(data){
 	createNotification(data.color,data.text,data.icon,data.sound)
 }
 function onlySound(data){
-	Game.EmitSound(data.sound)
+	if (data.sound!==undefined && data.sound!==""){
+		Game.EmitSound(data.sound)
+	}
 }
  GameEvents.Subscribe("show_notification_only_sound", onlySound);
  GameEvents.Subscribe("show_notification", showNotify);

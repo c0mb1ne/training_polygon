@@ -15,6 +15,10 @@ end
 function GamemodeManager:RegisterMode(modeName,gamemodeClass,gamemodeType)
   self.gamemodeList[modeName]=gamemodeClass
   table.insert(self.modeNames,{name=modeName,type=gamemodeType})
+  --let libraries register per-mode stuff (per-gamemode notification sound settings etc.)
+  if Notifications~=nil and Notifications.RegisterSoundSettingsForMode~=nil then
+    Notifications:RegisterSoundSettingsForMode(modeName)
+  end
 end
 
 function GamemodeManager:SetActiveGamemode(modeName)

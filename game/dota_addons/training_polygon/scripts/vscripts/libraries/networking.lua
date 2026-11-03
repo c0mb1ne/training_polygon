@@ -87,6 +87,10 @@ function Networking:handlePoll(body)
     --do something on ui
     self.loginState="login_done"
     CustomGameEventManager:Send_ServerToAllClients("login_done",{})
+    --let interested libraries know the auth key is ready (settings sync etc.)
+    if UserConfig~=nil and UserConfig.OnAuthenticated~=nil then
+      UserConfig:OnAuthenticated()
+    end
   end
 end
 function Networking:LoginState()
@@ -97,7 +101,8 @@ function Networking:InitUser(args)
   local route="auth/init"
   local language=args['data']['language']
   self.clientLanguage=language
-  local body=json.encode({steamid=self.steamId,key=self.secretKey,language=language,version=TP_VERSION})
+  local map_name=GetMapName()
+  local body=json.encode({steamid=self.steamId,key=self.secretKey,language=language,version=TP_VERSION,map=map_name})
   --[[ DeepPrintTable(args) ]]
   self:MakeRequest(body,route,nil,"handleInit")
 end
@@ -286,7 +291,12 @@ function Networking:MakeRequest(data,route,jsCallback,networkingCallback,reqType
             CustomGameEventManager:Send_ServerToAllClients(jsCallback,{data=res.Body})
         end
         if networkingCallback then
-          self[networkingCallback](self, res.Body)
+          --accepts either a method name on Networking or a plain function
+          if type(networkingCallback)=="function" then
+            networkingCallback(res.Body)
+          else
+            self[networkingCallback](self, res.Body)
+          end
         end
       end
       if not res.Body then
