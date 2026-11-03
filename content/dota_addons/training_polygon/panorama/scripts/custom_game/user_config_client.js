@@ -8,6 +8,9 @@ usage in any ui js (include this file in the xml first):
   UserConfigClient.OnLoad(function(){ ... UserConfigClient.Get("general","notif_good_sound") ... });
   UserConfigClient.Set("dodge", "camera_shake", false); //scope is "general" or a gamemode name
 */
+//guard against double includes (menu pages and in-game huds share one js context):
+//without it a second include would wipe the cache and duplicate the subscription
+if (typeof UserConfigClient === "undefined") {
 var UserConfigClient = (function () {
     var cache = { general: {}, modes: {} };
     var loaded = false;
@@ -63,3 +66,4 @@ var UserConfigClient = (function () {
     };
 })();
 UserConfigClient.Request();
+} //end of double-include guard

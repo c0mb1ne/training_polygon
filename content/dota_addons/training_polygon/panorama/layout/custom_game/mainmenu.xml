@@ -140,6 +140,14 @@
 								<Label class="discordLabel" text="github"/>
 							</Panel>
 						</Panel>
+						<Panel class="linkButtons" id="telegram">
+							<Panel id="bLogoContainer">
+								<Panel id="telegramLogo"/>
+							</Panel>
+							<Panel id="bLabelContainer">
+								<Label class="discordLabel" text="telegram"/>
+							</Panel>
+						</Panel>
 						<Panel style="visibility:collapse;" id="translatorsContainer">
 							<Label text="#translationProvided"/>
 							

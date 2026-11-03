@@ -34,6 +34,7 @@ function closeLoginPopup() {
     }
     p.overlay.style.visibility = "collapse";
     p.overlay.style.opacity = "0";
+    $.GetContextPanel().SetDisableFocusOnMouseDown(false)
 }
 
 (function () {

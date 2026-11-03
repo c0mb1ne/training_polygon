@@ -3566,6 +3566,12 @@ $('#github').SetPanelEvent(
 		openGithub()
 	}
 )
+$('#telegram').SetPanelEvent(
+	"onactivate",
+	function() {
+		openTelegram()
+	}
+)
 function newHudMode(){
 	var menu=$.GetContextPanel()
 	menu.style['opacity']='0'
@@ -3576,6 +3582,9 @@ function openDiscord(){
 }
 function openGithub(){
 	$.DispatchEvent("ExternalBrowserGoToURL", "https://github.com/c0mb1ne/training_polygon")
+}
+function openTelegram(){
+	$.DispatchEvent("ExternalBrowserGoToURL", "https://t.me/cumbine")
 }
 function openPatreon(){
 	$.DispatchEvent("ExternalBrowserGoToURL", "https://www.patreon.com/c0mb1ne")

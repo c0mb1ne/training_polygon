@@ -1823,6 +1823,15 @@ Label, TextEntry{
 	background-size: 100% 100%;
 	background-image: url("file://{images}/custom_game/github.png");
 }
+#telegramLogo{
+	width: 40px;
+	height: 40px;
+	vertical-align: center;
+	horizontal-align: center;
+	background-size: 100% 100%;
+	background-image: url("file://{images}/custom_game/tg_logo.png");
+}
+
 #twitterLogo{
 	width: 40px;
 	height: 40px;

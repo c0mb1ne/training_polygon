@@ -13,6 +13,7 @@ function Precache( context )
   PrecacheResource("particle", "particles/ui_mouseactions/bounding_area_view.vpcf", context)
   --[[ PrecacheResource("particle", "particles/ui_mouseactions/range_display.vpcf", context) ]]
   PrecacheResource("particle", "particles/ui_mouseactions/range_display.vpcf", context)
+  PrecacheResource("particle", "particles/generic_gameplay/lasthit_coins.vpcf", context)
   PrecacheResource("particle", "particles/tp_custom_msg.vpcf", context)
   PrecacheResource("particle", "particles/tp_custom_msg_dot.vpcf", context)
   PrecacheResource("particle", "particles/tp_custom_msg_plus.vpcf", context)

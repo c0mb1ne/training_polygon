@@ -5,8 +5,8 @@
     IsTemplate = false
     maps = 
     [
-        "template_map",
         "dota",
+        "template_map",
     ]
     CheckAFKPlayers = false
     DefaultMap = "template_map"
@@ -26,11 +26,11 @@
     [
         {
             MaxPlayers = 1
-            map = "template_map"
+            map = "dota"
         },
         {
             MaxPlayers = 1
-            map = "dota"
+            map = "template_map"
         },
     ]
     PenaltiesEnabled = false

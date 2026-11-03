@@ -619,6 +619,15 @@ function lasthit_training:OnEntityKilled(keys)
                     self:ShowDelayParticle(victim, Vector(0,0,50), delay, green, false)
                 end
             end
+            --coin burst + lasthit gold sound on the creep, skip on denies (no gold for those)
+            if attacker:GetTeam()~=victim:GetTeam() then
+                --stuff below doesnt work lets just enable gold
+                local coinsParticle=ParticleManager:CreateParticle("particles/generic_gameplay/lasthit_coins.vpcf", PATTACH_WORLDORIGIN, nil)
+                ParticleManager:SetParticleControl(coinsParticle, 1, victim:GetAbsOrigin())
+                ParticleManager:ReleaseParticleIndex(coinsParticle)
+                --[[ EmitSoundOnClient("General.Coins", self.playerHero:GetPlayerOwner()) ]]
+                victim:EmitSound("General.Coins")
+            end
         else
             Notifications:Show('red','bad','none')
             self:UpdateCounters('missCounter',1)
@@ -754,6 +763,17 @@ function lasthit_training:Deactivate()
     end
     self.botWardsEnts={}
     
+end
+
+function lasthit_training:GoldFilter(event)
+    --player_id_const                     = 0 (number)
+    --reliable                        	= 0 (number)
+    --reason_const                    	= 13 (number)
+    --source_entindex_const           	= 830 (number)
+    --gold                                = 39 (number)
+    --[[ event.gold=67 ]]
+    return false
+    --
 end
 
 lasthit_training:Init()
