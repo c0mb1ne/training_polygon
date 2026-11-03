@@ -61,7 +61,7 @@
                                 <Panel id="loginPlaceHolder">
                                     <Panel class="ColNoFill horCenter vertCenter">
                                         <Panel class="RowNoFill">
-                                            <Label class="embeedingContentLabel" text="#connectDesc"/>
+                                            <Label id="connectDescLabel" class="embeedingContentLabel" text="#connectDesc"/>
                                         </Panel>
                                         <Panel class="horCenter RowNoFill">
                                             <Panel class="smolIcon pcIcon"/>
@@ -112,5 +112,5 @@
                 </Panel>
             </Panel>
         </Panel>
-    </Panel>
+    </Panel> 
 </root>

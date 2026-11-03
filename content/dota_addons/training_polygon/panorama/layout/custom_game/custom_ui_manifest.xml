@@ -10,6 +10,7 @@
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/armlet.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/notifications.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/mainmenu_v2.xml" />
+    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/api_http_relay.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/action_logging.xml" /> 
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/ping_reader.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/timebar.xml" />
@@ -18,6 +19,7 @@
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/announce_message.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/debug_panel.xml" />
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/combo_tracker.xml" />
+    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/login_popup.xml" />
     <!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/xml_compiler.xml" /> -->
-  </Panel>
+  </Panel>  
 </root>

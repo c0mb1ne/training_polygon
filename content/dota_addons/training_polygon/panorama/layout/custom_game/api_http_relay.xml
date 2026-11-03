@@ -1,0 +1,17 @@
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/api_http_relay.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/api_http_relay.js" />
+    </scripts>
+    <Panel class="ApiHttpRelayRoot" hittest="false">
+        <Panel class="ApiHttpBridgeHost" hittest="false">
+            <DOTAHTMLPanel id="ApiHttpBridgeHtml0" class="ApiHttpBridgeHtml" hittest="false" />
+            <DOTAHTMLPanel id="ApiHttpBridgeHtml1" class="ApiHttpBridgeHtml" hittest="false" />
+            <DOTAHTMLPanel id="ApiHttpBridgeHtml2" class="ApiHttpBridgeHtml" hittest="false" />
+            <DOTAHTMLPanel id="ApiHttpBridgeHtml3" class="ApiHttpBridgeHtml" hittest="false" />
+        </Panel>
+    </Panel>
+</root>

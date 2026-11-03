@@ -1,0 +1,19 @@
+/* invisible relay panels: they must stay rendered (non-zero size, slight opacity)
+   or the embedded browser stops loading pages */
+.ApiHttpRelayRoot {
+    width: 0px;
+    height: 0px;
+    overflow: noclip;
+}
+
+.ApiHttpBridgeHost {
+    width: 0px;
+    height: 0px;
+    overflow: noclip;
+}
+
+.ApiHttpBridgeHtml {
+    width: 48px;
+    height: 48px;
+    opacity: 0.04;
+}

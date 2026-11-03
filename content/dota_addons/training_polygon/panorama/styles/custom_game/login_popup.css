@@ -1,0 +1,59 @@
+/* TEST: html panel login popup (revert: delete this file + login_popup.xml/js + its line in custom_ui_manifest.xml) */
+.LoginPopupOverlay {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.65);
+	visibility: collapse;
+	opacity: 0;
+}
+
+.LoginPopup {
+	width: 70%;
+	height: 85%;
+	horizontal-align: center;
+	vertical-align: center;
+	background-color: #1a1c20;
+	border: 2px solid #4a5568;
+	flow-children: down;
+}
+
+.LoginPopupHeader {
+	width: 100%;
+	height: 44px;
+	flow-children: right;
+	background-color: #23262d;
+}
+
+.LoginPopupTitle {
+	vertical-align: center;
+	margin-left: 12px;
+	color: #ffffff;
+	font-size: 20px;
+	letter-spacing: 2px;
+}
+
+.LoginPopupClose {
+	width: 36px;
+	height: 36px;
+	margin: 4px;
+	horizontal-align: right;
+	background-color: #2d333b;
+	border: 1px solid #4a5568;
+	opacity-mask: url("s2r://panorama/images/control_icons/24px/x_close.vsvg");
+}
+
+.LoginPopupClose:hover {
+	background-color: #b53b3b;
+}
+
+.LoginPopupCloseLabel {
+	align: center center;
+	color: #ffffff;
+	font-size: 18px;
+	
+}
+
+.LoginPopupHtml {
+	width: 100%;
+	height: fill-parent-flow(1);
+}

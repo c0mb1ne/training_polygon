@@ -38,6 +38,8 @@ function loginStateRefresh(data){
 	if (state=="server_alive"){
 		$('#loginPlaceHolder').style['visibility']='collapse'
 		$('#loginRequest').style['visibility']='visible'
+	}else if(state=="server_unreachable"){
+		showServerUnreachable()
 	}else if(state=="link_ready"){
 		GameEvents.SendCustomGameEventToServer ("get_login_link",{});
 	}else if(state=="login_done"){
@@ -46,6 +48,15 @@ function loginStateRefresh(data){
 		//nothing
 	}
 }
+//======= TEST: html panel login ============================================
+//revert: set USE_HTML_LOGIN_PANEL to false; full removal = this block + login_popup.xml/css/js + its line in custom_ui_manifest.xml + the listener in main_menu_communicator.lua
+var USE_HTML_LOGIN_PANEL = true
+function openLoginInPanel(url){
+	//popup lives in its own hud layout (login_popup.xml); game events reach every ui root
+	GameEvents.SendCustomGameEventToServer("open_login_popup_request", {link: url})
+	$.Msg('[LoginPanel] requested: ', url)
+}
+//===========================================================================
 function setLoginLink(data){
 	/* JSON.stringify(data) */
 	let link=data.link
@@ -57,7 +68,11 @@ function setLoginLink(data){
 		$('#loginInGame').SetPanelEvent(
 			"onactivate",
 			function() {
-				openInternal(link)
+				if (USE_HTML_LOGIN_PANEL){
+					openLoginInPanel(link)
+				}else{
+					openInternal(link)
+				}
 			}
 		)
 		$('#loginExternal').SetPanelEvent(
@@ -79,6 +94,16 @@ function showLoginRequest(){
 	$('#loginPlaceHolder').style['visibility']='collapse'
 	$('#loginRequest').style['visibility']='visible'
 }
+function showServerUnreachable(){
+	//server-side http is unavailable (local non-tools game): keep the placeholder visible and swap its text
+	$('#loginRequest').style['visibility']='collapse'
+	$('#loginForm').style['visibility']='collapse'
+	$('#loginPlaceHolder').style['visibility']='visible'
+	let label=$('#loginPlaceHolder').FindChildTraverse('connectDescLabel')
+	if (label){
+		label.text=$.Localize('#serverUnreachable')
+	}
+}
 function hideLoginWindow(){
 	$('#loginWindow').DeleteAsync(0)
 }
@@ -90,5 +115,6 @@ function openExternal(url){
 }
 GameEvents.Subscribe("login_state", loginStateRefresh);
 GameEvents.Subscribe("server_alive", showLoginRequest);
+GameEvents.Subscribe("server_unreachable", showServerUnreachable);
 GameEvents.Subscribe("login_link_set", setLoginLink);
 GameEvents.Subscribe("login_done", hideLoginWindow);

@@ -1,0 +1,20 @@
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/login_popup.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/login_popup.js" />
+    </scripts>
+    <Panel class="LoginPopupOverlay" hittest="false">
+        <Panel class="LoginPopup">
+            <Panel class="LoginPopupHeader">
+                <Label class="LoginPopupTitle" text="Login"/>
+                <Button id="LoginPopupClose" class="LoginPopupClose">
+                    <Label class="LoginPopupCloseLabel" text="✕"/>
+                </Button>
+            </Panel>
+            <DOTAHTMLPanel id="LoginPopupHtml" class="LoginPopupHtml"/>
+        </Panel>
+    </Panel>
+</root>

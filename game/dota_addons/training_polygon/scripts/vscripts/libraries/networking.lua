@@ -1,7 +1,8 @@
 if Networking == nil then
   Networking = class({})
 end
-
+require('libraries/http_relay')
+local dedic_key=GetDedicatedServerKeyV3( "sq@#dfqs" )
 local function generateRandomString(length)
     local charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     local charsetLength = string.len(charset)
@@ -15,6 +16,14 @@ local function generateRandomString(length)
     return table.concat(result)
 end
 
+--json.decode throws on nil/invalid bodies; inside HTTP callbacks that becomes "error in error handling", so decode defensively
+local function safeDecode(body)
+    if type(body) ~= "string" or body == "" then return nil end
+    local ok, result = pcall(json.decode, body)
+    if ok and type(result) == "table" then return result end
+    return nil
+end
+
 function Networking:Init()
   self.serverAdress="https://combine.isgood.host/"
   self.secretKey=generateRandomString(8)
@@ -22,15 +31,20 @@ function Networking:Init()
   self.pollSecret=nil
   self.authKey=nil
   self.loginUrl=nil
-  self.loggingEnabled=false
+  self.loggingEnabled=true
   self.loginState=""
   self.clientLanguage=""
+  self.forceRelay=true --set true to always use the client http relay (testing in tools mode); false = native http when available
   --[[ self.devSecret="67e54aqweqweqwece7e1f927c0437dd59997b" ]]
   CustomGameEventManager:RegisterListener("init_user", function(_, args)
-      
-      local cmdPlayer=PlayerResource:GetPlayer(0)
-      Networking.steamId=tostring(PlayerResource:GetSteamID(cmdPlayer:GetPlayerID()))
-      Networking:InitUser(args)
+      --errors inside C-invoked listeners surface as "error in error handling" in non-tools mode, so catch and print them explicitly
+      local ok, err = xpcall(function()
+        Networking.steamId=tostring(PlayerResource:GetSteamID(0))
+        Networking:InitUser(args)
+      end, function(e) return tostring(e) end)
+      if not ok then
+        print("[Networking] error in init_user listener: "..tostring(err))
+      end
       --[[ Networking:GetUserConfig(steam) ]]
   end)
   CustomGameEventManager:RegisterListener("get_leaderboard", function(_, args)
@@ -58,7 +72,11 @@ end
 
 function Networking:handlePoll(body)
   --[[ print('poll response:',body) ]]
-  local response=json.decode(body)
+  local response=safeDecode(body)
+  if response==nil then
+    print("[Networking] handlePoll: bad body:",tostring(body))
+    return
+  end
   if response.status=="pending" then
     Timers:CreateTimer(2,function()
       self:StartPolling()
@@ -92,7 +110,11 @@ end
 function Networking:handleInit(body)
   --[[ print('handling init')
   print('init response:',body) ]]
-  local responseJson=json.decode(body)
+  local responseJson=safeDecode(body)
+  if responseJson==nil then
+    print("[Networking] handleInit: bad body:",tostring(body))
+    return
+  end
   if responseJson.version then
     if responseJson.version~=TP_VERSION then
       CustomGameEventManager:Send_ServerToAllClients("update_required",{new_version=responseJson.version})
@@ -113,7 +135,11 @@ end
 function Networking:handleLogin(body)
   --[[ print('handling init')
   print('init response:',body) ]]
-  local responseJson=json.decode(body)
+  local responseJson=safeDecode(body)
+  if responseJson==nil then
+    print("[Networking] handleLogin: bad body:",tostring(body))
+    return
+  end
   if responseJson.poll_secret then
     self.pollSecret=responseJson.poll_secret
   else
@@ -215,45 +241,101 @@ function Networking:MakeRequest(data,route,jsCallback,networkingCallback,reqType
     reqType='POST'
   end
   self:DebugLog("Making request to: "..self.serverAdress..route)
-  local req = CreateHTTPRequestScriptVM(reqType, self.serverAdress..route)
+
+  --shared header/body setup for both transports
+  local headers={}
   if self.authKey~=nil then
-    req:SetHTTPRequestHeaderValue("X-Auth-Key", self.authKey)
+    headers["X-Auth-Key"]=self.authKey
   end
-  req:SetHTTPRequestHeaderValue("X-Steam-Id", self.steamId)
-  if data=="poll" then
-    req:SetHTTPRequestHeaderValue("X-Poll-Secret", self.pollSecret)
+  if self.steamId~=nil then
+    headers["X-Steam-Id"]=self.steamId
   end
-  --[[ req:SetHTTPRequestHeaderValue("Dev-Secret", self.devSecret) ]]
+  if data=="poll" and self.pollSecret~=nil then
+    headers["X-Poll-Secret"]=self.pollSecret
+  end
+  --[[ headers["Dev-Secret"]=self.devSecret ]]
+  local params=nil
+  local body=nil
   if type(data) == "table" then
+    params=data
     for k,v in pairs(data) do
       print(k,v)
-      req:SetHTTPRequestGetOrPostParameter(tostring(k),tostring(v))
       self:DebugLog("Parameters of request: "..tostring(k)..":"..tostring(v))
     end
-  else
-    req:SetHTTPRequestRawPostBody("application/json",data)
+  elseif data~=nil then
+    body=data
     self:DebugLog("Body of request: "..data)
   end
-  req:Send(function(res)
-    if res.StatusCode ~= 200 then
-      self:DebugLog("Failed to contact server")
-      self:DebugLog("Status Code:".. (res.StatusCode or "nil"))
-      self:DebugLog("Body:".. (res.Body or "nil"))
-    else
-      self:DebugLog("Connected to backend server "..res.StatusCode)
-      self:DebugLog("Body:".. (res.Body or "nil"))
-      if jsCallback then
-          CustomGameEventManager:Send_ServerToAllClients(jsCallback,{data=res.Body})
+
+  local function onResponse(res)
+    --errors inside HTTP callbacks surface as "error in error handling" in non-tools mode, so catch and print them explicitly
+    local ok, err = xpcall(function()
+      if (res.StatusCode or 0)==0 then
+        --total transport failure (relay timeout etc.): tell the ui
+        self.loginState="server_unreachable"
+        CustomGameEventManager:Send_ServerToAllClients("server_unreachable",{})
       end
-      if networkingCallback then
-        self[networkingCallback](self, res.Body)
+      if res.StatusCode ~= 200 then
+        self:DebugLog("Failed to contact server")
+        self:DebugLog("Status Code:"..tostring(res.StatusCode))
+        self:DebugLog("Body:"..tostring(res.Body))
+      else
+        self:DebugLog("Connected to backend server "..tostring(res.StatusCode))
+        self:DebugLog("Body:"..tostring(res.Body))
+        if jsCallback then
+            CustomGameEventManager:Send_ServerToAllClients(jsCallback,{data=res.Body})
+        end
+        if networkingCallback then
+          self[networkingCallback](self, res.Body)
+        end
       end
+      if not res.Body then
+        self:DebugLog("No result returned from server")
+        self:DebugLog("Status Code:"..tostring(res.StatusCode))
+      end
+    end, function(e) return tostring(e) end)
+    if not ok then
+      print("[Networking] callback error on route "..tostring(route)..": "..tostring(err))
     end
-    if not res.Body then
-      self:DebugLog("No result returned from server")
-      self:DebugLog("Status Code:".. (res.StatusCode or "nil"))
+  end
+
+  local req = CreateHTTPRequestScriptVM(reqType, self.serverAdress..route)
+  if _G.TP_FORCE_HTTP_RELAY or self.forceRelay then
+    req=nil --testing: pretend native http is unavailable so the relay path runs
+  end
+  if req~=nil then
+    --native transport (tools mode / raw listen server)
+    for k,v in pairs(headers) do
+      req:SetHTTPRequestHeaderValue(k,v)
     end
-  end)
+    if params~=nil then
+      for k,v in pairs(params) do
+        req:SetHTTPRequestGetOrPostParameter(tostring(k),tostring(v))
+      end
+    elseif body~=nil then
+      req:SetHTTPRequestRawPostBody("application/json",body)
+    end
+    req:Send(onResponse)
+  else
+    --relay transport (lobby-hosted games): the client's Panorama bridge executes the request
+    print("[Networking] native http unavailable, relaying via client: "..tostring(route))
+    self:DebugLog("Native http unavailable, using client relay")
+    local relayBody=body
+    if params~=nil then
+      --form-encode params like the native POST does (lua side has no urlencode, so inline it)
+      local parts={}
+      for k,v in pairs(params) do
+        local ev=string.gsub(tostring(v),"([^%w%-%_%.%~])",function(c) return string.format("%%%02X",string.byte(c)) end)
+        table.insert(parts,tostring(k).."="..ev)
+      end
+      relayBody=table.concat(parts,"&")
+      headers["Content-Type"]="application/x-www-form-urlencoded"
+    elseif relayBody~=nil then
+      --raw json body (auth/init etc.): flask needs the content type to parse it
+      headers["Content-Type"]="application/json"
+    end
+    HttpRelay:Send(reqType,self.serverAdress..route,headers,relayBody,onResponse)
+  end
 end
 
 Networking:Init()

@@ -177,6 +177,7 @@
 		"aimAvgTime" "average time"
 		"aimTimeLeft" "time left"
 		"retryButton" "retry"
+		"serverUnreachable" "server unreachable - online features are unavailable"
 		"LoginRequest" "confirm your identity through Steam to gain access to online features, such as:
 		<br>•settings saving
 		<br>•results saving

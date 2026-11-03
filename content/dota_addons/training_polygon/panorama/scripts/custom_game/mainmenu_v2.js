@@ -126,6 +126,7 @@ function updateVersion(data){
 	let version=data.version
 	$('#tp_version_label').text=$.Localize("#versionLabel")+" "+version
 }
+$.Msg('networking init')
 GameEvents.SendCustomGameEventToServer (
 	"init_user",
 	{
