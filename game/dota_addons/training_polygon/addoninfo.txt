@@ -9,7 +9,7 @@
         "template_map",
     ]
     CheckAFKPlayers = false
-    DefaultMap = "template_map"
+    DefaultMap = "dota"
     Default_Keys = []
     DisableIK = false
     EnablePickRules = false
