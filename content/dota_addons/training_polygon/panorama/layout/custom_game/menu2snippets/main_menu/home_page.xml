@@ -16,7 +16,7 @@
                         
 
                     <Panel class="embeedingContent width100 ColNoFill">
-                        <Label class="embeedingContentLabel" text="Currently WIP, appreciate your support"/>
+                        <Label class="embeedingContentLabel" text="#wipPlaceHolder"/>
                         <Panel class="RowWFill">
                             <Button id="boosty" class="small_button">
                                 <Label class="mode_play_label " text="boosty"/>
