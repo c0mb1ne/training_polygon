@@ -11,6 +11,13 @@
         <Button class="menu_button exit_button" id="menu_play" onactivate="stopTraining()">
             <Label class="menu_button_label" text="#trainingEnd"/>
         </Button>
+        <Panel class="attackPanelContainer">
+            <Button onactivate="OnPortraitClick()" oncontextmenu="OnPortraitRightClick()"
+            onmouseover="OnHover(true)" onmouseout="OnHover(false)">
+            <DOTAHeroImage id="fakeHeroPanel"> 
+            </DOTAHeroImage>
+            </Button>
+        </Panel>
         <Button class="ShowSettings" id="unHideSettings" onactivate="tempShow()">
 			<Panel class="ShowIcon"/>
 		</Button>

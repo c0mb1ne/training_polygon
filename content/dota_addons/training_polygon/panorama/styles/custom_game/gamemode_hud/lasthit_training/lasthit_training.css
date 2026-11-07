@@ -305,3 +305,16 @@
 	width: 100%;
 	height: 100%;
 }
+.attackPanelContainer{
+	margin-right: 271px;
+	horizontal-align:center;
+	vertical-align: top;
+	opacity-mask: url("s2r://panorama/images/masks/topbar_heroslant_left_psd.vtex");
+}
+#fakeHeroPanel{
+	/* margin-left: 20px; */
+	/* background-color: #8EBDCB; */
+	width: 66px;
+	height: 36px;
+	margin-top: 4px;
+}

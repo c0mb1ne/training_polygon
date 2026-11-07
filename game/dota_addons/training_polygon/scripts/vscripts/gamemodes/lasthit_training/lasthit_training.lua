@@ -145,6 +145,9 @@ function lasthit_training:Init()
     CustomGameEventManager:RegisterListener("lasthit_training_bot_ad_change", function(eventSourceIndex, args)
         lasthit_training:BotAttackDamageChange(args)
     end)
+    CustomGameEventManager:RegisterListener("lasthit_enemy_panel_mousover", function(eventSourceIndex, args)
+        lasthit_training:FakePanelHovered(args)
+    end)
     self.botWardsPos={
         Vector(-546.03894042969,497.81063842773,128),
         Vector(-6077.0205078125,4995.62890625,128),
@@ -153,6 +156,17 @@ function lasthit_training:Init()
         Vector(5887.6669921875,-5583.138671875,128)
     }
     self.botWardsEnts={}
+    self.aggroEnemy=nil
+    self.enemyPanelHovered=false
+    self.enemyPanelEntIndex=nil
+end
+
+function lasthit_training:FakePanelHovered(args)
+    if args.hovered==1 then
+        self.enemyPanelHovered=true
+    else
+        self.enemyPanelHovered=false
+    end
 end
 
 function lasthit_training:Prepare(args)
@@ -164,9 +178,10 @@ function lasthit_training:Prepare(args)
     local unitsToPrecache = {}
     local defaultHero = args.defaultHero or "npc_dota_hero_antimage"
     local botHero = args.botHero or "npc_dota_hero_sniper"
+    local aggroTarget= "npc_dota_hero_axe"
     precache:PrecacheAddPlayerUnitToList({defaultHero})
     precache:PrecacheAddUnitToList({botHero})
-
+    precache:PrecacheAddUnitToList({aggroTarget})
     -- Store args for use after precaching
     self.pendingArgs = args
 
@@ -290,7 +305,26 @@ function lasthit_training:StartGame(args)
             ward:AddNewModifier(ward,nil,"modifier_invisible",{})
             table.insert(self.botWardsEnts,ward)
         end
+        self.enemyPanelEntIndex=self.botEnt:entindex()
+        CustomGameEventManager:Send_ServerToAllClients("lasthit_register_enemy_unit",{unitEntIndex=self.enemyPanelEntIndex,unitName=self.botHeroName})
+    else
+        local enemyTeam=5-self.selectedSide
+        local enemyTower
+        if enemyTeam == DOTA_TEAM_BADGUYS then
+            enemyTower = TowerController.towers['npc_dota_badguys_tower1_' .. self.selectedLane]
+        else
+            enemyTower = TowerController.towers['npc_dota_goodguys_tower1_' .. self.selectedLane]
+        end
+        local spawnPoint=randomCirclePosition(150,enemyTower)
+        self.aggroEnemy=CreateUnitByName("npc_dota_hero_axe", spawnPoint, true, nil, nil, enemyTeam)
+        self.aggroEnemy:SetIdleAcquire(false)
+        self.aggroEnemy:SetAttackCapability(0)
+        self.aggroEnemy:AddNewModifier(self.aggroEnemy, nil, "modifier_elder_titan_echo_stomp", {})
+        self.aggroEnemy:AddNewModifier(self.playerHero, nil, "modifier_bounty_hunter_track", {})
+        self.enemyPanelEntIndex=self.aggroEnemy:entindex()
+        CustomGameEventManager:Send_ServerToAllClients("lasthit_register_enemy_unit",{unitEntIndex=self.enemyPanelEntIndex,unitName=self.aggroEnemy:GetUnitName()})
     end
+    
     --[[ self.playerHero:AddNewModifier(hero, nil, "modifier_attack_tracker", {}) ]]
     --[[ ParticleMessage:Test(self.playerHero) ]]
 end
@@ -390,6 +424,23 @@ function lasthit_training:OnNPCSpawned(keys)
 end
 
 function lasthit_training:OrderFilter(event)
+    --[[ DeepPrintTable(event) ]]
+    if event.order_type==3 or event.order_type==4 then
+        local ownerCheck=true
+        for _,unitInd in pairs(event.units) do
+            local unit=EntIndexToHScript(unitInd)
+            if not unit:IsControllableByAnyPlayer() then
+                ownerCheck=false
+            end
+        end
+        if ownerCheck then
+            if self.enemyPanelHovered then
+                print('order changed')
+                event.order_type=4
+                event.entindex_target=self.enemyPanelEntIndex
+            end
+        end
+    end
     -- TODO: return false to block specific player orders, true to allow
     return true
 end
@@ -742,8 +793,15 @@ function lasthit_training:Deactivate()
     if self.playerDamageTracker~=nil then
         Timers:RemoveTimer(self.playerDamageTracker)
     end
+    if self.aggroEnemy~=nil then
+        if IsValidEntity(self.aggroEnemy) then
+            self.aggroEnemy:RemoveSelf()
+        end
+        self.aggroEnemy=nil
+    end
     lasthit_training_bot_balance:Stop()
     self.deactivateCalled = false
+    self.enemyPanelHovered=false
     self.playerHero:SetTeam(DOTA_TEAM_GOODGUYS)
     self.Player:SetTeam(DOTA_TEAM_GOODGUYS)
     self.playerHero:SetAbsOrigin(Vector(-1501.5784912109,820.67797851563,0))

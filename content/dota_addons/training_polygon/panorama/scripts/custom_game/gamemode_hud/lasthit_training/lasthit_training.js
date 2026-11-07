@@ -113,6 +113,39 @@ var accGraph = CreateGraph(accGraphParent, {
     autoSize: true
 });
 
+function OnPortraitClick(){
+    /* $.Msg(fakePanelUnit)
+    GameUI.SelectUnit(fakePanelUnit, false); */
+}
+
+function OnPortraitRightClick(){
+    /* $.Msg('test2') */
+    AttackUnit(fakePanelUnit)
+}
+function OnHover(boolHover){
+    GameEvents.SendCustomGameEventToServer("lasthit_enemy_panel_mousover", {hovered:boolHover});
+} 
+
+function AttackUnit(targetEntIndex) {
+    var selected = Players.GetSelectedEntities(Players.GetLocalPlayer());
+    Game.PrepareUnitOrders({
+        UnitIndex: selected[0],
+        OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
+        TargetIndex: targetEntIndex,
+        QueueBehavior: OrderQueueBehavior_t.DOTA_ORDER_QUEUE_NEVER,
+        ShowEffects: true
+    });
+}
+
+let fakePanelUnit=null
+let fakePanelUnitName=""
+function regiserFakePanelUnit(data){
+    fakePanelUnit=data.unitEntIndex
+    fakePanelUnitName=data.unitName
+    $('#fakeHeroPanel').heroname=fakePanelUnitName
+}
+
+GameEvents.Subscribe("lasthit_register_enemy_unit", regiserFakePanelUnit);
 GameEvents.Subscribe("lasthit_show_settings", showSettings);
 GameEvents.Subscribe("lasthit_training_bot_stats", botStatsRefresh);
 GameEvents.Subscribe("lasthit_refresh_counters", refreshCounters);
