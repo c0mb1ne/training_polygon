@@ -2,7 +2,7 @@
 --anyway only thing that used from barebones is a timer library
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "1.00"
-TP_VERSION="0.5.3"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
+TP_VERSION="0.5.4"--gonna change this every push to workshop, since there is a bug that custom game is playable on old version
 --so it will be possible to see version on screenshots
 --in mainmenu_v2 js we gonna grab version
 CMB_SERVER="https://combine.isgood.host/"
@@ -43,7 +43,7 @@ require('libraries/announce_message')--to display some messages in center of scr
 require('libraries/networking') -- class for leaderboard sever communications
 require('libraries/action_logging') --class for action logging but not needed for now
 require('libraries/main_menu_communicator') --class for loading menu pages
---require('libraries/ping_reader') --class for fetching ping from ui and sending it to lua
+require('libraries/ping_reader') --class for fetching ping from ui and sending it to lua, todo: remove
 require('libraries/precache') --class for precaching resources before gamemode starts to avoid crashes and error models
 require('libraries/timebar') --class for controlling timebar useful for timing stuff
 require('libraries/combo_tracker') --class for controlling combo/streak hud

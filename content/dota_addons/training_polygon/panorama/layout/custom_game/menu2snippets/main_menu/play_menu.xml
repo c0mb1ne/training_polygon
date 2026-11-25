@@ -7,7 +7,7 @@
         <include src="file://{resources}/scripts/custom_game/menu2snippets/main_menu/play_menu.js" />
     </scripts>
     <Panel class="RowHFill">
-        <Panel class="Col modFilterContainer">
+        <Panel class="Col modFilterContainer Hidden">
             <Panel class="embeedingContainer filterEmb heightFill">
                 <Panel class="embeedingHeader">
                     <Label class="menu_button_label" text="filter"/>
@@ -20,19 +20,9 @@
         <Panel class="Col">
             <Panel class="Row">
                 <Panel class="ColWFill">
-                    <Panel class="embeedingContainer competContainer heightFill">
+                    <Panel class="embeedingContainer heightFill">
                         <Panel class="embeedingHeader">
-                            <Label class="menu_button_label" text="Competitive"/>
-                        </Panel>
-                        <Panel id="compMenu" class="embeedingContent">
-
-                        </Panel>
-                    </Panel>
-                </Panel>
-                <Panel class="ColWFill">
-                    <Panel class="embeedingContainer sandboxContainer heightFill">
-                        <Panel class="embeedingHeader">
-                            <Label class="menu_button_label testPlayItem" text="Sandbox"/>
+                            <Label class="menu_button_label testPlayItem" text="#gamemodesHeader"/>
                         </Panel>
                         <Panel id="sndbxMenu" class="embeedingContent">
                             

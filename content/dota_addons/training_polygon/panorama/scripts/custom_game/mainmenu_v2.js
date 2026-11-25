@@ -127,14 +127,15 @@ function updateVersion(data){
 	$('#tp_version_label').text=$.Localize("#versionLabel")+" "+version
 }
 $.Msg('networking init')
-GameEvents.SendCustomGameEventToServer (
+//patch 7.42 broke networking so
+/* GameEvents.SendCustomGameEventToServer (
 	"init_user",
 	{
         data: {
 			language: client_lang
 		}
 	} 
-); 
+);  */
 function onLoginDone(){
 	$('#tp_status_label').text=$.Localize("#onlineLabel")//localize in future
 	$('#tp_status_label').RemoveClass("statusOffline")

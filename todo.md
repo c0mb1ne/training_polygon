@@ -8,4 +8,4 @@ todo:
 - bane cycle seem wierd in dodge need more testing
 - custom delays in dodge (menu setting)
 - add combo trackers to other modes than aim
-- add reagro target to lasthit (with portrait on top)
+- fix units not seeing hero in dodge (in unusual training places)

@@ -31,19 +31,19 @@
                     </Panel>
                     
                 </Panel>
-                <Panel id="testing" class="embeedingContainer">
+                <Panel id="testing" class="embeedingContainer Hidden"> 
                     <Panel class="embeedingHeader">
                         <Label class="menu_button_label" text="something"/>
                     </Panel>
                     <Panel class="embeedingContent">
-                        <Label class="embeedingContentLabel" text="something"/>
+                        
                     </Panel>
                 </Panel>
             </Panel>
             <Panel class="ColWFill" id="testPan">
                 <Panel class="RowWFill">
                     <Panel class="ColWFill">
-                        <Panel id="testing2" class="embeedingContainer">
+                        <Panel id="testing2" class="embeedingContainer Hidden">
                             <Panel class="embeedingHeader">
                                 <Label class="menu_button_label" text="something"/>
                             </Panel>
@@ -53,7 +53,7 @@
                         </Panel>
                     </Panel>
                      <Panel id="loginWindow" class="ColWFill">
-                        <Panel class="embeedingContainer">
+                        <Panel class="embeedingContainer Hidden">
                             <Panel class="embeedingHeader">
                                 <Label class="menu_button_label" text="#LOGIN"/>
                             </Panel>
@@ -102,7 +102,7 @@
                         </Panel>
                     </Panel>
                 </Panel>
-                <Panel id="testing3" class="embeedingContainer">
+                <Panel id="testing3" class="embeedingContainer Hidden">
                     <Panel class="embeedingHeader">
                         <Label class="menu_button_label" text="something"/>
                     </Panel>

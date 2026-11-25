@@ -8,7 +8,7 @@ let fps_label=ping_right_col1.FindChild('NetGraph_FPS')
 $.Msg(ping_label.text)
 let avg_ping=0
 let init_run=1
-startCountingPing()
+/* startCountingPing() */
 function startCountingPing(){
 	if (Game.IsInToolsMode()){
 		$.Msg('game is in tools, stop counting ping')

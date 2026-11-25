@@ -124,30 +124,47 @@ function DotaDB:SafeGet(rootTable, pathKeys, default)
   return current
 end
 
-function DotaDB:ParseKVValue(data,level)
+function DotaDB:ParseKVValue(data, level)
   if data == nil then
     print("[DotaDB ParseKVValue WARNING] received nil data, returning nil")
     return nil
   end
 
-  local value_count = level == nil and 1 or level
-  local res_table = {}
-  local start = 1
-
-  for i = 1, string.len(data) do
-    local symbol = string.sub(data, i, i)
-    if symbol == " " then
-      table.insert(res_table, tonumber(string.sub(data, start, i - 1)))
-      start = i + 1
+  -- Valve sometimes wraps values: { value = "1 2 3", special_bonus_xxx = "+5" }
+  if type(data) == "table" then
+    if data["value"] ~= nil then
+      data = data["value"]
+    else
+      print("[DotaDB ParseKVValue WARNING] got table without 'value' key, returning nil")
+      return nil
     end
   end
-  table.insert(res_table, tonumber(string.sub(data, start, string.len(data))))
+
+  -- Already a number (LoadKeyValues converts some values)
+  if type(data) == "number" then
+    if level == 'all' then return {data} end
+    return data
+  end
+
+  if type(data) ~= "string" then
+    print("[DotaDB ParseKVValue WARNING] unsupported type: " .. type(data))
+    return nil
+  end
+
+  local value_count = level == nil and 1 or level
+  local res_table = {}
+
+  for token in string.gmatch(data, "%S+") do
+    table.insert(res_table, tonumber(token))
+  end
 
   if value_count == 'all' then
     return res_table
-  else
-    return res_table[value_count]
   end
+
+  -- Fall back to the last value if the requested level exceeds the list
+  -- (Valve often gives a single value for all levels)
+  return res_table[value_count] or res_table[#res_table]
 end
 
 function DotaDB:GetParsedValue(rootTable, pathKeys, default, level)

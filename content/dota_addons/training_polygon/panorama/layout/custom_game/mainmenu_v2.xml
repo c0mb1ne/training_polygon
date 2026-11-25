@@ -19,13 +19,13 @@
 						<Panel class="menu_button_icon_container">
 							<Image id="menu_button_icon_play" src="file://{images}/custom_game/play_button.png" />
 						</Panel>
-						<Label class="menu_button_label" id="menu_play_label" text="Play"/>
+						<Label class="menu_button_label" id="menu_play_label" text="#main_play"/>
 					</RadioButton>
 					<RadioButton selected="true" class="menu_button" id="menu_home">
 						<Panel class="menu_button_icon_container">
 							<Image id="menu_button_icon_home" src="file://{images}/custom_game/gradient.png" />
 						</Panel>
-						<Label class="menu_button_label" id="menu_play_label" text="Home"/>
+						<Label class="menu_button_label" id="menu_play_label" text="#main_home"/>
 					</RadioButton>
 					<RadioButton class="menu_button" id="menu_settings">
 						<Panel class="menu_button_icon_container">
@@ -33,7 +33,7 @@
 						</Panel>
 						<Label class="menu_button_label" text="Settings"/>
 					</RadioButton>
-					<RadioButton class="menu_button" id="menu_profile">
+					<RadioButton class="menu_button Hidden" id="menu_profile">
 						<Panel id="menu_avatar_container" class="menu_button_icon_container">
 							<DOTAAvatarImage class="avata_menu_icon" steamid="local" id="menu_button_avatar"/>
 						</Panel>
@@ -69,7 +69,7 @@
 						<Label id="tp_version_label" text="version 1.0"/>
 						<Label id="need_upd_label" text="need upd"/>
 					</Panel>
-					<Label id="tp_status_label" class="statusOffline" text="#offlineLabel"/>
+					<Label id="tp_status_label" class="statusOffline Hidden" text="#offlineLabel"/>
 				</Panel>
 				<Panel id="menu_content">
 					

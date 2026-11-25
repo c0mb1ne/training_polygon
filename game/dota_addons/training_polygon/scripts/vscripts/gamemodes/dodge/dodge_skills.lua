@@ -2,7 +2,7 @@ function dodge:lina_light_strike_array(entry)
     local abilityName = entry.spell_name
     local castPoint = DotaDB:GetAbilityValue(abilityName, {"AbilityCastPoint"}, "0.45 0.45 0.45 0.45")
     local damageDelay = DotaDB:GetAbilityValue(abilityName, {"AbilityValues", "light_strike_array_delay_time", "value"}, "0.5")
-    local range = DotaDB:GetAbilityValue(abilityName, {"AbilityCastRange"}, "700")
+    local range = DotaDB:GetAbilityValue(abilityName, {"AbilityValues", "AbilityCastRange"}, "700")
     if self.yashaKaya then
         castPoint = castPoint * self.yashaKayaModifier
     end

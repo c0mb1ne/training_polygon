@@ -607,6 +607,7 @@ function dodge:funhouseFix()
     if abilityCheck:GetAbilityName()=="ringmaster_empty_souvenir" then
         self.playerHero:SwapAbilities("ringmaster_empty_souvenir", "ringmaster_funhouse_mirror", false, true)
         local ability=self.playerHero:FindAbilityByName("ringmaster_funhouse_mirror")
+        self.dodgeAbilityEnt=ability
         ability:SetCurrentAbilityCharges(99)
     end
 end
@@ -722,6 +723,7 @@ function dodge:StartGame(args)
         self.helperForEmber:SetBaseHealthRegen(100)
     end
     self:cycleEnemies()
+    ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 5, 10, 20, 30, 50, 100 } })
 end
 
 function dodge:cycleEnemies()
@@ -773,9 +775,12 @@ function dodge:checkResult()
         else
             Notifications:Show('red','bad',self.currentAbilityName)
         end
+        ComboTracker:Break()
+        ComboTracker:Add()
     else
         --good result
         Notifications:Show('green','good',self.currentAbilityName)
+        ComboTracker:Add()
     end
     self.playerGotHurt=false
     self.dodgePressed=false
@@ -838,7 +843,7 @@ function dodge:OrderFilter(event)
             if self.dodgePressed==false then
                 self.dodgePressed=true
                 self.playerDodgeTime=Time()
-                print('manta pressed')
+                print('dodge pressed')
                 Timebar:PlayerAction()
             end
         end
@@ -900,6 +905,9 @@ function dodge:ModifierGained(event)
             end
         }) ]]
         
+    end
+    if event.name_const=="modifier_lina_slow_burn" then
+        return false
     end
     return true
 end
@@ -972,6 +980,7 @@ end
 
 function dodge:Deactivate()
     Timebar:ResetLines()
+    ComboTracker:Deactivate()
     self.activated=false
     self.deactivateCalled=false
     self.playerHero:SetDayTimeVisionRange(2000)

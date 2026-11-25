@@ -18,11 +18,13 @@ videoPanel.SetMovie('file://{resources}/videos/15503461349800.webm')
 videoPanel.Play()
 videoPanel.Stop()*/
 var modeName=$('#mode_name')
-modeName.text=mode
+modeName.text=$.Localize('#'+mode)
 videoPanel=$('#mode_video')
 videoPanel.ClearPanelEvent("onactivate")
 videoPanel.ClearPanelEvent("onload")
-videoPanel.SetMovie('file://{resources}/videos/15503461349800.webm')
+var vidPath='file://{resources}/videos/'+mode+'.webm'
+$.Msg(vidPath)
+videoPanel.SetMovie('file://{resources}/videos/'+mode+'.webm')
 videoPanel.Play()
 $.Schedule(0.1, function() {
 	videoPanel.Pause()

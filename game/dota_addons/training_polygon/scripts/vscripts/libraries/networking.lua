@@ -34,7 +34,7 @@ function Networking:Init()
   self.loggingEnabled=true
   self.loginState=""
   self.clientLanguage=""
-  self.forceRelay=true --set true to always use the client http relay (testing in tools mode); false = native http when available
+  self.forceRelay=false --set true to always use the client http relay (testing in tools mode); false = native http when available
   --[[ self.devSecret="67e54aqweqweqwece7e1f927c0437dd59997b" ]]
   CustomGameEventManager:RegisterListener("init_user", function(_, args)
       --errors inside C-invoked listeners surface as "error in error handling" in non-tools mode, so catch and print them explicitly
