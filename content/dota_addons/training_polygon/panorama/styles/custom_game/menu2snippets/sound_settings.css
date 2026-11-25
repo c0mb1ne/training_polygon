@@ -1,0 +1,148 @@
+/* Reusable sound settings button and popup. Loaded by sound_settings.xml/js. */
+.SoundSettingsWidget{
+	width: fit-children;
+	flow-children: down;
+}
+.SoundSettingsButton{
+	min-width: 250px;
+	padding: 10px 14px;
+	flow-children: down;
+	background-image: url("file://{images}/custom_game/noise.png");
+	background-color: gradient(linear, 0% 0%, 0% 100%, from(#101115), color-stop(0.00156, #101115), to(#0E0F11));
+	border: 1px solid #212121;
+	transition-property: border, background-color;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.SoundSettingsButton:hover{
+	border: 1px solid #ADD9E6;
+}
+.SoundSettingsButton:active{
+	sound: "ui_generic_button_click";
+}
+.SoundSettingsButtonTitle{
+	color: #FFFFFF;
+	font-family: Reaver, Goudy Trajan Medium, FZKai-Z03, TH Sarabun New, YDYGO 540;
+	font-size: 18px;
+	text-transform: uppercase;
+}
+.SoundSettingsCurrentRow{
+	width: 100%;
+	flow-children: right;
+	margin-top: 4px;
+}
+.SoundSettingsCurrentLabel{
+	color: #91A4AA;
+	font-size: 14px;
+	vertical-align: center;
+}
+.SoundSettingsCurrentValue{
+	color: #ADD9E6;
+	font-size: 14px;
+	margin-left: 6px;
+	vertical-align: center;
+}
+ 
+/* The backdrop and dialog are siblings so dialog clicks never close the popup. */
+.SoundSettingsPopupLayer{
+	width: 100%;
+	height: 100%;
+	horizontal-align: center;
+	vertical-align: center;
+}
+.SoundSettingsOverlay{
+	width: 100%;
+	height: 100%;
+	horizontal-align: center;
+	vertical-align: center;
+	background-color: #212121D2;
+}
+.SoundSettingsPopup{
+	width: 650px;
+	max-width: 90%;
+	max-height: 85%;
+	horizontal-align: center;
+	vertical-align: center;
+	flow-children: down;
+	padding-bottom: 16px;
+	background-image: url("file://{images}/custom_game/noise.png");
+	background-color: gradient(linear, 0% 0%, 0% 100%, from(#101115), color-stop(0.00156, #101115), to(#0E0F11));
+	border: 1px solid #ADD9E6;
+	box-shadow: #000000AA 0px 0px 24px 0px;
+}
+.SoundSettingsPopupHeader{
+	width: 100%;
+	flow-children: right;
+	padding: 14px 16px 10px 16px;
+}
+.SoundSettingsPopupTitle{
+	color: #FFFFFF;
+	font-family: Reaver, Goudy Trajan Medium, FZKai-Z03, TH Sarabun New, YDYGO 540;
+	font-size: 22px;
+	text-transform: uppercase;
+	vertical-align: center;
+}
+.SoundSettingsCloseButton{
+	width: 32px;
+	height: 32px;
+	horizontal-align: right;
+	background-color: #212121;
+	border: 1px solid #474747;
+}
+.SoundSettingsCloseButton:hover{
+	border: 1px solid #ADD9E6;
+	background-color: #474747;
+}
+.SoundSettingsCloseButton Label{
+	horizontal-align: center;
+	vertical-align: center;
+	color: #FFFFFF;
+	font-size: 20px;
+}
+.SoundSettingsPopupContent{
+	width: 100%;
+	flow-children: right;
+	padding: 0px 16px;
+}
+.SoundSettingsSection{
+	width: 50%;
+	flow-children: down;
+}
+.SoundSettingsSectionLabel{
+	color: #FFFFFF;
+	font-size: 16px;
+	margin: 4px 6px;
+}
+.SoundSettingsOptions{
+	width: 100%;
+	max-height: 320px;
+	padding: 6px;
+	flow-children: down;
+	overflow: squish scroll;
+}
+.SoundSettingsEntry{
+	width: 100%;
+	height: 34px;
+	margin-bottom: 4px;
+	padding: 4px 8px;
+	flow-children: right;
+	border: 1px solid #212121;
+	background-color: #10111580;
+	transition-property: border, background-color;
+	transition-duration: 0.20s;
+	transition-timing-function: ease-in-out;
+}
+.SoundSettingsEntry:hover{
+	border: 1px solid #ADD9E6;
+}
+.SoundSettingsEntry:selected{
+	border: 1px solid #212121;
+	background-color: gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), color-stop(0.00156, #FFFFFF), to(#8EBDCB));
+}
+.SoundSettingsEntry Label{
+	color: #ADD9E6;
+	vertical-align: center;
+}
+.SoundSettingsEntry:selected Label{
+	color: #000000;
+}

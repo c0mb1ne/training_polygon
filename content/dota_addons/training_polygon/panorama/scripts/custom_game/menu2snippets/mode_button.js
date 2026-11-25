@@ -23,7 +23,7 @@ videoPanel=$('#mode_video')
 videoPanel.ClearPanelEvent("onactivate")
 videoPanel.ClearPanelEvent("onload")
 var vidPath='file://{resources}/videos/'+mode+'.webm'
-$.Msg(vidPath)
+/* $.Msg(vidPath) */
 videoPanel.SetMovie('file://{resources}/videos/'+mode+'.webm')
 videoPanel.Play()
 $.Schedule(0.1, function() {

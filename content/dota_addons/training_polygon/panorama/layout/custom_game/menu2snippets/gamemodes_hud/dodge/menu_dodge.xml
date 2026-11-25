@@ -2,10 +2,15 @@
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/dodge/menu_dodge.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dodge/menu_dodge.js" />
+    <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
+    <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+    <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
+    <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dodge/menu_dodge.js" />
     </scripts>
     <Panel class="dodgeMain">
         <Panel class="Col">
@@ -38,13 +43,12 @@
                     </Panel>
                     <ToggleButton checked="true" id="treesToggle" class="customCheckbox" text="#clearTrees" />
                 </Panel>
+                <Panel class="ColNoFill padding5">
+                    <Panel id="soundSettingsContainer" />
+                </Panel>
                 <Panel id="heroPickerContainer" class="ColNoFill padding5">
-                    <Panel id="hero_picker" class="HeroPicker">
-                        <Button id="hero_icon_container" class="HeroPickerIconContainer">
-                            <DOTAHeroImage id="hero_picker_selected" class="heroPickerIcon" heroname="npc_dota_hero_pudge" heroimagestyle="icon"/>
-                        </Button>
-                        <Panel class="BadgeCircle">
-                        </Panel>
+                    <Panel id="heroPickerContainer" class="ColNoFill padding5">
+                    
                     </Panel>
                 </Panel>
                 <Panel class="ColNoFill padding5">

@@ -1,0 +1,18 @@
+<root>
+	<styles>
+		<include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
+	</styles>
+	<Panel class="SoundSettingsWidget">
+		<Button class="SoundSettingsButton">
+			<Label class="SoundSettingsButtonTitle" text="#settingsNotifications" />
+			<Panel class="SoundSettingsCurrentRow">
+				<Label class="SoundSettingsCurrentLabel" text="#settingsGoodSound" />
+				<Label class="SoundSettingsCurrentValue SoundSettingsGoodValue" text="frog" />
+			</Panel>
+			<Panel class="SoundSettingsCurrentRow">
+				<Label class="SoundSettingsCurrentLabel" text="#settingsBadSound" />
+				<Label class="SoundSettingsCurrentValue SoundSettingsBadValue" text="sproing" />
+			</Panel>
+		</Button>
+	</Panel>
+</root>

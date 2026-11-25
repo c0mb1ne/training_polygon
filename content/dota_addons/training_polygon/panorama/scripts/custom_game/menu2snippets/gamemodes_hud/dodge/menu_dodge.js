@@ -260,95 +260,19 @@ numberSwitcher.BLoadLayout("file://{resources}/layout/custom_game/menu2snippets/
 
 //making hero picker for manta 
 
-let defaultHero="npc_dota_hero_antimage"
-let heroPicker=$('#hero_picker')
-let popupContainer=$('#dodge_popup_container')
-let heroPickerIcon=$('#hero_picker_selected')
-heroPickerIcon.heroname=defaultHero
-let heroList=[]
-GameEvents.SendCustomGameEventToServer (
-	"dotadb_get_hero_list",
-		{
-		}
-);
-function saveHeroList(data) {
-    heroList = data.hero_list;
-
-   /*  $.Msg(heroList); */
-
-    // Extract keys into an array manually
-    let keys = [];
-    for (let key in heroList) {
-        keys[keys.length] = key;
+let defaultHero = 'npc_dota_hero_antimage'
+let HeroPicker = CreateHeroPicker($('#heroPickerContainer'), {
+	defaultHero: defaultHero,
+	onSelect: function(hero) { defaultHero = hero }
+})
+var soundSettings = CreateSoundSettings($('#soundSettingsContainer'), {
+    scope: 'dodge',
+    onChange: function(type, soundId, scope) {
+        // Optional callback
     }
-
-    // Simple sort by hero name string
-    for (let i = 0; i < keys.length - 1; i++) {
-        for (let j = i + 1; j < keys.length; j++) {
-            let nameA = heroList[keys[i]].replace("npc_dota_hero_", "");
-            let nameB = heroList[keys[j]].replace("npc_dota_hero_", "");
-            if (nameA > nameB) {
-                let tmp = keys[i];
-                keys[i] = keys[j];
-                keys[j] = tmp;
-            }
-        }
-    }
-
-    // Iterate in sorted order
-    for (let i = 0; i < keys.length; i++) {
-        let key = keys[i];
-        let heroButton = $.CreatePanel('Button', $('#manta_hero_picker_popup'),  heroList[key]);
-        heroButton.AddClass('heroPickerButton');
-        let heroIcon = $.CreatePanel('DOTAHeroImage', heroButton, "hero_icon_" + key);
-        heroIcon.heroimagestyle = "icon";
-        heroIcon.heroname = heroList[key];
-        /* if (heroList[key] == heroPickerIcon.heroname) {
-            heroButton.AddClass('heroPickerSelected');
-        } */
-	   	if (heroList[key] == defaultHero) {
-			/* $.Msg(heroPickerIcon.heroname) */
-            heroButton.AddClass('heroPickerSelected');
-        }
-		heroButton.SetPanelEvent(
-			"onactivate",
-			function() {
-				$('#'+defaultHero).RemoveClass('heroPickerSelected')
-				defaultHero=heroButton.id
-				heroPickerIcon.heroname=defaultHero
-				heroButton.AddClass('heroPickerSelected');
-				popupContainer.style['opacity']="0"
-				popupContainer.style['visibility']="collapse"
-
-			}
-		)
-    }
-}
-
-heroPicker.SetPanelEvent(
-	"onactivate",
-	function() {
-		/* heroPickerPopup=$.CreatePanel('Panel',popupContainer,"manta_hero_picker_popup")
-		heroPickerPopup.AddClass('heroPickerPopup') */
-		popupContainer.style['opacity']="1"
-		popupContainer.style['visibility']="visible"
-	}
-)
-popupContainer.SetPanelEvent(
-	"onactivate",
-	function() {
-		/* heroPickerPopup=$.CreatePanel('Panel',popupContainer,"manta_hero_picker_popup")
-		heroPickerPopup.AddClass('heroPickerPopup') */
-		popupContainer.style['opacity']="0"
-		popupContainer.style['visibility']="collapse"
-	}
-)
-
-
-
+});
 // Precache progress is now handled by precache_modal.js
 GameEvents.Subscribe("dodge_respawn_pos", setRespawn);
-GameEvents.Subscribe("dotadb_get_hero_list_answer", saveHeroList);
 GameEvents.Subscribe("place_picker_result", placePicked);
 GameEvents.Subscribe("dodge_spell_table", saveData);
 

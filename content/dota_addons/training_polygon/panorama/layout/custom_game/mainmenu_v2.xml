@@ -27,12 +27,6 @@
 						</Panel>
 						<Label class="menu_button_label" id="menu_play_label" text="#main_home"/>
 					</RadioButton>
-					<RadioButton class="menu_button" id="menu_settings">
-						<Panel class="menu_button_icon_container">
-							<Image id="menu_button_icon_settings" src="file://{images}/custom_game/settings.png" />
-						</Panel>
-						<Label class="menu_button_label" text="Settings"/>
-					</RadioButton>
 					<RadioButton class="menu_button Hidden" id="menu_profile">
 						<Panel id="menu_avatar_container" class="menu_button_icon_container">
 							<DOTAAvatarImage class="avata_menu_icon" steamid="local" id="menu_button_avatar"/>
