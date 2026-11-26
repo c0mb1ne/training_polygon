@@ -231,6 +231,12 @@ let botHeroPicker=CreateHeroPicker($('#botHeroPickerContainer'), {
 	defaultHero: botHero,
 	onSelect: function(hero) {botHero=hero}
 })
+var soundSettings = CreateSoundSettings($('#soundSettingsContainer'), {
+    scope: 'lasthit_training',
+    onChange: function(type, soundId, scope) {
+        // Optional callback
+    }
+});
 GameEvents.SendCustomGameEventToServer (
 	"get_lasthit_training_starting_items",
 	{

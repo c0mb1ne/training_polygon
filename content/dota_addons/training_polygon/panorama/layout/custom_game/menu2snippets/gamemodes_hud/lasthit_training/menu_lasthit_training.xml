@@ -3,11 +3,15 @@
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/lasthit_training/menu_lasthit_training.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
+        <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/lasthit_training/menu_lasthit_training.js" />
+        
     </scripts>
     <Panel class="lasthit_training_Main">
         <Panel class="Col width100">
@@ -64,6 +68,9 @@
             </Panel>
             <Panel id="boughtItems">
                 
+            </Panel>
+            <Panel class="ColNoFill padding5">
+                <Panel id="soundSettingsContainer" />
             </Panel>
             <Panel class="RowNoFill">
                 <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">

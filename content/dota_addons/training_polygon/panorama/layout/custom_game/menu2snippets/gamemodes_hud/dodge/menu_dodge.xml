@@ -7,10 +7,10 @@
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
-    <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
-    <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
-    <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
-    <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dodge/menu_dodge.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
+        <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/dodge/menu_dodge.js" />
     </scripts>
     <Panel class="dodgeMain">
         <Panel class="Col">
@@ -28,7 +28,7 @@
                     <ToggleButton checked="false" id="hardcoreMode" class="customCheckbox" text="#hardcoreMode" />
                     <ToggleButton checked="false" id="cancelAnimToggle" class="customCheckbox" text="#animationCancelMode" />
                 </Panel>
-                <Panel class="ColNoFill padding5">
+                <Panel class="ColNoFill padding5 Hidden">
                     <Panel class="RowNoFill">
                         <Label class="settingLabel" text="#currentRespawnPos"/>
                         <Label id="respawnPosSetting" class="settingLabel" text="0,67,67"/>

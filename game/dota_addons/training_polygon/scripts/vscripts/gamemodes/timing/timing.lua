@@ -361,6 +361,7 @@ function timing:StartGame(args)
     self.playerHero:SetBaseHealthRegen(300)
     self.playerHero:SetBaseManaRegen(300)
     self.playerHero:SetAttackCapability(0)
+    ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 5, 10, 20, 30, 50, 100 } })
     --[[ self.tempVision = createTempVision(500,DOTA_TEAM_GOODGUYS,self.trainingPlace,true) ]]
 end
 
@@ -377,8 +378,10 @@ function timing:OnStartOfCycle()
             local delay=self.enemyHurtTime-self.invulOutTime
             delay=math.floor(delay*1000)/1000
             Notifications:Show('green','good, delay:'..delay,self.selectedSpell.spell_name)
+            ComboTracker:Add()
         else
             Notifications:Show('red','bad',self.selectedSpell.spell_name)
+            ComboTracker:Break()
         end
         if self.trainingItem~=nil then
             self.trainingItem:EndCooldown()
@@ -416,6 +419,7 @@ function timing:item_cyclone_cycle(unit)
             self:OnStartOfCycle()
             if IsValidEntity(unit) then
                 eul:EndCooldown()
+                unit:Stop()
                 unit:SetContextThink(DoUniqueString("cast_ability"), function()
                     ExecuteOrderFromTable({
                         UnitIndex = unit:entindex(),
@@ -800,6 +804,7 @@ function timing:Deactivate()
     self.manualEul=nil
     Timebar:ResetLines()
     Timebar:Hide()
+    ComboTracker:Deactivate()
     CustomGameEventManager:Send_ServerToAllClients("clear_hud",{})
     CustomGameEventManager:Send_ServerToAllClients("show_main_menu",{})
 end

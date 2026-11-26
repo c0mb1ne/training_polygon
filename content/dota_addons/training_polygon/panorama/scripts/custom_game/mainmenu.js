@@ -3537,10 +3537,12 @@ var dotaui=$.GetContextPanel().GetParent().GetParent().GetParent().GetParent()
 $.Msg("ID OF ROOT PANEL:",dotaui.id)
 var hud=dotaui.FindChild("Hud")
 var hudElems=hud.FindChild("HUDElements")
+var combat_events=hudElems.FindChild("combat_events")
+combat_events.style['visibility']='collapse'
+
 var chatEbanii=hudElems.FindChild("HudChat")
 /*chatEbanii.style['visibility']='collapse'*/
-var hueta=hudElems.FindChild("combat_events")
-hueta.style['visibility']='collapse'
+
 //showLoading()
 $('#boosty2').SetPanelEvent(
 	"onactivate",

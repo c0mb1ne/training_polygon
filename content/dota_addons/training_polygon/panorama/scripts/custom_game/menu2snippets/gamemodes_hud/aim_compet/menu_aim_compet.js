@@ -271,11 +271,16 @@ function startGame() {
             wardLifetime: cfg.wardLifetime,
         });
 }
-
+$('#curveClassic').checked=true
 function saveData(data) {
     $.Msg(JSON.stringify(data));
 }
-
+var soundSettings = CreateSoundSettings($('#soundSettingsContainer'), {
+    scope: 'timing',
+    onChange: function(type, soundId, scope) {
+        // Optional callback 
+    }
+});
 GameEvents.Subscribe("aim_compet_spell_table", saveData);
 
 buildGrids();

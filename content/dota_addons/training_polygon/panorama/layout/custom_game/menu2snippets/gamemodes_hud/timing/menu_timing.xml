@@ -2,65 +2,71 @@
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/timing/menu_timing.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/timing/menu_timing.js" />
+        
     </scripts>
-    <Panel class="Col">
-        <Label class="menu_button_label" text="timing"/>
-        <Panel class="RowNoFill">
-            <Panel class="ColNoFill padding5">
-                <Panel class="RowNoFill">
-                    <Label class="settingLabel" text="#currentRespawnPos"/>
-                    <Label id="respawnPosSetting" class="settingLabel" text="0,67,67"/>
+    <Panel class="TimingMain">
+        <Panel class="Col">
+            <Label class="menu_button_label" text="timing"/>
+            <Panel class="RowNoFill">
+                <Panel class="ColNoFill padding5 Hidden">
+                    <Panel class="RowNoFill">
+                        <Label class="settingLabel" text="#currentRespawnPos"/>
+                        <Label id="respawnPosSetting" class="settingLabel" text="0,67,67"/>
+                    </Panel>
+                    <Panel class="RowNoFill">
+                        <Button class="menu_button normal_button buttons" id="changeRespawn" onactivate="placePickerStart()">
+                            <Label text="#changeRespawn"/>
+                        </Button>
+                        <Button class="menu_button normal_button buttons" id="resetRespawn" onactivate="resetRespawnPlace()">
+                            <Label text="#resetRespawn"/>
+                        </Button>
+                    </Panel>
+                    <ToggleButton checked="true" id="treesToggle" class="customCheckbox" text="#clearTrees" />
                 </Panel>
-                <Panel class="RowNoFill">
-                    <Button class="menu_button normal_button buttons" id="changeRespawn" onactivate="placePickerStart()">
-                        <Label text="#changeRespawn"/>
-                    </Button>
-                    <Button class="menu_button normal_button buttons" id="resetRespawn" onactivate="resetRespawnPlace()">
-                        <Label text="#resetRespawn"/>
-                    </Button>
+                <Panel class="ColNoFill padding5">
+                    <ToggleButton checked="true" id="helperMode" class="customCheckbox" text="#helperMode" />
+                    <ToggleButton checked="true" id="yashaKayaToggle" class="customCheckbox" text="#menuYashaKaya" />
+                    <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
                 </Panel>
-                <ToggleButton checked="true" id="treesToggle" class="customCheckbox" text="#clearTrees" />
+                <Panel class="ColNoFill padding5">
+                    <Panel id="soundSettingsContainer" />
+                </Panel>
+                <Panel class="ColNoFill padding5">
+                    <Panel id="levelSetting" class="levelSetting RowNoFill">
+                        <Label class="settingLabel" text="#levelSetting"/>
+                        <Panel id="levelSettingSwitcher"/>
+                    </Panel>
+                </Panel>
+                <Panel class="ColNoFill padding5">
+                    <Panel id="delaySetting" class="levelSetting RowNoFill">
+                        <Label class="settingLabel" text="#timingCustomDelay"/>
+                        <Panel id="customDelaySwitcher"/>
+                    </Panel>
+                </Panel>
             </Panel>
-            <Panel class="ColNoFill padding5">
-                <ToggleButton checked="true" id="helperMode" class="customCheckbox" text="#helperMode" />
-                <ToggleButton checked="true" id="yashaKayaToggle" class="customCheckbox" text="#menuYashaKaya" />
-                <ToggleButton checked="true" id="rubickMode" class="customCheckbox" text="#rubickMode" />
-            </Panel>
-            <Panel class="ColNoFill padding5">
+            <Label class="embeedingContentLabel" text="#timingType"/>
+            <Panel id="timingTypes" class="RowNoFill">
                 
             </Panel>
-            <Panel class="ColNoFill padding5">
-                <Panel id="levelSetting" class="levelSetting RowNoFill">
-                    <Label class="settingLabel" text="#levelSetting"/>
-                    <Panel id="levelSettingSwitcher"/>
-                </Panel>
-            </Panel>
-            <Panel class="ColNoFill padding5">
-                <Panel id="delaySetting" class="levelSetting RowNoFill">
-                    <Label class="settingLabel" text="#timingCustomDelay"/>
-                    <Panel id="customDelaySwitcher"/>
-                </Panel>
-            </Panel>
-        </Panel>
-        <Label class="embeedingContentLabel" text="#timingType"/>
-        <Panel id="timingTypes" class="RowNoFill">
-            
-        </Panel>
-        <Label class="embeedingContentLabel" text="#menuSkill"/>
-        <Panel class="RowNoFill">
-            <Panel id="timingSpellContainer">
+            <Label class="embeedingContentLabel" text="#menuSkill"/>
+            <Panel class="RowNoFill">
+                <Panel id="timingSpellContainer">
 
+                </Panel>
             </Panel>
+            <Panel class="RowNoFill">
+                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
+                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                </Button>
+                <Label id="errorMsg"></Label>
+            </Panel> 
         </Panel>
-        <Panel class="RowNoFill">
-            <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
-				<Label class="mode_play_label" id="menu_play_label" text="Play"/>
-            </Button>
-            <Label id="errorMsg"></Label>
-        </Panel> 
     </Panel>
 </root>

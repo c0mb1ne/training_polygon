@@ -197,7 +197,12 @@ function setRespawn(data){
 	$('#respawnPosSetting').text=data.pos[1].toFixed(0)+","+data.pos[2].toFixed(0)+","+data.pos[3].toFixed(0)
 	respawnPos=[data.pos[1],data.pos[2],data.pos[3]]
 }
-
+var soundSettings = CreateSoundSettings($('#soundSettingsContainer'), {
+    scope: 'timing',
+    onChange: function(type, soundId, scope) {
+        // Optional callback 
+    }
+});
 $('#helperMode').checked=true;
 
 //making number field for level changer

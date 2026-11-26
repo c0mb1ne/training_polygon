@@ -67,4 +67,10 @@ let HeroPicker = CreateHeroPicker($('#heroPickerContainer'), {
 	defaultHero: defaultHero,
 	onSelect: function(hero) { defaultHero = hero }
 })
+var soundSettings = CreateSoundSettings($('#soundSettingsContainer'), {
+    scope: 'dream_coil_escape',
+    onChange: function(type, soundId, scope) {
+        // Optional callback
+    }
+});
 GameEvents.Subscribe("dream_coil_escape_spell_table", saveData);

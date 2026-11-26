@@ -186,6 +186,7 @@ function dream_coil_escape:StartGame(args)
             return nil
         end
     end)
+    ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 5, 10, 20, 30, 50, 100 } })
 end
 
 function dream_coil_escape:PuckActionDelayed(delay)
@@ -368,11 +369,13 @@ function dream_coil_escape:ModifierGained(event)
                         Notifications:Show('green','good',"puck_dream_coil")
                         self.coilDone[event.entindex_ability_const]=true
                         self:PuckActionDelayed(self.timeBetweenCoils+FrameTime())
+                        ComboTracker:Add()
                     else
                         
                         Notifications:Show('red','bad',"puck_dream_coil")
                         self.coilDone[event.entindex_ability_const]=true
                         self:PuckActionDelayed(self.timeBetweenCoils+FrameTime())
+                        ComboTracker:Break()
                     end
                     return nil
                 end
