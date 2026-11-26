@@ -1,0 +1,11 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/menu2snippets/unit_picker.css" />
+    </styles>
+    <Panel class="UnitPickerWidget">
+        <Button class="UnitPickerButton">
+            <Image class="unitPickerIcon" />
+            <Label class="unitPickerName" text="" />
+        </Button>
+    </Panel>
+</root>

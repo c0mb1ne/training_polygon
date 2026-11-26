@@ -1,50 +1,103 @@
---prepared all generic methods single gamemode needs
---init prepare deactivate are necessary, events and damage filters can be removed if not used
 if aim_compet == nil then
-  aim_compet = class({})
+    aim_compet = class({})
 end
 
-local WARD_NAME = "npc_dota_observer_wards"
-local HERO_NAME = "npc_dota_hero_pangolier"
+local PLAYER_HERO_NAME = "npc_dota_hero_pangolier"
+local DEFAULT_TARGET_HERO = "npc_dota_hero_axe"
+local DEFAULT_TARGET_UNIT = "npc_dota_observer_wards"
+
+-- The menu requests this catalogue instead of keeping its own list of units.
+-- icon may point at a base Dota unit when a custom unit has no portrait of its own.
+local TARGET_UNITS = {
+    {name = "npc_dota_observer_wards", label = "#aimUnitObserverWard"},
+    {name = "npc_dota_sentry_wards", label = "#aimUnitSentryWard"},
+    {name = "npc_dota_creep_badguys_melee", label = "#aimUnitMeleeCreep"},
+    {name = "npc_dota_creep_badguys_ranged", label = "#aimUnitRangedCreep"},
+    {name = "npc_dota_badguys_siege", label = "#aimUnitSiegeCreep"},
+    {
+        name = "npc_dota_neutral_centaur_khan_custom",
+        label = "#aimTargetCentaur",
+        icon = "npc_dota_neutral_centaur_khan",
+    },
+}
+local TARGET_UNIT_BY_NAME = {}
+for _, entry in ipairs(TARGET_UNITS) do
+    TARGET_UNIT_BY_NAME[entry.name] = entry
+end
+
+-- Every enabled color owns a target type. A blade only destroys targets of the
+-- same color; using it on any other color is a normal failed click.
+local TARGET_COLORS = {
+    {
+        name = "yellow", item = "item_aim_topor", render = {255, 215, 40},
+        abilities = {"aim_compet_topor_ability", "aim_compet_topor_ability_2", "aim_compet_topor_ability_3", "aim_compet_topor_ability_4"},
+    },
+    {
+        name = "blue", item = "item_aim_topor2", render = {0, 89, 255},
+        abilities = {"aim_compet_topor2_ability", "aim_compet_topor2_ability_2", "aim_compet_topor2_ability_3", "aim_compet_topor2_ability_4"},
+    },
+    {
+        name = "green", item = "item_aim_topor3", render = {40, 220, 80},
+        abilities = {"aim_compet_topor3_ability", "aim_compet_topor3_ability_2", "aim_compet_topor3_ability_3", "aim_compet_topor3_ability_4"},
+    },
+    {
+        name = "red", item = "item_aim_topor4", render = {255, 55, 55},
+        abilities = {"aim_compet_topor4_ability", "aim_compet_topor4_ability_2", "aim_compet_topor4_ability_3", "aim_compet_topor4_ability_4"},
+    },
+}
+
+local ITEM_COLOR_INDEX = {}
+for colorIndex, color in ipairs(TARGET_COLORS) do
+    ITEM_COLOR_INDEX[color.item] = colorIndex
+    for _, abilityName in ipairs(color.abilities) do
+        ITEM_COLOR_INDEX[abilityName] = colorIndex
+    end
+end
 
 local TIMER_DISPLAY = "aim_compet_time_display"
-local TIMER_WARD_CYCLE = "aim_compet_ward_cycle"
+local TIMER_TARGET_CYCLE = "aim_compet_target_cycle"
 
--- round settings, overridable from the menu (StartGame args, see ReadRoundSettings)
-local DEFAULT_ROUND_TIME = 60  -- seconds
+local DEFAULT_ROUND_TIME = 60
 local MIN_ROUND_TIME, MAX_ROUND_TIME = 10, 600
-local MIN_INTERVAL, MAX_INTERVAL = 0.1, 3   -- seconds between wards
+local MIN_INTERVAL, MAX_INTERVAL = 0.1, 3
 local MIN_EXPONENT, MAX_EXPONENT = 0.2, 5
-local CLASSIC_DECAY = 0.08                  -- classic curve: interval shrinks by this after every spawn
-local WARD_CAP = 500                        -- absolute safety cap on wards per round
-local WARD_HP = 200
-local WARD_DECAY_TICK = 0.1
--- ward lifetime is a menu setting: the hp decay per tick is derived from it, so a
--- ward always has WARD_HP hp and lives wardLifetime seconds (legacy default: 2.0)
-local DEFAULT_WARD_LIFETIME = 2.0
-local MIN_WARD_LIFETIME, MAX_WARD_LIFETIME = 0.5, 5
+local CLASSIC_DECAY = 0.08
+local TARGET_CAP = 500
+local TARGET_HP = 200
+local TARGET_DECAY_TICK = 0.1
+local DEFAULT_TARGET_LIFETIME = 2.0
+local MIN_TARGET_LIFETIME, MAX_TARGET_LIFETIME = 0.5, 5
+local MIN_MOVE_SPEED, MAX_MOVE_SPEED = 50, 2000
+local MAX_MOVE_SPEED_RAMP = 1000
+local MIN_MODEL_SCALE, MAX_MODEL_SCALE = 0.2, 2.0
+local MOVEMENT_WAYPOINTS = 10
 
--- play area relative to the hero (legacy defaults; the menu's area picker can
--- redefine the box, stored as offsets from the training place)
-local AREA_DEFAULT_MIN_X, AREA_DEFAULT_MIN_Y = -750, -350
-local AREA_DEFAULT_MAX_X, AREA_DEFAULT_MAX_Y = 750, 650
-local AREA_MIN_SIDE = 400    -- smallest box side the picker accepts
-local AREA_MAX_EXTENT = 1600 -- picked corners are clamped to this distance from the anchor
+local DEFAULT_TRAINING_PLACE = Vector(-5065, 4226, 128)
+local AREA_PRESETS = {
+    classic = {
+        minX = -750, minY = -350, maxX = 750, maxY = 650,
+        origin = DEFAULT_TRAINING_PLACE,
+        vision = 1200, castRange = 1200, treeRadius = 1500,
+    },
+    all_map = {
+        minX = -6000, minY = -6000, maxX = 6000, maxY = 6000,
+        origin = Vector(0, 0, 128),
+        vision = 16000, castRange = 20000, treeRadius = 12000,
+    },
+}
 
--- area border drawing. The shared CreateParticleBox from utils.lua rebuilds every
--- point with z=0, which is under the terrain (the training place sits at z=128),
--- so the lines end up buried. This draws one bounding_area_view particle instead:
--- CP0-CP3 = the four corners in loop order, CP15 = color (RGB), CP16 = color scale.
+local HERO_MIN_RANGE = 350
+local TARGET_MIN_GAP = 300
+local RECENT_TARGETS = 6
+local MAX_PLACE_ATTEMPTS = 50
+
 local BOUNDING_AREA_PARTICLE = "particles/ui_mouseactions/bounding_area_view.vpcf"
 
 local function GroundPoint(x, y)
     return GetGroundPosition(Vector(x, y, 0), nil)
 end
 
--- returns a 1-element table with the particle index, so the cleanup code that
--- expects CreateParticleBox's table keeps working
 local function DrawGroundBox(minVec, maxVec)
-    -- c1 -> c2 -> c3 -> c4 -> back to c1 forms a closed loop around the perimeter
     local c1 = GroundPoint(minVec.x, minVec.y)
     local c2 = GroundPoint(minVec.x, maxVec.y)
     local c3 = GroundPoint(maxVec.x, maxVec.y)
@@ -55,20 +108,12 @@ local function DrawGroundBox(minVec, maxVec)
     ParticleManager:SetParticleControl(fx, 1, c2)
     ParticleManager:SetParticleControl(fx, 2, c3)
     ParticleManager:SetParticleControl(fx, 3, c4)
-    ParticleManager:SetParticleControl(fx, 15, Vector(75, 0, 130)) -- color (RGB)
-    ParticleManager:SetParticleControl(fx, 16, Vector(1, 0, 0))     -- color scale (x)
+    ParticleManager:SetParticleControl(fx, 15, Vector(75, 0, 130))
+    ParticleManager:SetParticleControl(fx, 16, Vector(1, 0, 0))
     return {fx}
 end
 
--- ward placement rules
-local HERO_MIN_RANGE = 350       -- wards never spawn closer than this to the hero
-local WARD_MIN_GAP = 300         -- wards never spawn closer than this to recent wards
-local RECENT_WARDS = 6           -- how many previous wards to check (roughly how many can be alive at once)
-local MAX_PLACE_ATTEMPTS = 50    -- hard cap for the placement loop
-
--- Own seedable RNG (Park-Miller). Dota's RandomInt can't be seeded, and math.random
--- is shared with every other script, so this keeps its own state per instance.
--- Only integer math below 2^53, so it gives the same sequence on every machine.
+-- Own seedable RNG so spawn positions, colors, paths and speeds are reproducible.
 local RNG_MOD = 2147483647
 local RNG_MUL = 16807
 
@@ -81,17 +126,14 @@ local function NewRng(seed)
         state = (state * RNG_MUL) % RNG_MOD
         return state
     end
-    -- integer in [min, max], inclusive
     function rng:Int(min, max)
         return min + math.floor((self:Next() - 1) / (RNG_MOD - 1) * (max - min + 1))
     end
 
-    -- small seeds give weak first outputs, so burn a few
     for _ = 1, 10 do rng:Next() end
     return rng
 end
 
--- days since 1970-01-01 for a calendar date
 local function DaysFromCivil(y, m, d)
     if m <= 2 then y = y - 1 end
     local era = math.floor(y / 400)
@@ -102,63 +144,89 @@ local function DaysFromCivil(y, m, d)
     return era * 146097 + doe - 719468
 end
 
+local function ClampNumber(v, lo, hi)
+    v = tonumber(v)
+    if v == nil or v ~= v then return nil end
+    return math.min(hi, math.max(lo, v))
+end
+
+local function EventBool(value)
+    return value == true or value == 1 or value == "1"
+end
+
+local function DefaultBladeSettings()
+    return {
+        targetType = "unit",
+        targetName = DEFAULT_TARGET_UNIT,
+        moving = false,
+        moveSpeedMin = 600,
+        moveSpeedMax = 1500,
+        moveSpeedRamp = 0,
+        modelScaleStart = 1.0,
+        modelScaleEnd = 1.0,
+    }
+end
 
 function aim_compet:Init()
-    --[[ self.type = "compet" ]] -- Define the type of mode
     self.type = "sandbox"
-    self.name = "aim_compet" -- Name of the gamemode (must match the key used to register it)
-    self.activated = false -- Whether the mode is activated (replaces REACTION_TRAINING)
-    self.Player = nil -- Reference to the player
-    self.playerHeroName=HERO_NAME
-    self.playerHero = nil -- Reference to the player's hero
-    self.trainingPlaceDefault = Vector(-5065,4226,128)
+    self.name = "aim_compet"
+    self.activated = false
+    self.Player = nil
+    self.playerHeroName = PLAYER_HERO_NAME
+    self.playerHero = nil
+    self.trainingPlaceDefault = DEFAULT_TRAINING_PLACE
     self.trainingPlace = self.trainingPlaceDefault
-    self.startDelay=3
-    -- round state (all of these used to be globals)
-    self.results = {}       -- was RESULTS_TABLE, time-to-kill of every ward the player killed
-    self.wardPool = {}      -- was WARD_POOL, {entindex, spawnTime} of alive wards
-    self.wards = {}         -- was AIM_TRASH, every ward spawned this round (for cleanup)
-    self.box = nil          -- was AIM_BOX, particles of the play area border
-    self.score = 0          -- was AIM_SCORE
-    self.combo = 1          -- was AIM_COMBO
-    self.maxCombo = 1       -- was AIM_MAX_COMBO
-    self.avgTime = 0        -- was AIM_AVG_TIME
-    self.hits = 0           -- wards killed by the player (shown on the HUD)
-    self.misses = 0         -- wards that died on their own (shown on the HUD)
-    self.timeLeft = DEFAULT_ROUND_TIME -- was WARD_TIMER
-    self.roundTime = DEFAULT_ROUND_TIME -- round duration in seconds (menu setting)
-    self.spawnCurve = nil    -- ward spawn speed curve (menu setting), filled by ReadRoundSettings
-    self.spawnSchedule = {}  -- spawn times in seconds from round start, from ComputeSpawnSchedule
-    self.wardLifetime = DEFAULT_WARD_LIFETIME -- seconds a ward stays alive (menu setting)
-    self.wardHpDecay = WARD_HP * WARD_DECAY_TICK / DEFAULT_WARD_LIFETIME -- hp lost per decay tick
-    -- play area as offsets from the training place (area picker in the menu)
-    self.area = {minX = AREA_DEFAULT_MIN_X, minY = AREA_DEFAULT_MIN_Y, maxX = AREA_DEFAULT_MAX_X, maxY = AREA_DEFAULT_MAX_Y}
-    self.areaPicking = false   -- true while the area picker overlay is open
-    self.areaPickCorner1 = nil -- picked corners, world coords, already clamped
-    self.areaPickCorner2 = nil
-    self.areaPreview = {}      -- preview particles drawn while picking
-    self.seed = nil        -- seed of the current round (same seed = same ward layout)
-    self.spawnPlan = {}     -- ward offsets from the hero, generated from the seed
-    self.useSeed = false     -- true: layout comes from a seed (custom or weekly), false: new random seed every round
-    self.customSeed = nil   -- manually set seed, overrides the weekly one while useSeed is true
-    self.argsKeeper=nil
-    -- Register listeners here
-    --[[ CustomGameEventManager:RegisterListener("get_aim_compet_respawn_pos", function(_, event)
-        aim_compet:SendRespawnPos()
-    end)
-    CustomGameEventManager:RegisterListener("aim_compet_reset_respawn_pos", function(_, event)
-        aim_compet:ResetRespawn()
-    end) ]]
-    CustomGameEventManager:RegisterListener("aim_compet_training_end", function(_, event)
+    self.startDelay = 3
+
+    self.results = {}
+    self.targets = {}
+    self.targetRecords = {}
+    self.box = nil
+    self.mapVisionTimer = nil
+    self.score = 0
+    self.combo = 1
+    self.maxCombo = 1
+    self.avgTime = 0
+    self.hits = 0
+    self.misses = 0
+    self.timeLeft = DEFAULT_ROUND_TIME
+    self.roundTime = DEFAULT_ROUND_TIME
+    self.spawnCurve = nil
+    self.spawnSchedule = {}
+    self.targetLifetime = DEFAULT_TARGET_LIFETIME
+    self.targetHpDecay = TARGET_HP * TARGET_DECAY_TICK / DEFAULT_TARGET_LIFETIME
+
+    self.areaPreset = "classic"
+    self.area = AREA_PRESETS.classic
+    self.itemCount = 1
+    self.colorTargets = true
+    self.unitTable = TARGET_UNITS
+    self.bladeSettings = {}
+    for i = 1, #TARGET_COLORS do
+        self.bladeSettings[i] = DefaultBladeSettings()
+    end
+    self.castRange = AREA_PRESETS.classic.castRange
+    self.treeRadius = AREA_PRESETS.classic.treeRadius
+
+    self.seed = nil
+    self.spawnPlan = {}
+    self.useSeed = false
+    self.customSeed = nil
+    self.argsKeeper = nil
+
+    CustomGameEventManager:RegisterListener("aim_compet_training_end", function()
         aim_compet:PrepareDeactivate()
     end)
-    CustomGameEventManager:RegisterListener("aim_compet_training_retry", function(_, event)
-        aim_compet.argsKeeper.retry=1
+    CustomGameEventManager:RegisterListener("aim_compet_training_retry", function()
+        if aim_compet.argsKeeper == nil then return end
+        aim_compet.argsKeeper.retry = 1
         aim_compet:StartGame(aim_compet.argsKeeper)
     end)
-    -- seed controls (event.seed = number, event.value = 1/0 or true/false)
-    CustomGameEventManager:RegisterListener("get_aim_compet_seed", function(_, event)
+    CustomGameEventManager:RegisterListener("get_aim_compet_seed", function()
         aim_compet:SendSeed()
+    end)
+    CustomGameEventManager:RegisterListener("get_aim_compet_unit_table", function()
+        aim_compet:SendUnitTable()
     end)
     CustomGameEventManager:RegisterListener("aim_compet_set_seed", function(_, event)
         aim_compet:SetSeed(event.seed)
@@ -167,88 +235,87 @@ function aim_compet:Init()
         aim_compet:ShowMiss(event.position)
     end)
     CustomGameEventManager:RegisterListener("aim_compet_set_use_seed", function(_, event)
-        aim_compet:SetUseSeed(event.value == 1 or event.value == true)
+        aim_compet:SetUseSeed(EventBool(event.value))
     end)
-    -- area picker (overlay with two corner buttons + done)
-    CustomGameEventManager:RegisterListener("aim_compet_area_pick_start", function(_, event)
-        aim_compet:StartAreaPick()
-    end)
-    CustomGameEventManager:RegisterListener("aim_compet_area_set_corner", function(_, event)
-        aim_compet:SetAreaCorner(event)
-    end)
-    CustomGameEventManager:RegisterListener("aim_compet_area_done", function(_, event)
-        aim_compet:FinishAreaPick()
-    end)
-    CustomGameEventManager:RegisterListener("aim_compet_area_reset", function(_, event)
-        aim_compet:ResetArea()
-    end)
-    CustomGameEventManager:RegisterListener("get_aim_compet_area", function(_, event)
-        aim_compet:SendArea()
-    end)
-    -- TODO: add a listener for this mode's own spell table request, e.g.
-    -- CustomGameEventManager:RegisterListener("get_aim_compet_spell_table", function(_, event)
-    --     aim_compet:SendSpellTable()
-    -- end)
 
     self.deactivateCalled = false
-
-    print('aim_compet inited')
+    print("aim_compet inited")
 end
 
---[[ function aim_compet:SendRespawnPos()
-    CustomGameEventManager:Send_ServerToAllClients("aim_compet_respawn_pos", {pos = {self.trainingPlace.x, self.trainingPlace.y, self.trainingPlace.z}})
-end
+function aim_compet:HasAllBladeBindings(args)
+    args = args or {}
+    local itemCount = math.floor(ClampNumber(args.itemCount, 1, #TARGET_COLORS) or 1)
+    local bound = {}
+    local slotGroups = {
+        SlotsArray(args.aimAbilitySlots, 4),
+        SlotsArray(args.aimItemSlots, 6),
+    }
 
-function aim_compet:ResetRespawn()
-    self.trainingPlace = self.trainingPlaceDefault
-    aim_compet:SendRespawnPos()
-end ]]
+    for _, slots in ipairs(slotGroups) do
+        for _, itemName in pairs(slots) do
+            local colorIndex = ITEM_COLOR_INDEX[itemName]
+            if colorIndex ~= nil and colorIndex <= itemCount then
+                bound[colorIndex] = true
+            end
+        end
+    end
+
+    for i = 1, itemCount do
+        if not bound[i] then return false end
+    end
+    return true
+end
 
 function aim_compet:Prepare(args)
+    --[[ if not self:HasAllBladeBindings(args) then
+        print("[aim_compet] Launch blocked: every enabled blade must be bound")
+        CustomGameEventManager:Send_ServerToAllClients("aim_compet_config_error", {
+            message = "#aimBladeBindingError",
+        })
+        return
+    end ]]
+
     print("[aim_compet] Preparing gamemode")
     precache:clearTable()
 
-    -- units this mode needs precached (wards + the hero that replaceHero will create)
-    local unitsToPrecache = {WARD_NAME, HERO_NAME}
-
-    if #unitsToPrecache > 0 then
-        precache:PrecacheAddUnitToList(unitsToPrecache)
+    local unitsToPrecache = {PLAYER_HERO_NAME}
+    local unitsAdded = {[PLAYER_HERO_NAME] = true}
+    for _, entry in ipairs(TARGET_UNITS) do
+        table.insert(unitsToPrecache, entry.name)
+        unitsAdded[entry.name] = true
     end
-    --To precache player hero use this
-    if self.playerHeroName then
-        precache:PrecacheAddPlayerUnitToList({self.playerHeroName})
+    for _, blade in ipairs(self:ParseBladeSettings(args)) do
+        if blade.targetType == "hero" and not unitsAdded[blade.targetName] then
+            table.insert(unitsToPrecache, blade.targetName)
+            unitsAdded[blade.targetName] = true
+        end
     end
-    -- Store args for use after precaching
-    self.pendingArgs = args
+    precache:PrecacheAddUnitToList(unitsToPrecache)
+    precache:PrecacheAddPlayerUnitToList({PLAYER_HERO_NAME})
 
-    -- Start precaching with callback to start the actual game
+    self.pendingArgs = args or {}
     precache:doPrecache(function()
-        aim_compet:StartGame(self.pendingArgs)
+        aim_compet:StartGame(aim_compet.pendingArgs)
     end)
 end
 
--- args.PlayerID : player id (defaults to 0, it's single player)
--- args.retry    : 1 to restart the round without re-creating hero / items
 function aim_compet:StartGame(args)
     args = args or {}
-    self.argsKeeper=args
-    local retry = (args.retry == 1)
+    self.argsKeeper = args
+    local retry = args.retry == 1
     local playerID = args.PlayerID or 0
 
-    self:ReadRoundSettings(args)
-
-    CustomGameEventManager:Send_ServerToAllClients("load_hud",{name=self.name})
-    --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_start",{type='aim'}) ]]
-
     if retry then
-        print("RETRY")
+        print("[aim_compet] Retry")
         self:Clear()
     end
+    self:ReadRoundSettings(args)
 
-    -- reset round state
+    CustomGameEventManager:Send_ServerToAllClients("load_hud", {name = self.name})
+
     self.results = {}
-    self.wardPool = {}
-    self.wards = {}
+    self.targets = {}
+    self.targetRecords = {}
     self.score = 0
     self.combo = 1
     self.maxCombo = 1
@@ -257,121 +324,198 @@ function aim_compet:StartGame(args)
     self.misses = 0
     self.timeLeft = self.roundTime
     self.activated = true
-    self:SendCounters() -- resets the HUD on retry
+    self:SendCounters()
 
     self.Player = PlayerResource:GetPlayer(playerID)
     local hero = self.Player:GetAssignedHero()
     if not retry then
-        hero = replaceHero(hero, HERO_NAME)
+        hero = replaceHero(hero, PLAYER_HERO_NAME)
         removeItems(hero)
     end
     self.playerHero = hero
 
+    self.trainingPlace = GetGroundPosition(self.area.origin, nil)
     hero:SetMoveCapability(DOTA_UNIT_CAP_MOVE_NONE)
     hero:SetAttackCapability(DOTA_UNIT_CAP_NO_ATTACK)
-    hero:SetDayTimeVisionRange(1200)--dont forget to change back
+    hero:SetDayTimeVisionRange(self.area.vision)
+    hero:SetNightTimeVisionRange(self.area.vision)
     hero:SetAbsOrigin(self.trainingPlace)
-    GridNav:DestroyTreesAroundPoint(self.trainingPlace, 1500, true)
+    GridNav:DestroyTreesAroundPoint(self.trainingPlace, self.treeRadius, true)
     hero:SetBaseHealthRegen(10)
+
+    if self.areaPreset == "all_map" then
+        self.mapVisionTimer = createTempVision(12000, DOTA_TEAM_GOODGUYS, self.trainingPlace, false)
+    end
 
     if not retry then
         self:SetupTopor(hero, args)
-        --[[ local gem = CreateItem("item_gem", hero, hero)
-        hero:AddItem(gem) ]]
-        --[[ getConfigAndApply(hero, 'aim') ]]
     end
-
-    -- logging can be started here
 
     self.seed = self:ResolveSeed(args)
     self.spawnSchedule = self:ComputeSpawnSchedule()
     self.spawnPlan = self:GenerateSpawnPlan(self.seed, #self.spawnSchedule)
-    print("[aim_compet] seed:", self.seed, "wards planned:", #self.spawnSchedule)
+    local movingBlades = 0
+    for i = 1, self.itemCount do
+        if self.bladeSettings[i].moving then movingBlades = movingBlades + 1 end
+    end
+    print("[aim_compet] seed:", self.seed, "targets planned:", #self.spawnSchedule,
+        "zone:", self.areaPreset, "colors:", self.itemCount, "moving blades:", movingBlades)
     self:SendSeed()
 
     self:StartTimeDisplay()
-    self:StartWardCycle()
+    self:StartTargetCycle()
     CustomGameEventManager:Send_ServerToAllClients("aim_compet_countdown_start", {})
-    -- play area border
+
     local origin = hero:GetAbsOrigin()
-    local minVec = origin + Vector(self.area.minX, self.area.minY, 0)
-    local maxVec = origin + Vector(self.area.maxX, self.area.maxY, 0)
-    self.box = DrawGroundBox(minVec, maxVec)
-    --combo tracker
-    ComboTracker:Configure({ active = true, anchor = "bottom_right", timeout = 2, tiers = { 10, 25, 50, 75, 100, 120 } })
+    self.box = DrawGroundBox(
+        origin + Vector(self.area.minX, self.area.minY, 0),
+        origin + Vector(self.area.maxX, self.area.maxY, 0)
+    )
+
+    ComboTracker:Configure({active = true, anchor = "bottom_right", timeout = 2, tiers = {10, 25, 50, 75, 100, 120}})
     ComboTracker:Add()
 end
 
--- Places topor according to the slots picked in the menu (args.aimAbilitySlots / args.aimItemSlots).
--- Ability slots get the topor_ability ability, item slots get the item_topor item.
--- Panorama sends js arrays as lua tables with string keys "0".."n", so index by tostring(i).
--- If nothing was picked (e.g. args missing), falls back to the old behavior: one item_topor.
-function aim_compet:SetupTopor(hero, args)
-    local ITEM = "item_topor"
-
-    local function slotsArray(arg, count)
-        local result = {}
-        if type(arg) == "table" then
-            for i = 0, count - 1 do
-                result[i + 1] = arg[tostring(i)]
-            end
+local function SlotsArray(arg, count)
+    local result = {}
+    if type(arg) == "table" then
+        for i = 0, count - 1 do
+            result[i + 1] = arg[tostring(i)]
         end
-        return result
+    end
+    return result
+end
+
+function aim_compet:ParseBladeSettings(args)
+    local requested = SlotsArray(args and args.aimBladeSettings, #TARGET_COLORS)
+    local result = {}
+
+    for i = 1, #TARGET_COLORS do
+        local entry = requested[i]
+        if type(entry) ~= "table" then entry = {} end
+        local blade = DefaultBladeSettings()
+
+        blade.targetType = tostring(entry.targetType or "unit") == "hero" and "hero" or "unit"
+        local requestedName = tostring(entry.targetName or "")
+        if blade.targetType == "hero" then
+            if requestedName ~= "npc_dota_hero_target_dummy" and DotaDB:GetHeroKV(requestedName) ~= nil then
+                blade.targetName = requestedName
+            else
+                blade.targetName = DEFAULT_TARGET_HERO
+            end
+        else
+            blade.targetName = TARGET_UNIT_BY_NAME[requestedName] ~= nil and requestedName or DEFAULT_TARGET_UNIT
+        end
+
+        blade.moving = EventBool(entry.moving)
+        blade.moveSpeedMin = ClampNumber(entry.moveSpeedMin, MIN_MOVE_SPEED, MAX_MOVE_SPEED) or 600
+        blade.moveSpeedMax = ClampNumber(entry.moveSpeedMax, MIN_MOVE_SPEED, MAX_MOVE_SPEED) or 1500
+        if blade.moveSpeedMin > blade.moveSpeedMax then
+            blade.moveSpeedMin, blade.moveSpeedMax = blade.moveSpeedMax, blade.moveSpeedMin
+        end
+        blade.moveSpeedRamp = ClampNumber(entry.moveSpeedRamp, 0, MAX_MOVE_SPEED_RAMP) or 0
+        blade.modelScaleStart = ClampNumber(entry.modelScaleStart, MIN_MODEL_SCALE, MAX_MODEL_SCALE) or 1.0
+        blade.modelScaleEnd = ClampNumber(entry.modelScaleEnd, MIN_MODEL_SCALE, MAX_MODEL_SCALE) or 1.0
+        result[i] = blade
     end
 
-    local abilitySlots = slotsArray(args and args.aimAbilitySlots, 4)
-    local itemSlots = slotsArray(args and args.aimItemSlots, 6)
+    return result
+end
 
-    local anyPicked = false
+function aim_compet:SetupTopor(hero, args)
+    local abilitySlots = SlotsArray(args and args.aimAbilitySlots, 4)
+    local itemSlots = SlotsArray(args and args.aimItemSlots, 6)
 
-    -- every picked ability slot gets its own topor copy (abilities are keyed by name,
-    -- so 4 separate KV names are needed for 4 slots; all share utils/topor_ability.lua)
-    local ABILITY_NAMES = {"topor_ability", "topor_ability_2", "topor_ability_3", "topor_ability_4"}
+    -- Native abilities interfere with both the custom slots and their Q/W/E/R bindings.
+    -- Collect names first so removing one ability cannot shift the next one past our loop.
+    local nativeAbilities = {}
+    for i = 0, 6 do
+        local nativeAbility = hero:GetAbilityByIndex(i)
+        if nativeAbility ~= nil then
+            table.insert(nativeAbilities, nativeAbility:GetAbilityName())
+        end
+    end
+    for _, abilityName in ipairs(nativeAbilities) do
+        hero:RemoveAbility(abilityName)
+    end
+
     for i = 1, 4 do
-        if abilitySlots[i] == ITEM then
-            anyPicked = true
-            local abil = hero:AddAbility(ABILITY_NAMES[i])
-            abil:SetLevel(1)
-            local desired = i - 1
-            local current = abil:GetAbilityIndex()
-            if current >= 0 and current ~= desired then
-                local target = hero:GetAbilityByIndex(desired)
-                if target then
-                    hero:SwapAbilities(abil:GetAbilityName(), target:GetAbilityName(), true, true)
+        local itemName = abilitySlots[i]
+        local colorIndex = ITEM_COLOR_INDEX[itemName]
+        if colorIndex ~= nil and colorIndex <= self.itemCount then
+            local ability = hero:AddAbility(TARGET_COLORS[colorIndex].abilities[i])
+            if ability ~= nil then
+                ability:SetLevel(1)
+                ability:SetAbilityIndex(i - 1)
+                if i==4 then
+                    ability:SetAbilityIndex(5)
+                end
+                ability:SetHidden(false)
+            end
+        end
+    end
+
+    for i = 1, 6 do
+        local itemName = itemSlots[i]
+        local colorIndex = ITEM_COLOR_INDEX[itemName]
+        if colorIndex ~= nil and colorIndex <= self.itemCount then
+            local item = CreateItem(itemName, hero, hero)
+            if item ~= nil then
+                hero:AddItem(item)
+                local desired = i - 1
+                local current = item:GetItemSlot()
+                if current >= 0 and current ~= desired then
+                    hero:SwapItems(current, desired)
                 end
             end
         end
     end
+end
 
-    -- items: one item_topor per picked slot, swapped into place if AddItem put it elsewhere
-    for i = 1, 6 do
-        if itemSlots[i] == ITEM then
-            anyPicked = true
-            local topor = CreateItem(ITEM, hero, hero)
-            hero:AddItem(topor)
-            local desired = i - 1
-            local current = topor:GetItemSlot()
-            if current >= 0 and current ~= desired then
-                hero:SwapItems(current, desired)
-            end
+function aim_compet:GetToporCastRange()
+    return self.castRange or AREA_PRESETS.classic.castRange
+end
+
+function aim_compet:FailToporClick(ability, hero)
+    ApplyDamage({
+        victim = hero,
+        attacker = hero,
+        damage = 1,
+        damage_type = DAMAGE_TYPE_PURE,
+        damage_flags = DOTA_DAMAGE_FLAG_NONE,
+        ability = ability,
+    })
+end
+
+function aim_compet:UseTopor(ability)
+    if not self.activated then return end
+    local hero = ability:GetCaster()
+    if hero ~= self.playerHero then return end
+
+    local target = nil
+    if not ability:GetCursorTargetingNothing() then
+        target = ability:GetCursorTarget()
+    end
+
+    if target ~= nil and not target:IsNull() and target:IsAlive() then
+        local record = self.targetRecords[target:entindex()]
+        local bladeColor = ITEM_COLOR_INDEX[ability:GetAbilityName()]
+        if record ~= nil and not record.resolved and bladeColor == record.colorIndex then
+            target:Kill(ability, hero)
+            return
         end
     end
 
-    if not anyPicked then
-        local topor = CreateItem(ITEM, hero, hero)
-        hero:AddItem(topor)
-    end
+    -- Ground clicks, non-targets and wrong-color blades all count as a fail.
+    self:FailToporClick(ability, hero)
 end
 
--- countdown shown on the HUD, ends the round when it reaches 0
 function aim_compet:StartTimeDisplay()
     Timers:CreateTimer(TIMER_DISPLAY, {
         useGameTime = true,
         endTime = self.startDelay,
         callback = function()
-            if not self.activated then
-                return nil
-            end
+            if not self.activated then return nil end
 
             CustomGameEventManager:Send_ServerToAllClients("reaction_timer", {time = self.timeLeft})
             self:SendCounters()
@@ -381,37 +525,23 @@ function aim_compet:StartTimeDisplay()
                 self:OnRoundEnd()
                 return nil
             end
-
-            if self.timeLeft == 2 then
-                -- sound can be emitted here (round is about to end, was "drums")
-            end
             return 1
-        end
+        end,
     })
 end
 
 function aim_compet:OnRoundEnd()
-    --[[ setItemConfig(self.playerHero, 'aim') ]]
+    self.activated = false
+    Timers:RemoveTimer(TIMER_TARGET_CYCLE)
 
-    -- result can be sent here:
-    --   score = self.score
-    --   max combo = self.maxCombo
-    --   avg time = math.floor(self.avgTime * 1000) / 1000
-    -- ping reading can be done here too
-    -- logging can be stopped / saved here
-    self.activated=false
-
-    -- remove wards that are still alive: decay stops with the round, so without this
-    -- they would freeze on the map. They spawned less than wardLifetime before the end
-    -- (or died in the same frame), so they were never counted as hit or miss.
-    for _, ward in pairs(self.wards) do
-        if not ward:IsNull() and ward:IsAlive() then
-            ward:RemoveSelf()
+    for _, target in pairs(self.targets) do
+        if not target:IsNull() and target:IsAlive() then
+            target:RemoveSelf()
         end
     end
-    self.wardPool = {}
+    self.targets = {}
+    self.targetRecords = {}
 
-    -- round results popup on the HUD: stats + reaction time of every hit
     local total = self.hits + self.misses
     local hitRate = 0
     if total > 0 then
@@ -426,27 +556,15 @@ function aim_compet:OnRoundEnd()
         avgTime = self.avgTime,
         reactionTimes = self.results,
     })
-
-    print("wards_destroyed:", #self.results)
+    print("[aim_compet] targets destroyed:", #self.results)
 end
 
--- reads and validates the round settings sent by the menu, so a bad payload can't break the round
-local CURVE_TYPES = { classic = true, constant = true, linear = true, power = true }
+local CURVE_TYPES = {classic = true, constant = true, linear = true, power = true}
 
-local function ClampNumber(v, lo, hi)
-    v = tonumber(v)
-    if v == nil or v ~= v then return nil end -- nil / NaN
-    return math.min(hi, math.max(lo, v))
-end
-
--- args.roundTime        : round duration in seconds
--- args.spawnCurveType   : "classic" | "constant" | "linear" | "power"
--- args.spawnStartInterval / args.spawnEndInterval : seconds between wards at round start / end
--- args.spawnExponent    : steepness of the "power" curve
--- args.wardLifetime     : seconds a ward stays alive
 function aim_compet:ReadRoundSettings(args)
     args = args or {}
     self.roundTime = ClampNumber(args.roundTime, MIN_ROUND_TIME, MAX_ROUND_TIME) or DEFAULT_ROUND_TIME
+
     local curveType = tostring(args.spawnCurveType or "classic")
     if not CURVE_TYPES[curveType] then curveType = "classic" end
     self.spawnCurve = {
@@ -455,15 +573,34 @@ function aim_compet:ReadRoundSettings(args)
         endInterval = ClampNumber(args.spawnEndInterval, MIN_INTERVAL, MAX_INTERVAL) or 0.4,
         exponent = ClampNumber(args.spawnExponent, MIN_EXPONENT, MAX_EXPONENT) or 2,
     }
-    self.wardLifetime = ClampNumber(args.wardLifetime, MIN_WARD_LIFETIME, MAX_WARD_LIFETIME) or DEFAULT_WARD_LIFETIME
-    self.wardHpDecay = WARD_HP * WARD_DECAY_TICK / self.wardLifetime
+
+    self.targetLifetime = ClampNumber(args.targetLifetime or args.wardLifetime,
+        MIN_TARGET_LIFETIME, MAX_TARGET_LIFETIME) or DEFAULT_TARGET_LIFETIME
+    self.targetHpDecay = TARGET_HP * TARGET_DECAY_TICK / self.targetLifetime
+
+    local areaPreset = tostring(args.spawnArea or "classic")
+    if AREA_PRESETS[areaPreset] == nil then areaPreset = "classic" end
+    self.areaPreset = areaPreset
+    self.area = AREA_PRESETS[areaPreset]
+    self.castRange = self.area.castRange
+    self.treeRadius = self.area.treeRadius
+
+    self.itemCount = math.floor(ClampNumber(args.itemCount, 1, #TARGET_COLORS) or 1)
+    self.bladeSettings = self:ParseBladeSettings(args)
+    self.colorTargets = args.colorTargets == nil or EventBool(args.colorTargets)
+
+    -- Identical targets must remain distinguishable even when colors were disabled.
+    local targetNames = {}
+    for i = 1, self.itemCount do
+        local targetName = self.bladeSettings[i].targetName
+        if targetNames[targetName] then
+            self.colorTargets = true
+            break
+        end
+        targetNames[targetName] = true
+    end
 end
 
--- Turns the spawn curve into a list of spawn times (seconds from round start).
--- First ward spawns at t = 0 (right after the countdown), the rest follow interval(progress).
--- Pure math, no RNG: the timing depends only on the settings, the layout only on the seed.
--- Classic reproduces the old behavior exactly: interval starts at startInterval, shrinks by
--- CLASSIC_DECAY after every spawn and never goes below endInterval.
 function aim_compet:ComputeSpawnSchedule()
     local curve = self.spawnCurve
     local duration = self.roundTime
@@ -471,7 +608,7 @@ function aim_compet:ComputeSpawnSchedule()
     local t = 0
     local classicInterval = curve.startInterval
 
-    while #times < WARD_CAP do
+    while #times < TARGET_CAP do
         local dt
         if curve.type == "classic" then
             dt = classicInterval
@@ -482,98 +619,169 @@ function aim_compet:ComputeSpawnSchedule()
                 dt = curve.startInterval
             elseif curve.type == "power" then
                 dt = curve.startInterval + (curve.endInterval - curve.startInterval) * progress ^ curve.exponent
-            else -- linear
+            else
                 dt = curve.startInterval + (curve.endInterval - curve.startInterval) * progress
             end
         end
         dt = math.max(0.05, dt)
         t = t + dt
-        -- a ward needs its whole lifetime inside the round, or it could never
-        -- be killed/counted before the timer ends
-        if t > duration - self.wardLifetime then break end
+        if t > duration - self.targetLifetime then break end
         table.insert(times, t)
     end
-
     return times
 end
 
--- spawns wards at the times precomputed from the menu's spawn-speed curve
-function aim_compet:StartWardCycle()
+function aim_compet:StartTargetCycle()
     local schedule = self.spawnSchedule
     local idx = 0
 
-    Timers:CreateTimer(TIMER_WARD_CYCLE, {
+    Timers:CreateTimer(TIMER_TARGET_CYCLE, {
         useGameTime = true,
         endTime = self.startDelay,
         callback = function()
-            if not self.activated then
-                return nil
-            end
+            if not self.activated then return nil end
 
             idx = idx + 1
-            local pos = self.playerHero:GetAbsOrigin() + self.spawnPlan[idx]
-            local ward = CreateUnitByName(WARD_NAME, pos, true, nil, nil, DOTA_TEAM_BADGUYS)
-            ward:SetDeathXP(0)
-            ward:SetMaxHealth(WARD_HP)
-            ward:SetHealth(WARD_HP)
-            table.insert(self.wards, ward)
-
-            if idx >= #schedule then
-                return nil
-            end
+            self:SpawnTarget(schedule[idx], self.spawnPlan[idx])
+            if idx >= #schedule then return nil end
             return schedule[idx + 1] - schedule[idx]
-        end
+        end,
     })
 end
 
--- seed that changes every week (weeks start on Monday), so everyone gets the same layout for a week
--- NOTE: this uses the local clock, if you have a server it's safer to get the seed from it and pass args.seed
+function aim_compet:SpawnTarget(spawnTime, plan)
+    if plan == nil then return end
+    local origin = self.playerHero:GetAbsOrigin()
+    local pos = GetGroundPosition(origin + plan.offset, nil)
+    local colorIndex = plan.colorIndex
+    local blade = self.bladeSettings[colorIndex] or DefaultBladeSettings()
+    local color = TARGET_COLORS[colorIndex]
+
+    local target = CreateUnitByName(blade.targetName, pos, true, nil, nil, DOTA_TEAM_BADGUYS)
+    if target == nil then return end
+
+    target:SetDeathXP(0)
+    target:SetMinimumGoldBounty(0)
+    target:SetMaximumGoldBounty(0)
+    target:SetBaseHealthRegen(0)
+    target:SetMaxHealth(TARGET_HP)
+    target:SetHealth(TARGET_HP)
+    target:SetAttackCapability(DOTA_UNIT_CAP_NO_ATTACK)
+    if target.SetIdleAcquire ~= nil then target:SetIdleAcquire(false) end
+    if self.colorTargets then
+        target:SetRenderColor(color.render[1], color.render[2], color.render[3])
+    end
+
+    local progress = math.min(1, math.max(0, spawnTime / self.roundTime))
+    local scale = blade.modelScaleStart + (blade.modelScaleEnd - blade.modelScaleStart) * progress
+    target:SetModelScale(scale)
+
+    -- Some created hero entities do not expose SetCanRespawn in VScript.
+    if target:IsHero() and target.SetCanRespawn ~= nil then
+        target:SetCanRespawn(false)
+    end
+
+    if blade.moving then
+        local maxSpeed = blade.moveSpeedMax + blade.moveSpeedRamp * progress
+        local speed = blade.moveSpeedMin + (maxSpeed - blade.moveSpeedMin) * plan.speedFraction
+        target:SetMoveCapability(DOTA_UNIT_CAP_MOVE_GROUND)
+        target:SetBaseMoveSpeed(speed)
+        for i, offset in ipairs(plan.waypoints) do
+            ExecuteOrderFromTable({
+                UnitIndex = target:entindex(),
+                OrderType = DOTA_UNIT_ORDER_MOVE_TO_POSITION,
+                Position = GetGroundPosition(origin + offset, nil),
+                Queue = i > 1,
+            })
+        end
+    else
+        target:SetMoveCapability(DOTA_UNIT_CAP_MOVE_NONE)
+    end
+
+    table.insert(self.targets, target)
+    self:RegisterTarget(target, colorIndex)
+end
+
+function aim_compet:RegisterTarget(target, colorIndex)
+    local index = target:entindex()
+    if self.targetRecords[index] ~= nil then return end
+    self.targetRecords[index] = {
+        entity = target,
+        spawnTime = Time(),
+        colorIndex = colorIndex,
+        resolved = false,
+    }
+    self:StartTargetDecay(target)
+end
+
+function aim_compet:StartTargetDecay(target)
+    Timers:CreateTimer({
+        useGameTime = false,
+        endTime = TARGET_DECAY_TICK,
+        callback = function()
+            if not self.activated or target:IsNull() or not target:IsAlive() then return nil end
+            local record = self.targetRecords[target:entindex()]
+            if record == nil or record.resolved then return nil end
+
+            local newHp = target:GetHealth()
+            if newHp - self.targetHpDecay <= 0 then
+                self:ExpireTarget(target)
+            else
+                target:ModifyHealth(newHp - self.targetHpDecay, nil, true, 0)
+            end
+            return TARGET_DECAY_TICK
+        end,
+    })
+end
+
+function aim_compet:ExpireTarget(target)
+    local index = target:entindex()
+    local record = self.targetRecords[index]
+    if record == nil or record.resolved then return end
+
+    record.resolved = true
+    self:OnTargetMiss(target)
+    target:ForceKill(false)
+    if self.targetRecords[index] ~= nil then
+        self.targetRecords[index] = nil
+        if not target:IsNull() then target:RemoveSelf() end
+    end
+end
+
 function aim_compet:GetWeeklySeed()
-    local m, d, y = string.match(GetSystemDate(), "(%d+)/(%d+)/(%d+)") -- "MM/DD/YY"
+    local m, d, y = string.match(GetSystemDate(), "(%d+)/(%d+)/(%d+)")
     m, d, y = tonumber(m), tonumber(d), tonumber(y)
     if m == nil or d == nil or y == nil then
-        print("[aim_compet] could not read system date, using fallback seed")
+        print("[aim_compet] Could not read system date, using fallback seed")
         return 1
     end
     if y < 100 then y = y + 2000 end
-
-    -- 1970-01-01 was a Thursday, +3 shifts the week boundary to Monday
     return math.floor((DaysFromCivil(y, m, d) + 3) / 7)
 end
 
--- Picks the seed for a round, in this order:
---   1. args.seed (e.g. given by your server), always wins
---   2. useSeed == true : customSeed if one was set, otherwise the weekly seed
---   3. useSeed == false: a fresh random seed (still shown, so a good layout can be replayed with SetSeed)
 function aim_compet:ResolveSeed(args)
     if args and args.seed then
-        local s = tonumber(args.seed)
-        if s then return math.floor(s) end
+        local seed = tonumber(args.seed)
+        if seed then return math.floor(seed) end
     end
-
     if self.useSeed then
         return self.customSeed or self:GetWeeklySeed()
     end
-
     return RandomInt(1, RNG_MOD - 1)
 end
 
--- sets a seed for the next rounds and turns seeding on (does not affect the round in progress)
 function aim_compet:SetSeed(seed)
-    local s = tonumber(seed)
-    if s == nil then
+    local value = tonumber(seed)
+    if value == nil then
         print("[aim_compet] SetSeed: invalid seed", seed)
         return false
     end
-
-    self.customSeed = math.floor(s)
+    self.customSeed = math.floor(value)
     self.useSeed = true
-    print("[aim_compet] custom seed set:", self.customSeed)
     self:SendSeed()
     return true
 end
 
--- back to the weekly seed
 function aim_compet:ClearSeed()
     self.customSeed = nil
     self:SendSeed()
@@ -581,149 +789,21 @@ end
 
 function aim_compet:SetUseSeed(enabled)
     self.useSeed = enabled and true or false
-    print("[aim_compet] useSeed:", self.useSeed)
     self:SendSeed()
 end
 
--- sends seed info to the HUD: seed of the current round, the custom seed (if set) and whether seeding is on
 function aim_compet:SendSeed()
     CustomGameEventManager:Send_ServerToAllClients("aim_compet_seed", {
         seed = self.seed,
         customSeed = self.customSeed,
-        enabled = self.useSeed
+        enabled = self.useSeed,
     })
 end
 
--- ============================ area picker ============================
--- The menu's "set area" button hides the menu and shows an overlay with three
--- buttons (corner 1 / corner 2 / done). Corners are world positions under the
--- screen center, clamped to a sane distance from the training place. On confirm
--- the training place moves to the box center (the hero stands in the middle of
--- the box) and the area is stored as offsets from it. Preview particles are
--- drawn as corners get placed.
-
--- js arrays arrive as tables with string keys "0".."2"
-local function EventPos(pos)
-    if type(pos) ~= "table" then return nil end
-    local x = tonumber(pos['0'] or pos[0])
-    local y = tonumber(pos['1'] or pos[1])
-    if x == nil or y == nil then return nil end
-    return Vector(x, y, 0)
+function aim_compet:SendUnitTable()
+    CustomGameEventManager:Send_ServerToAllClients("aim_compet_unit_table", {data = self.unitTable})
 end
 
-local function ClampToAnchor(anchor, pos)
-    local dx = math.max(-AREA_MAX_EXTENT, math.min(AREA_MAX_EXTENT, pos.x - anchor.x))
-    local dy = math.max(-AREA_MAX_EXTENT, math.min(AREA_MAX_EXTENT, pos.y - anchor.y))
-    return anchor + Vector(dx, dy, 0)
-end
-
-function aim_compet:StartAreaPick()
-    if self.activated then return end -- menu only, never mid-round
-    self.areaPicking = true
-    self.areaPickCorner1 = nil
-    self.areaPickCorner2 = nil
-    GameMode:HideMenu()
-    CustomGameEventManager:Send_ServerToAllClients("area_picker_begin", {
-        ax = self.trainingPlace.x,
-        ay = self.trainingPlace.y,
-        az = self.trainingPlace.z
-    })
-end
-
-function aim_compet:ClearAreaPreview()
-    for _, p in pairs(self.areaPreview) do
-        ParticleManager:DestroyParticle(p, true)
-        ParticleManager:ReleaseParticleIndex(p)
-    end
-    self.areaPreview = {}
-end
-
--- corner 1 only: small marker box; both corners: the full rectangle
-function aim_compet:DrawAreaPreview()
-    self:ClearAreaPreview()
-    local c1, c2 = self.areaPickCorner1, self.areaPickCorner2
-    if c1 ~= nil and c2 ~= nil then
-        local minVec = Vector(math.min(c1.x, c2.x), math.min(c1.y, c2.y), 0)
-        local maxVec = Vector(math.max(c1.x, c2.x), math.max(c1.y, c2.y), 0)
-        self.areaPreview = DrawGroundBox(minVec, maxVec)
-    elseif c1 ~= nil then
-        self.areaPreview = DrawGroundBox(c1 - Vector(32, 32, 0), c1 + Vector(32, 32, 0))
-    end
-end
-
-function aim_compet:SetAreaCorner(event)
-    if not self.areaPicking then return end
-    local pos = EventPos(event and event.pos)
-    if pos == nil then return end
-    if event.corner == 1 or event.corner == "1" then
-        self.areaPickCorner1 = ClampToAnchor(self.trainingPlace, pos)
-    else
-        self.areaPickCorner2 = ClampToAnchor(self.trainingPlace, pos)
-    end
-    self:DrawAreaPreview()
-end
-
-function aim_compet:FinishAreaPick()
-    if not self.areaPicking then return end
-
-    local c1, c2 = self.areaPickCorner1, self.areaPickCorner2
-    -- done without both corners = cancel, keep the old area
-    if c1 == nil or c2 == nil then
-        self:EndAreaPick(false)
-        return
-    end
-
-    local minX, maxX = math.min(c1.x, c2.x), math.max(c1.x, c2.x)
-    local minY, maxY = math.min(c1.y, c2.y), math.max(c1.y, c2.y)
-    if maxX - minX < AREA_MIN_SIDE or maxY - minY < AREA_MIN_SIDE then
-        -- overlay stays open and shows the error
-        CustomGameEventManager:Send_ServerToAllClients("area_picker_error", {})
-        return
-    end
-
-    -- the hero stands in the center of the picked box: the training place moves to
-    -- the box center and the offsets become symmetric around it
-    local center = GetGroundPosition(Vector((minX + maxX) / 2, (minY + maxY) / 2, 0), nil)
-    self.trainingPlace = center
-    self.area = {
-        minX = minX - center.x,
-        minY = minY - center.y,
-        maxX = maxX - center.x,
-        maxY = maxY - center.y,
-    }
-    self:EndAreaPick(true)
-end
-
-function aim_compet:EndAreaPick(saved)
-    self.areaPicking = false
-    self.areaPickCorner1 = nil
-    self.areaPickCorner2 = nil
-    self:ClearAreaPreview()
-    CustomGameEventManager:Send_ServerToAllClients("area_picker_end", {})
-    GameMode:ShowMenu()
-    if saved then
-        self:SendArea()
-    end
-end
-
--- back to the legacy box and training place (menu's "default" button)
-function aim_compet:ResetArea()
-    self.trainingPlace = self.trainingPlaceDefault
-    self.area = {minX = AREA_DEFAULT_MIN_X, minY = AREA_DEFAULT_MIN_Y, maxX = AREA_DEFAULT_MAX_X, maxY = AREA_DEFAULT_MAX_Y}
-    self:SendArea()
-end
-
--- current area offsets -> menu (updates the "play area" row)
-function aim_compet:SendArea()
-    CustomGameEventManager:Send_ServerToAllClients("aim_compet_area_result", {
-        minX = self.area.minX,
-        minY = self.area.minY,
-        maxX = self.area.maxX,
-        maxY = self.area.maxY
-    })
-end
-
--- sends the stats shown on the HUD (score, combo, hits, misses, hit rate, avg reaction time, time left)
 function aim_compet:SendCounters()
     local total = self.hits + self.misses
     local hitRate = 0
@@ -739,31 +819,32 @@ function aim_compet:SendCounters()
         misses = self.misses,
         hitRate = hitRate,
         avgTime = self.avgTime,
-        timeLeft = math.max(0, self.timeLeft)
+        timeLeft = math.max(0, self.timeLeft),
     })
 end
 
--- Builds the offsets (relative to the hero) of every ward of the round, up front.
--- It only depends on the seed, not on how fast the player kills wards, so the layout is identical
--- for everyone. Wards are spaced from the last few planned wards instead of alive ones for the same reason.
--- The loop is capped: if no ideal spot is found, the best candidate seen is used.
 function aim_compet:GenerateSpawnPlan(seed, count)
     local rng = NewRng(seed)
     local plan = {}
 
+    local function RandomOffset()
+        return Vector(
+            rng:Int(self.area.minX, self.area.maxX),
+            rng:Int(self.area.minY, self.area.maxY),
+            0
+        )
+    end
+
     for i = 1, count do
         local best, bestGap = nil, -1
-
         for _ = 1, MAX_PLACE_ATTEMPTS do
-            local offset = Vector(rng:Int(self.area.minX, self.area.maxX), rng:Int(self.area.minY, self.area.maxY), 0)
-
+            local offset = RandomOffset()
             if offset:Length2D() > HERO_MIN_RANGE then
                 local gap = math.huge
-                for j = math.max(1, i - RECENT_WARDS), i - 1 do
-                    gap = math.min(gap, (offset - plan[j]):Length2D())
+                for j = math.max(1, i - RECENT_TARGETS), i - 1 do
+                    gap = math.min(gap, (offset - plan[j].offset):Length2D())
                 end
-
-                if gap >= WARD_MIN_GAP then
+                if gap >= TARGET_MIN_GAP then
                     best = offset
                     break
                 end
@@ -773,148 +854,64 @@ function aim_compet:GenerateSpawnPlan(seed, count)
             end
         end
 
-        -- fallback only if every attempt was too close to the hero (practically impossible)
-        plan[i] = best or Vector(HERO_MIN_RANGE + 150, 0, 0)
+        plan[i] = {
+            offset = best or Vector(HERO_MIN_RANGE + 150, 0, 0),
+            colorIndex = rng:Int(1, self.itemCount),
+            speedFraction = rng:Next() / RNG_MOD,
+            waypoints = {},
+        }
+        for j = 1, MOVEMENT_WAYPOINTS do
+            plan[i].waypoints[j] = RandomOffset()
+        end
     end
-
     return plan
 end
 
--- ward loses hp over time, if it would die from that it is killed by itself (counts as a miss)
--- decay per tick comes from the ward lifetime setting, so a ward always lives wardLifetime seconds
-function aim_compet:StartWardDecay(ward)
-    Timers:CreateTimer({
-        useGameTime = false,
-        endTime = WARD_DECAY_TICK,
-        callback = function()
-            if not self.activated or ward:IsNull() or not ward:IsAlive() then
-                return nil
-            end
-
-            local newHp = ward:GetHealth()
-            if newHp - self.wardHpDecay <= 0 then
-                ward:ForceKill(false)
-                self:WardKilledHimself(ward)
-            else
-                ward:ModifyHealth(newHp - self.wardHpDecay, nil, true, 0)
-            end
-            return WARD_DECAY_TICK
-        end
-    })
-end
-
-function aim_compet:OnNPCSpawned(keys)
-    if not self.activated then return end
-
-    local npc = EntIndexToHScript(keys.entindex)
-    if npc == nil or npc:IsNull() then return end
-
-    if npc:GetUnitName() == WARD_NAME then
-        self:StartWardDecay(npc)
-        table.insert(self.wardPool, {keys.entindex, Time()})
-    end
-end
-
-function aim_compet:OrderFilter(event)
-    -- TODO: return false to block specific player orders, true to allow
-    return true
-end
-
-function aim_compet:ModifierGained(event)
-    -- TODO: react to modifiers being applied (e.g. track dodge/invuln windows)
-    return true
-end
-
-function aim_compet:DamageFilter(event)
-    --return false to prevent specific damage instances, true to allow
-    --event.damagetype_const        damage type
-    --event.damage      damage (returns full damage even if victim had less hp)
-    --event.entindex_victim_const        entindex of victim
-    --entindex_attacker_const        entindex of attacker
-    return true
-end
-
-function aim_compet:OnAbilityUsed(keys)
-    -- TODO: react to abilities being cast
-end
-
-local function IsWardBase(unit)
-    local name = unit:GetName()
-    return name == "npc_dota_ward_base" or name == "npc_dota_ward_base_truesight"
-end
-
 function aim_compet:ShowMiss(position)
-    local vecPos=Vector(position['0'],position['1'],position['2'])
-    --[[ print(vecPos,position) ]]
-    ParticleMessage:ShowMissSignAtPosition(vecPos, Vector(0,0,30), ParticleMessage.colors.red)
-
+    if type(position) ~= "table" then return end
+    local x, y, z = tonumber(position["0"]), tonumber(position["1"]), tonumber(position["2"])
+    if x == nil or y == nil or z == nil then return end
+    ParticleMessage:ShowMissSignAtPosition(Vector(x, y, z), Vector(0, 0, 30), ParticleMessage.colors.red)
 end
+
 function aim_compet:OnEntityKilled(keys)
-    --keys.fires when entity got killed
-    --keys.entindex_killed       victim entindex
-    --keys.splitscreenplayer      no idea tbh
-    --keys.entindex_attacker      attacker entindex
-    --keys.game_event_name        event name
-    --keys.entindex_inflictor        entindex of ability killed with (not exist if autoattack)
-    --keys.damagebits        no idea always 0
-    --keys.game_event_listener       never used
-    --[[ DeepPrintTable(keys) ]]
     if not self.activated then return end
+    local index = keys.entindex_killed
+    local record = self.targetRecords[index]
+    if record == nil then return end
 
-    local killedUnit = EntIndexToHScript(keys.entindex_killed)
-    if killedUnit == nil or killedUnit:IsNull() or not IsWardBase(killedUnit) then return end
-
-    local killerEntity = keys.entindex_attacker and EntIndexToHScript(keys.entindex_attacker) or nil
-    local killedByWard = (killerEntity == nil) or killerEntity:IsNull() or IsWardBase(killerEntity)
-    
-    if killedByWard then
-        --doesnt work
-        -- ward died on its own (player was too slow)
-        --[[ print("ward killed himself")
-        -- sound can be emitted here (miss, was "sproing")
-        self.combo = 1
-        self.misses = self.misses + 1
-        self:SendCounters()
-        ComboTracker:Break() ]]
-        --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
-            time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo,
-            badx = killedUnit:GetAbsOrigin().x, bady = killedUnit:GetAbsOrigin().y
-        }) ]]
-    else
-        -- ward was killed by player
-        self:OnWardHit(keys.entindex_killed)
+    local killedUnit = EntIndexToHScript(index)
+    if killedUnit == nil or killedUnit:IsNull() then
+        self.targetRecords[index] = nil
+        return
     end
 
+    if not record.resolved then
+        record.resolved = true
+        local killer = keys.entindex_attacker and EntIndexToHScript(keys.entindex_attacker) or nil
+        if killer ~= nil and not killer:IsNull() and killer == self.playerHero then
+            self:OnTargetHit(killedUnit, record)
+        else
+            self:OnTargetMiss(killedUnit)
+        end
+    end
+
+    self.targetRecords[index] = nil
     killedUnit:RemoveSelf()
 end
 
-function aim_compet:WardKilledHimself(ent)
-    --[[ print("ward killed himself") ]]
-    -- sound can be emitted here (miss, was "sproing")
+function aim_compet:OnTargetMiss(target)
     self.combo = 1
     self.misses = self.misses + 1
     self:SendCounters()
     ComboTracker:Break()
     ComboTracker:Add()
-    ParticleMessage:ShowUnluckySign(ent,Vector(0,0,50),ParticleMessage.colors['red'])
+    ParticleMessage:ShowUnluckySign(target, Vector(0, 0, 50), ParticleMessage.colors.red)
     Notifications:SoundOnly("bad")
 end
 
-function aim_compet:OnWardHit(wardIndex)
-    -- find ward in pool
-    local indexFound
-    for k, v in pairs(self.wardPool) do
-        if v[1] == wardIndex then
-            indexFound = k
-            break
-        end
-    end
-    if indexFound == nil then return end
-
-    local spawnTime = self.wardPool[indexFound][2]
-    table.remove(self.wardPool, indexFound)
-
-    local reactionTime = Time() - spawnTime
+function aim_compet:OnTargetHit(target, record)
+    local reactionTime = math.max(0.01, Time() - record.spawnTime)
 
     self.combo = self.combo + 1
     if self.combo > self.maxCombo then
@@ -924,100 +921,75 @@ function aim_compet:OnWardHit(wardIndex)
     local score = math.ceil(100 / reactionTime) * self.combo
     self.score = self.score + score
 
-    -- average reaction time
     table.insert(self.results, reactionTime)
     local sum = 0
-    for _, t in pairs(self.results) do
-        sum = sum + t
+    for _, time in pairs(self.results) do
+        sum = sum + time
     end
     self.avgTime = sum / #self.results
     self.hits = self.hits + 1
     self:SendCounters()
     ComboTracker:Add()
-    local wardEnt=EntIndexToHScript(wardIndex)
-    local displayDelay=math.floor(reactionTime*1000)/1000
-    ParticleMessage:ShowNumber(wardEnt, Vector(0,0,50), displayDelay, ParticleMessage.colors.green, false)
+
+    local displayDelay = math.floor(reactionTime * 1000) / 1000
+    ParticleMessage:ShowNumber(target, Vector(0, 0, 50), displayDelay, ParticleMessage.colors.green, false)
     Notifications:SoundOnly("good")
-    --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
-        time = reactionTime, score = score, avg = self.avgTime,
-        totalscore = self.score, combo = self.combo
-    }) ]]
-    -- sound can be emitted here (hit, was "frog")
 end
 
 function aim_compet:OnEntityHurt(keys)
-    --react to entities taking damage
-    --keys.entindex_inflictor        entindex of ability if caused by (not exist if autoattack)
-    --keys.damagebits         no idea
-    --keys.game_event_listener        never needed
-    --keys.game_event_name    returns name of event
-    --keys.entindex_killed        victim of damage
-    --keys.damage     amount of damage taken (actual damage compare to damage filter)
-    --keys.entindex_attacker      attacker entindex
-    --keys.splitscreenplayer      no idea
     if not self.activated then return end
-
     local victim = EntIndexToHScript(keys.entindex_killed)
-    if victim ~= nil and victim == self.playerHero then
-        -- player got hit, combo is lost
-        -- sound can be emitted here (miss, was "sproing")
-        self.combo = 1
-        self:SendCounters()
-        ComboTracker:Break()
-        ComboTracker:Add()
-        Notifications:SoundOnly("bad")
-        CustomGameEventManager:Send_ServerToAllClients("aim_compet_where_mouse", {})
-        --maybe take cursor position and display something here
-        --[[ CustomGameEventManager:Send_ServerToAllClients("reaction_clicked", {
-            time = 0, score = 'Bad!', totalscore = self.score, combo = self.combo
-        }) ]]
-        print("Hero took damage")
-    end
+    if victim == nil or victim ~= self.playerHero then return end
+
+    self.combo = 1
+    self:SendCounters()
+    ComboTracker:Break()
+    ComboTracker:Add()
+    Notifications:SoundOnly("bad")
+    CustomGameEventManager:Send_ServerToAllClients("aim_compet_where_mouse", {})
 end
 
-function aim_compet:SendSpellTable()
-    -- TODO: send this mode's spell table to the client, if it has one, e.g.
-    -- CustomGameEventManager:Send_ServerToAllClients("aim_compet_spell_table", self.spellTable)
-end
-
--- stops timers, removes wards, border particles and trees; also used before a retry (was aimClear)
 function aim_compet:Clear()
     self.activated = false
     self.results = {}
-    self.wardPool = {}
+    self.targetRecords = {}
     self.score = 0
     self.combo = 1
     ComboTracker:Deactivate()
-    GridNav:DestroyTreesAroundPoint(self.trainingPlace, 1500, true)
+
+    if self.mapVisionTimer ~= nil then
+        Timers:RemoveTimer(self.mapVisionTimer)
+        self.mapVisionTimer = nil
+    end
+
+    GridNav:DestroyTreesAroundPoint(self.trainingPlace, self.treeRadius, true)
 
     if self.box ~= nil then
-        for _, v in pairs(self.box) do
-            ParticleManager:DestroyParticle(v, true)
-            ParticleManager:ReleaseParticleIndex(v)
+        for _, particle in pairs(self.box) do
+            ParticleManager:DestroyParticle(particle, true)
+            ParticleManager:ReleaseParticleIndex(particle)
         end
         self.box = nil
     end
 
-    for _, v in pairs(self.wards) do
-        if not v:IsNull() then
-            v:RemoveSelf()
+    for _, target in pairs(self.targets) do
+        if not target:IsNull() then
+            target:RemoveSelf()
         end
     end
-    self.wards = {}
+    self.targets = {}
 
-    Timers:RemoveTimer(TIMER_WARD_CYCLE)
+    Timers:RemoveTimer(TIMER_TARGET_CYCLE)
     Timers:RemoveTimer(TIMER_DISPLAY)
 end
 
 function aim_compet:PrepareDeactivate()
     self.deactivateCalled = true
-    --[[ announcer:Show({message = "#waitingForCastEnd"}) ]]
     CustomGameEventManager:Send_ServerToAllClients("clear_hud", {})
     self:Deactivate()
 end
 
 function aim_compet:Deactivate()
-    
     self:Clear()
     self.activated = false
     self.deactivateCalled = false

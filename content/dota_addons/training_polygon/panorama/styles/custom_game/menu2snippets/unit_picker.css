@@ -1,0 +1,86 @@
+.UnitPickerWidget{
+    width: fit-children;
+    height: fit-children;
+}
+
+.UnitPickerButton{
+    width: 230px;
+    height: 58px;
+    padding: 4px 8px;
+    flow-children: right;
+    background-color: #101115;
+    border: 1px solid #3a3f44;
+    transition-property: border, background-color;
+    transition-duration: 0.2s;
+}
+
+.UnitPickerButton:hover{
+    border: 1px solid #ADD9E6;
+    background-color: #1c252a;
+}
+
+.unitPickerIcon{
+    width: 48px;
+    height: 48px;
+    vertical-align: center;
+}
+
+.unitPickerName{
+    width: fill-parent-flow(1);
+    margin-left: 10px;
+    vertical-align: center;
+    horizontal-align: left;
+    text-align: left;
+    color: #d6e5e9;
+    font-size: 16px;
+    text-overflow: shrink;
+}
+
+.unit_picker_overlay{
+    width: 100%;
+    height: 100%;
+    background-color: #111417ed;
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.unitPickerPopup{
+    width: 660px;
+    max-height: 480px;
+    padding: 12px;
+    vertical-align: center;
+    horizontal-align: center;
+    background-color: #202428;
+    border: 1px solid #5f747c;
+    flow-children: right-wrap;
+    overflow: squish scroll;
+}
+
+.unitPickerOption{
+    width: 206px;
+    height: 76px;
+    margin: 4px;
+    padding: 6px;
+    flow-children: right;
+    background-color: #101115;
+    border: 1px solid #3a3f44;
+}
+
+.unitPickerOption:hover{
+    border: 1px solid #ADD9E6;
+    background-color: #2b3b42;
+}
+
+.unitPickerOption .unitPickerIcon{
+    width: 58px;
+    height: 58px;
+}
+
+.unitPickerOption .unitPickerName{
+    font-size: 15px;
+}
+
+.unitPickerSelected{
+    border: 1px solid #ADD9E6;
+    box-shadow: #5fa5ba44 0px 0px 12px 0px;
+}

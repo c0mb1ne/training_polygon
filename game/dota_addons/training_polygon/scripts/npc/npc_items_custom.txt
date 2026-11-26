@@ -44,6 +44,58 @@
         "AbilityManaCost"               "0"
 
     }
-    
-    
+
+    // Aim Challenge variants. Their script delegates target validation to aim_compet.
+    "item_aim_topor"
+    {
+        "ID"                            "2034"
+        "BaseClass"                     "item_lua"
+        "ScriptFile"                    "gamemodes/aim_compet/aim_compet_topor.lua"
+        "AbilityTextureName"            "obs_blade"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+    }
+    "item_aim_topor2"
+    {
+        "ID"                            "2035"
+        "BaseClass"                     "item_lua"
+        "ScriptFile"                    "gamemodes/aim_compet/aim_compet_topor.lua"
+        "AbilityTextureName"            "sentry_blade"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+    }
+    "item_aim_topor3"
+    {
+        "ID"                            "2044"
+        "BaseClass"                     "item_lua"
+        "ScriptFile"                    "gamemodes/aim_compet/aim_compet_topor.lua"
+        "AbilityTextureName"            "aim_blade_green"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+    }
+    "item_aim_topor4"
+    {
+        "ID"                            "2045"
+        "BaseClass"                     "item_lua"
+        "ScriptFile"                    "gamemodes/aim_compet/aim_compet_topor.lua"
+        "AbilityTextureName"            "aim_blade_red"
+        "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+        "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_ALL"
+        "AbilityCastRange"              "1200"
+        "AbilityCastPoint"              "0.0"
+        "AbilityCooldown"               "0"
+        "AbilityManaCost"               "0"
+    }
 }

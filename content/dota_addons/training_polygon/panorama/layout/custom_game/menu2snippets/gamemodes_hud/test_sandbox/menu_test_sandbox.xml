@@ -13,7 +13,7 @@
             <Label text="template gamemode for easy creation of file structures for future modes"/>
             
             <Panel class="RowNoFill">
-                
+                <DOTAHeroImage class="heroPickerIcon" heroname="npc_dota_hero_allied_coach" heroimagestyle="landscape"/>
                 
             </Panel>
 

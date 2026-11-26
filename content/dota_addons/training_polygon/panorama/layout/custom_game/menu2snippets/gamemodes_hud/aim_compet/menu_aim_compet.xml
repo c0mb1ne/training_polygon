@@ -1,6 +1,8 @@
 <root>
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/unit_picker.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/aim_compet/menu_aim_compet.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
@@ -9,118 +11,181 @@
         <include src="file://{resources}/scripts/custom_game/graph.js" />
         <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/unit_picker.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/aim_compet/menu_aim_compet.js" />
     </scripts>
     <Panel class="aim_compet_Main">
-        <Panel class="Col width100">
-            <Label class="menu_button_label" text="#aim_compet"/>
-
-            <Panel class="RowNoFill">
-                <Panel class="Col">
-                    <Panel class="RowNoFill">
-                        <Label class="itemSetupDesc" text="#aimSetupDesc"/>
-                        <DOTAItemImage itemname="item_topor" class="AimItemPreview"/>
-                    </Panel>
-                    <Panel class="RowNoFill AimSetupRow">
-                        <Panel class="ColNoFill">
-                            
-                        </Panel>
-                        <Panel class="ColNoFill AimGridContainer">
-                            <Label class="AimGridLabel" text="Abilities"/>
-                            <Panel id="aim_abilities_grid" class="RowNoFill">
-                                <!-- cells are created by aim_compet.js -->
-                            </Panel>
-                        </Panel>
-
-                        <Panel class="ColNoFill AimGridContainer">
-                            <Label class="AimGridLabel" text="Items"/>
-                            <Panel id="aim_items_grid" class="ColNoFill">
-                                <!-- rows and cells are created by aim_compet.js -->
-                            </Panel>
-                        </Panel>
-                    </Panel>
-                </Panel>
-                <Panel class="ColNoFill padding5">
-                    <Panel id="soundSettingsContainer" />
-                </Panel>
-            </Panel>
-
-            <Panel class="RowNoFill AimSettingsRow">
-                <Panel class="ColNoFill AimSettingsCol">
-                    <Panel class="RowNoFill">
-                        <Label class="AimGridLabel" text="#aimRoundSettings"/>
-                        <Button class="small_button AimDefaultsButton" id="defaultsButton" onactivate="resetDefaults()">
-                            <Label text="#aimDefaults"/>
-                        </Button>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine">
-                        <Label class="settingLabel" text="#aimRoundDuration"/>
-                        <Panel id="roundTimeSwitcher"/>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine">
-                        <Label class="settingLabel" text="#aimSpawnCurve"/>
-                        <Panel class="radioRow" id="curveTypeRow">
-                            <RadioButton group="aimCurveType" id="curveClassic" class="radioRowButton" checked="true">
-                                <Label text="#aimCurveClassic"/>
-                            </RadioButton>
-                            <RadioButton group="aimCurveType" id="curveConstant" class="radioRowButton">
-                                <Label text="#aimCurveConstant"/>
-                            </RadioButton>
-                            <RadioButton group="aimCurveType" id="curveLinear" class="radioRowButton">
-                                <Label text="#aimCurveLinear"/>
-                            </RadioButton>
-                            <RadioButton group="aimCurveType" id="curvePower" class="radioRowButton">
-                                <Label text="#aimCurvePower"/>
-                            </RadioButton>
-                        </Panel>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine">
-                        <Label class="settingLabel" text="#aimStartInterval"/>
-                        <Panel id="startIntervalSwitcher"/>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine" id="endIntervalRow">
-                        <Label class="settingLabel" text="#aimEndInterval"/>
-                        <Panel id="endIntervalSwitcher"/>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine Hidden" id="exponentRow">
-                        <Label class="settingLabel" text="#aimCurveExponent"/>
-                        <Panel id="exponentSwitcher"/>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine">
-                        <Label class="settingLabel" text="#aimWardLifetime"/>
-                        <Panel id="wardLifetimeSwitcher"/>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine">
-                        <Label class="settingLabel" text="#aimPlayArea"/>
-                        <Label id="areaSizeValue" class="AimEstimateValue" text="1500 × 1000"/>
-                        <Button class="small_button AimDefaultsButton" id="areaPickButton" onactivate="pickArea()">
-                            <Label text="#aimSetArea"/>
-                        </Button>
-                    </Panel>
-
-                    <Panel class="RowNoFill AimSettingLine">
-                        <Label class="settingLabel" text="#aimWardEstimate"/>
-                        <Label id="wardEstimateValue" class="AimEstimateValue" text=""/>
-                    </Panel>
-                </Panel>
-
-                <Panel class="ColNoFill AimCurveGraphCol">
-                    <Panel id="curveGraphContainer"/>
-                </Panel>
-            </Panel>
-
-            <Panel class="RowNoFill">
-                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
-                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+        <Panel class="aimRootContainer">
+            <Panel class="AimHeader">
+                <Label class="menu_button_label" text="#aim_compet" />
+                <Label id="errorMsg" />
+                <Button class="AimPlayButton" id="aim_start_button" onactivate="startGame()">
+                    <Label text="#main_play" />
                 </Button>
-                <Label id="errorMsg"></Label>
+            </Panel>
+            <Panel class="RowWFill">
+                <Panel class="RowNoFill AimPresetRow">
+                    <Label class="AimPresetTitle" text="#aimLegacyPresets" />
+                    <Button class="small_button AimPresetButton" id="presetDefault" onactivate="applyPreset('default')">
+                        <Label text="#aimPresetDefault" />
+                    </Button>
+                    <Button class="small_button AimPresetButton" id="presetHard" onactivate="applyPreset('hard')">
+                        <Label text="#aimPresetHard" />
+                    </Button>
+                    <Button class="small_button AimPresetButton" id="presetMoving" onactivate="applyPreset('moving')">
+                        <Label text="#aimPresetMoving" />
+                    </Button>
+                    <Button class="small_button AimPresetButton" id="presetMap" onactivate="applyPreset('map')">
+                        <Label text="#aimPresetMap" />
+                    </Button>
+                </Panel>
+                <Panel id="soundSettingsContainer" class="AimSoundSettings" />
+            </Panel>
+            <Panel class="AimColumns">
+                <Panel class="AimLeftColumn">
+                    <Panel class="AimSection">
+                        <Label class="AimSectionTitle" text="#aimTargetSettings" />
+
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimItemCount" />
+                            <Panel class="radioRow" id="itemCountRow">
+                                <RadioButton group="aimItemCount" id="itemCount1" class="radioRowButton" checked="true"><Label text="1" /></RadioButton>
+                                <RadioButton group="aimItemCount" id="itemCount2" class="radioRowButton"><Label text="2" /></RadioButton>
+                                <RadioButton group="aimItemCount" id="itemCount3" class="radioRowButton"><Label text="3" /></RadioButton>
+                                <RadioButton group="aimItemCount" id="itemCount4" class="radioRowButton"><Label text="4" /></RadioButton>
+                            </Panel>
+                        </Panel>
+
+                        <Label class="AimGridLabel" text="#aimItemTarget" />
+                        <Panel id="itemTargetTabs" class="RowNoFill AimTargetTabs" />
+
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimTargetType" />
+                            <Panel class="radioRow" id="targetTypeRow">
+                                <RadioButton group="aimTargetCategory" id="targetCategoryUnit" class="radioRowButton" checked="true">
+                                    <Label text="#aimTargetUnit" />
+                                </RadioButton>
+                                <RadioButton group="aimTargetCategory" id="targetCategoryHero" class="radioRowButton">
+                                    <Label text="#aimTargetHero" />
+                                </RadioButton>
+                            </Panel>
+                        </Panel>
+
+                        <Panel class="AimPickerRow">
+                            <Panel id="unitTargetPicker" />
+                            <Panel id="heroTargetPicker" class="Hidden" />
+                        </Panel>
+
+                        <Panel class="RowNoFill AimSettingLine">
+                            <ToggleButton checked="false" id="movingTargetsToggle" class="customCheckbox AimMovingToggle" text="#aimMovingTargets" />
+                        </Panel>
+
+                        <Panel class="RowNoFill AimSettingLine Hidden" id="moveSpeedMinRow">
+                            <Label class="settingLabel" text="#aimMoveSpeedMin" />
+                            <Panel id="moveSpeedMinSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine Hidden" id="moveSpeedMaxRow">
+                            <Label class="settingLabel" text="#aimMoveSpeedMax" />
+                            <Panel id="moveSpeedMaxSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine Hidden" id="moveSpeedRampRow">
+                            <Label class="settingLabel" text="#aimMoveSpeedRamp" />
+                            <Panel id="moveSpeedRampSwitcher" />
+                        </Panel>
+
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimModelScaleStart" />
+                            <Panel id="modelScaleStartSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimModelScaleEnd" />
+                            <Panel id="modelScaleEndSwitcher" />
+                        </Panel>
+                    </Panel>
+
+                    <Panel class="AimSection AimSlotSection">
+                        <Label class="AimSectionTitle" text="#aimBladeSetup" />
+                        <Label class="itemSetupDesc" text="#aimSetupDesc" />
+                        <Panel class="RowNoFill AimSetupRow">
+                            <Panel class="ColNoFill AimGridContainer">
+                                <Label class="AimGridLabel" text="#aimAbilities" />
+                                <Panel id="aim_abilities_grid" class="RowNoFill" />
+                            </Panel>
+                            <Panel class="ColNoFill AimGridContainer">
+                                <Label class="AimGridLabel" text="#aimItems" />
+                                <Panel id="aim_items_grid" class="ColNoFill" />
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                </Panel>
+
+                <Panel class="AimRightColumn">
+                    <Panel class="AimSection">
+                        <Label class="AimSectionTitle" text="#aimRoundSettings" />
+
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimRoundDuration" />
+                            <Panel id="roundTimeSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimSpawnZone" />
+                            <Panel class="radioRow" id="zoneTypeRow">
+                                <RadioButton group="aimZoneType" id="zoneClassic" class="radioRowButton" checked="true">
+                                    <Label text="#aimZoneClassic" />
+                                </RadioButton>
+                                <RadioButton group="aimZoneType" id="zoneAllMap" class="radioRowButton">
+                                    <Label text="#aimZoneAllMap" />
+                                </RadioButton>
+                            </Panel>
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <ToggleButton checked="true" id="colorTargetsToggle" class="customCheckbox AimColorTargetsToggle" text="#aimColorTargets" />
+                            <Label id="colorTargetsForcedHint" class="AimColorForcedHint Hidden" text="#aimColorTargetsForced" />
+                        </Panel>
+
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimSpawnCurve" />
+                            <Panel class="radioRow" id="curveTypeRow">
+                                <RadioButton group="aimCurveType" id="curveClassic" class="radioRowButton" checked="true">
+                                    <Label text="#aimCurveClassic" />
+                                </RadioButton>
+                                <RadioButton group="aimCurveType" id="curveConstant" class="radioRowButton">
+                                    <Label text="#aimCurveConstant" />
+                                </RadioButton>
+                                <RadioButton group="aimCurveType" id="curveLinear" class="radioRowButton">
+                                    <Label text="#aimCurveLinear" />
+                                </RadioButton>
+                                <RadioButton group="aimCurveType" id="curvePower" class="radioRowButton">
+                                    <Label text="#aimCurvePower" />
+                                </RadioButton>
+                            </Panel>
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimStartInterval" />
+                            <Panel id="startIntervalSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine" id="endIntervalRow">
+                            <Label class="settingLabel" text="#aimEndInterval" />
+                            <Panel id="endIntervalSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine Hidden" id="exponentRow">
+                            <Label class="settingLabel" text="#aimCurveExponent" />
+                            <Panel id="exponentSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimWardLifetime" />
+                            <Panel id="targetLifetimeSwitcher" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <Label class="settingLabel" text="#aimWardEstimate" />
+                            <Label id="targetEstimateValue" class="AimEstimateValue" text="" />
+                        </Panel>
+
+                        <Panel id="curveGraphContainer" class="AimCurveGraph" />
+                    </Panel>
+
+                </Panel>
             </Panel>
         </Panel>
     </Panel>
