@@ -18,6 +18,7 @@ function CreateUnitPicker(parentPanel, opts) {
     const button = widgetRoot.FindChildrenWithClassTraverse('UnitPickerButton')[0];
     const icon = widgetRoot.FindChildrenWithClassTraverse('unitPickerIcon')[0];
     const nameLabel = widgetRoot.FindChildrenWithClassTraverse('unitPickerName')[0];
+    nameLabel.style['visibility']="collapse;"
     let popupPanel = null;
 
     function getEntry(unitName) {
@@ -29,7 +30,7 @@ function CreateUnitPicker(parentPanel, opts) {
 
     function unitIconSource(entry) {
         const iconName = (entry && (entry.icon || entry.name)) || 'npc_dota_observer_wards';
-        return 'file://{images}/heroes/' + iconName + '.png';
+        return iconName;
     }
 //file://{images}/heroes/npc_dota_neutral_eimermole.png
     function renderSelection() {
@@ -68,7 +69,7 @@ function CreateUnitPicker(parentPanel, opts) {
             const optionName = $.CreatePanel('Label', option, instanceId + '_name_' + i);
             optionName.AddClass('unitPickerName');
             optionName.text = $.Localize(entry.label);
-
+            optionName.style['visibility']="collapse;"
             option.SetPanelEvent('onactivate', function () {
                 selectedUnit = entry.name;
                 renderSelection();

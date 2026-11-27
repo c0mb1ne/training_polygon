@@ -20,6 +20,11 @@ function startGame() {
 function saveData(data){
     $.Msg(JSON.stringify(data));
 }
-
+var soundSettings = CreateSoundSettings($('#soundSettingsContainer'), {
+    scope: 'template_mode',
+    onChange: function(type, soundId, scope) {
+        // Optional callback
+    }
+});
 
 GameEvents.Subscribe("template_mode_spell_table", saveData);

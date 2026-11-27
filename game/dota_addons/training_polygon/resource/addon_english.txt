@@ -216,6 +216,8 @@
 		"aimBladeBindingError" "bind every enabled blade to an ability or item slot"
 		"aimColorTargets" "color targets"
 		"aimColorTargetsForced" "required for duplicate targets"
+		"aimHideLiveStats" "hide live stats"
+		"aimDisableComboTracker" "disable combo tracker"
 		"main_play" "play"
 		"aimTargetUnit" "unit"
 		"aimBladeSetup" "blade slots"

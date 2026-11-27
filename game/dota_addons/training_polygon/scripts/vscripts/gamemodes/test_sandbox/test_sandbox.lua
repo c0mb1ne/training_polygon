@@ -169,6 +169,9 @@ function test_sandbox:OnEntityKilled(keys)
 end
 
 function test_sandbox:OnEntityHurt(keys)
+    local npc=EntIndexToHScript(keys.entindex_attacker)
+    print("attacker:",npc:GetUnitName(),npc:GetClassname())
+    --GetClassname()
     --react to entities taking damage
     --keys.entindex_inflictor        entindex of ability if caused by (not exist if autoattack)
     --keys.damagebits         no idea

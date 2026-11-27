@@ -18,6 +18,7 @@ function formatTime(totalSeconds) {
 // data keys: score, combo, maxCombo, hits, misses, hitRate, avgTime, timeLeft (see aim_compet:SendCounters)
 function refreshCounters(data) {
     /* $.Msg(JSON.stringify(data)); */
+    $("#statDisplay").SetHasClass("Hidden", data.hideLiveStats === 1 || data.hideLiveStats === true);
     $("#score").text = data.score;
     $("#combo").text = "x" + data.maxCombo;
     $("#hits").text = data.hits;

@@ -9,15 +9,20 @@ local DEFAULT_TARGET_UNIT = "npc_dota_observer_wards"
 -- The menu requests this catalogue instead of keeping its own list of units.
 -- icon may point at a base Dota unit when a custom unit has no portrait of its own.
 local TARGET_UNITS = {
-    {name = "npc_dota_observer_wards", label = "#aimUnitObserverWard"},
-    {name = "npc_dota_sentry_wards", label = "#aimUnitSentryWard"},
-    {name = "npc_dota_creep_badguys_melee", label = "#aimUnitMeleeCreep"},
-    {name = "npc_dota_creep_badguys_ranged", label = "#aimUnitRangedCreep"},
-    {name = "npc_dota_badguys_siege", label = "#aimUnitSiegeCreep"},
+    {name = "npc_dota_observer_wards", label = "#aimUnitObserverWard",
+    icon="file://{images}/items/ward_observer.png"},
+    {name = "npc_dota_sentry_wards", label = "#aimUnitSentryWard",
+    icon="file://{images}/items/ward_sentry.png"},
+    {name = "npc_dota_creep_goodguys_melee", label = "#aimUnitMeleeCreep",
+    icon="file://{images}/heroes/npc_dota_creep_goodguys_melee.png"},
+    {name = "npc_dota_creep_goodguys_ranged", label = "#aimUnitRangedCreep",
+    icon="file://{images}/heroes/npc_dota_creep_goodguys_ranged.png"},
+    {name = "npc_dota_goodguys_siege", label = "#aimUnitSiegeCreep",
+    icon="file://{images}/heroes/npc_dota_goodguys_siege.png"},
     {
         name = "npc_dota_neutral_centaur_khan_custom",
         label = "#aimTargetCentaur",
-        icon = "npc_dota_neutral_centaur_khan",
+        icon = "file://{images}/heroes/npc_dota_neutral_centaur_khan.png",
     },
 }
 local TARGET_UNIT_BY_NAME = {}
@@ -63,7 +68,6 @@ local MIN_INTERVAL, MAX_INTERVAL = 0.1, 3
 local MIN_EXPONENT, MAX_EXPONENT = 0.2, 5
 local CLASSIC_DECAY = 0.08
 local TARGET_CAP = 500
-local TARGET_HP = 200
 local TARGET_DECAY_TICK = 0.1
 local DEFAULT_TARGET_LIFETIME = 2.0
 local MIN_TARGET_LIFETIME, MAX_TARGET_LIFETIME = 0.5, 5
@@ -194,12 +198,13 @@ function aim_compet:Init()
     self.spawnCurve = nil
     self.spawnSchedule = {}
     self.targetLifetime = DEFAULT_TARGET_LIFETIME
-    self.targetHpDecay = TARGET_HP * TARGET_DECAY_TICK / DEFAULT_TARGET_LIFETIME
 
     self.areaPreset = "classic"
     self.area = AREA_PRESETS.classic
     self.itemCount = 1
-    self.colorTargets = true
+    self.colorTargets = false
+    self.hideLiveStats = false
+    self.disableComboTracker = false
     self.unitTable = TARGET_UNITS
     self.bladeSettings = {}
     for i = 1, #TARGET_COLORS do
@@ -372,7 +377,7 @@ function aim_compet:StartGame(args)
         origin + Vector(self.area.maxX, self.area.maxY, 0)
     )
 
-    ComboTracker:Configure({active = true, anchor = "bottom_right", timeout = 2, tiers = {10, 25, 50, 75, 100, 120}})
+    ComboTracker:Configure({active = not self.disableComboTracker, anchor = "bottom_right", timeout = 2, tiers = {10, 25, 50, 75, 100, 120}})
     ComboTracker:Add()
 end
 
@@ -576,7 +581,6 @@ function aim_compet:ReadRoundSettings(args)
 
     self.targetLifetime = ClampNumber(args.targetLifetime or args.wardLifetime,
         MIN_TARGET_LIFETIME, MAX_TARGET_LIFETIME) or DEFAULT_TARGET_LIFETIME
-    self.targetHpDecay = TARGET_HP * TARGET_DECAY_TICK / self.targetLifetime
 
     local areaPreset = tostring(args.spawnArea or "classic")
     if AREA_PRESETS[areaPreset] == nil then areaPreset = "classic" end
@@ -587,7 +591,9 @@ function aim_compet:ReadRoundSettings(args)
 
     self.itemCount = math.floor(ClampNumber(args.itemCount, 1, #TARGET_COLORS) or 1)
     self.bladeSettings = self:ParseBladeSettings(args)
-    self.colorTargets = args.colorTargets == nil or EventBool(args.colorTargets)
+    self.colorTargets = EventBool(args.colorTargets)
+    self.hideLiveStats = EventBool(args.hideLiveStats)
+    self.disableComboTracker = EventBool(args.disableComboTracker)
 
     -- Identical targets must remain distinguishable even when colors were disabled.
     local targetNames = {}
@@ -631,6 +637,14 @@ function aim_compet:ComputeSpawnSchedule()
     return times
 end
 
+function aim_compet:ModifierGained(event)
+    --[[ debugModifier(event) ]]
+    --removing axe inmate effect so he will not have extra strength
+    if event.name_const=="modifier_axe_one_man_army" then
+        return false
+    end
+end
+
 function aim_compet:StartTargetCycle()
     local schedule = self.spawnSchedule
     local idx = 0
@@ -664,8 +678,6 @@ function aim_compet:SpawnTarget(spawnTime, plan)
     target:SetMinimumGoldBounty(0)
     target:SetMaximumGoldBounty(0)
     target:SetBaseHealthRegen(0)
-    target:SetMaxHealth(TARGET_HP)
-    target:SetHealth(TARGET_HP)
     target:SetAttackCapability(DOTA_UNIT_CAP_NO_ATTACK)
     if target.SetIdleAcquire ~= nil then target:SetIdleAcquire(false) end
     if self.colorTargets then
@@ -680,12 +692,15 @@ function aim_compet:SpawnTarget(spawnTime, plan)
     if target:IsHero() and target.SetCanRespawn ~= nil then
         target:SetCanRespawn(false)
     end
-
+    if target:IsHero() then
+        target:SetBaseStrength(0)
+    end
     if blade.moving then
         local maxSpeed = blade.moveSpeedMax + blade.moveSpeedRamp * progress
         local speed = blade.moveSpeedMin + (maxSpeed - blade.moveSpeedMin) * plan.speedFraction
         target:SetMoveCapability(DOTA_UNIT_CAP_MOVE_GROUND)
         target:SetBaseMoveSpeed(speed)
+        target:AddNewModifier(target, nil, "modifier_item_force_boots", {})
         for i, offset in ipairs(plan.waypoints) do
             ExecuteOrderFromTable({
                 UnitIndex = target:entindex(),
@@ -696,6 +711,7 @@ function aim_compet:SpawnTarget(spawnTime, plan)
         end
     else
         target:SetMoveCapability(DOTA_UNIT_CAP_MOVE_NONE)
+        target:SetAbsAngles(0, RandomFloat(0, 360), 0)
     end
 
     table.insert(self.targets, target)
@@ -705,9 +721,13 @@ end
 function aim_compet:RegisterTarget(target, colorIndex)
     local index = target:entindex()
     if self.targetRecords[index] ~= nil then return end
+    local spawnTime = Time()
     self.targetRecords[index] = {
         entity = target,
-        spawnTime = Time(),
+        spawnTime = spawnTime,
+        targetLifetime = self.targetLifetime,
+        expiresAt = spawnTime + self.targetLifetime,
+        maxHealth = math.max(1, target:GetMaxHealth()),
         colorIndex = colorIndex,
         resolved = false,
     }
@@ -715,23 +735,39 @@ function aim_compet:RegisterTarget(target, colorIndex)
 end
 
 function aim_compet:StartTargetDecay(target)
+    local record = self.targetRecords[target:entindex()]
+    if record == nil then return end
+
     Timers:CreateTimer({
         useGameTime = false,
         endTime = TARGET_DECAY_TICK,
         callback = function()
             if not self.activated or target:IsNull() or not target:IsAlive() then return nil end
-            local record = self.targetRecords[target:entindex()]
-            if record == nil or record.resolved then return nil end
+            local currentRecord = self.targetRecords[target:entindex()]
+            if currentRecord == nil or currentRecord.resolved then return nil end
 
-            local newHp = target:GetHealth()
-            if newHp - self.targetHpDecay <= 0 then
+            local now = Time()
+            if now >= record.expiresAt then
                 self:ExpireTarget(target)
-            else
-                target:ModifyHealth(newHp - self.targetHpDecay, nil, true, 0)
+                return nil
             end
-            return TARGET_DECAY_TICK
+
+            -- Derive HP from the absolute clock instead of accumulating subtraction
+            -- errors or allowing regen/damage to change the target's expiry time.
+            local remainingFraction = (record.expiresAt - now) / record.targetLifetime
+            local desiredHp = math.max(1, record.maxHealth * remainingFraction)
+            target:ModifyHealth(desiredHp, nil, true, 0)
+            return math.min(TARGET_DECAY_TICK, record.expiresAt - now)
         end,
     })
+end
+
+function aim_compet:LogTargetLifetime(target, record, reason)
+    local lifetime = math.max(0, Time() - record.spawnTime)
+    print(string.format(
+        "[aim_compet] index=%d unit=%s reason=%s lifetime=%.3fs configured=%.3fs maxHp=%.0f",
+        target:entindex(), target:GetUnitName(), reason, lifetime, record.targetLifetime, record.maxHealth
+    ))
 end
 
 function aim_compet:ExpireTarget(target)
@@ -740,6 +776,7 @@ function aim_compet:ExpireTarget(target)
     if record == nil or record.resolved then return end
 
     record.resolved = true
+    self:LogTargetLifetime(target, record, "expired")
     self:OnTargetMiss(target)
     target:ForceKill(false)
     if self.targetRecords[index] ~= nil then
@@ -820,6 +857,7 @@ function aim_compet:SendCounters()
         hitRate = hitRate,
         avgTime = self.avgTime,
         timeLeft = math.max(0, self.timeLeft),
+        hideLiveStats = self.hideLiveStats and 1 or 0,
     })
 end
 
@@ -889,7 +927,9 @@ function aim_compet:OnEntityKilled(keys)
     if not record.resolved then
         record.resolved = true
         local killer = keys.entindex_attacker and EntIndexToHScript(keys.entindex_attacker) or nil
-        if killer ~= nil and not killer:IsNull() and killer == self.playerHero then
+        local wasHit = killer ~= nil and not killer:IsNull() and killer == self.playerHero
+        self:LogTargetLifetime(killedUnit, record, wasHit and "hit" or "killed")
+        if wasHit then
             self:OnTargetHit(killedUnit, record)
         else
             self:OnTargetMiss(killedUnit)

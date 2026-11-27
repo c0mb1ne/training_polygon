@@ -215,7 +215,9 @@
     vertical-align: center;
 }
 
-.AimColorTargetsToggle{
+.AimColorTargetsToggle,
+.AimHideStatsToggle,
+.AimDisableComboTrackerToggle{
     margin-left: 0px;
     vertical-align: center;
 }

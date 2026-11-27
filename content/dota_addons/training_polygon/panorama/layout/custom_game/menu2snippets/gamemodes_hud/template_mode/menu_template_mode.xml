@@ -2,10 +2,13 @@
     <styles>
         <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/template_mode/menu_template_mode.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/template_mode/menu_template_mode.js" />
+        <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
     </scripts>
     <Panel class="template_mode_Main">
         <Panel class="Col width100">
@@ -13,7 +16,9 @@
             <Label text="template gamemode for easy creation of file structures for future modes"/>
             
             <Panel class="RowNoFill">
-                
+                <Panel class="ColNoFill padding5">
+                    <Panel id="soundSettingsContainer" />
+                </Panel>
                 
             </Panel>
 

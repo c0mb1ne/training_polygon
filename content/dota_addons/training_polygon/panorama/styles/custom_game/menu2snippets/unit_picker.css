@@ -4,9 +4,9 @@
 }
 
 .UnitPickerButton{
-    width: 230px;
-    height: 58px;
-    padding: 4px 8px;
+    width: 128px;
+    height: 72px;
+    /* padding: 4px 8px; */
     flow-children: right;
     background-color: #101115;
     border: 1px solid #3a3f44;
@@ -20,8 +20,8 @@
 }
 
 .unitPickerIcon{
-    width: 48px;
-    height: 48px;
+    width: 100%;
+    height: 100%; 
     vertical-align: center;
 }
 
@@ -57,10 +57,10 @@
 }
 
 .unitPickerOption{
-    width: 206px;
-    height: 76px;
+    width: 128px;
+    height: 72px;
     margin: 4px;
-    padding: 6px;
+    /* padding: 6px; */
     flow-children: right;
     background-color: #101115;
     border: 1px solid #3a3f44;
@@ -72,8 +72,8 @@
 }
 
 .unitPickerOption .unitPickerIcon{
-    width: 58px;
-    height: 58px;
+    width: 100%;
+    height: 100%;
 }
 
 .unitPickerOption .unitPickerName{

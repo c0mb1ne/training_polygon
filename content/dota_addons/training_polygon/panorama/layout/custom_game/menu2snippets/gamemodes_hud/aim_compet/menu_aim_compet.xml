@@ -140,8 +140,14 @@
                             </Panel>
                         </Panel>
                         <Panel class="RowNoFill AimSettingLine">
-                            <ToggleButton checked="true" id="colorTargetsToggle" class="customCheckbox AimColorTargetsToggle" text="#aimColorTargets" />
+                            <ToggleButton checked="false" id="colorTargetsToggle" class="customCheckbox AimColorTargetsToggle" text="#aimColorTargets" />
                             <Label id="colorTargetsForcedHint" class="AimColorForcedHint Hidden" text="#aimColorTargetsForced" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <ToggleButton checked="false" id="hideLiveStatsToggle" class="customCheckbox AimHideStatsToggle" text="#aimHideLiveStats" />
+                        </Panel>
+                        <Panel class="RowNoFill AimSettingLine">
+                            <ToggleButton checked="false" id="disableComboTrackerToggle" class="customCheckbox AimDisableComboTrackerToggle" text="#aimDisableComboTracker" />
                         </Panel>
 
                         <Panel class="RowNoFill AimSettingLine">

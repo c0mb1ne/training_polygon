@@ -16,7 +16,7 @@ var unitCatalogue = [];
 var heroTargetPicker = null;
 var unitTargetPicker = null;
 var syncingBladeUI = false;
-var colorTargetsPreference = true;
+var colorTargetsPreference = false;
 var colorTargetsForced = false;
 var sw = {};
 
@@ -334,27 +334,32 @@ GameEvents.Subscribe('aim_compet_unit_table', function (data) {
 var LEGACY_PRESETS = {
     'default': {
         roundTime: 60, type: 'classic', startInterval: 2.0, endInterval: 0.4, exponent: 2,
-        targetLifetime: 2.0, spawnArea: 'classic', itemCount: 1,
+        targetLifetime: 2.0, spawnArea: 'classic', itemCount: 1, colorTargets: false,
         blades: presetBlades({})
     },
     'hard': {
         roundTime: 60, type: 'classic', startInterval: 2.0, endInterval: 0.4, exponent: 2,
-        targetLifetime: 2.0, spawnArea: 'classic', itemCount: 2,
-        blades: presetBlades({})
+        targetLifetime: 2.0, spawnArea: 'classic', itemCount: 2, colorTargets: false,
+        blades: [
+            createBladeSettings({unitName: 'npc_dota_observer_wards'}),
+            createBladeSettings({unitName: 'npc_dota_sentry_wards'}),
+            createBladeSettings(),
+            createBladeSettings()
+        ]
     },
     'moving': {
         roundTime: 60, type: 'classic', startInterval: 2.0, endInterval: 1.5, exponent: 2,
-        targetLifetime: 2.0, spawnArea: 'classic', itemCount: 1,
+        targetLifetime: 2.0, spawnArea: 'classic', itemCount: 1, colorTargets: false,
         blades: presetBlades({
             unitName: 'npc_dota_neutral_centaur_khan_custom', moving: true,
-            moveSpeedMin: 600, moveSpeedMax: 1500, moveSpeedRamp: 300,
+            moveSpeedMin: 450, moveSpeedMax: 850, moveSpeedRamp: 600,
             modelScaleStart: 1.0, modelScaleEnd: 0.4
         })
     },
     'map': {
         roundTime: 60, type: 'classic', startInterval: 2.5, endInterval: 1.14, exponent: 2,
-        targetLifetime: 2.0, spawnArea: 'all_map', itemCount: 1,
-        blades: presetBlades({unitName: 'npc_dota_creep_badguys_melee'})
+        targetLifetime: 3.0, spawnArea: 'all_map', itemCount: 1, colorTargets: false,
+        blades: presetBlades({unitName: 'npc_dota_observer_wards'})
     }
 };
 
@@ -377,10 +382,10 @@ function applyPreset(name) {
     itemSlots = [null, null, null, null, null, null];
     for (var i = 0; i < itemCount; i++) itemSlots[i] = ITEM_NAMES[i];
 
-    colorTargetsPreference = true;
+    colorTargetsPreference = cfg.colorTargets === true;
     colorTargetsForced = false;
     $('#colorTargetsToggle').enabled = true;
-    $('#colorTargetsToggle').checked = true;
+    $('#colorTargetsToggle').checked = colorTargetsPreference;
     buildRoundSwitchers(cfg);
     buildGrids();
     buildItemTargetTabs();
@@ -410,6 +415,8 @@ function currentSettings() {
         targetLifetime: switcherValue(sw.targetLifetime, 2.0),
         spawnArea: $('#zoneAllMap').checked ? 'all_map' : 'classic',
         colorTargets: colorTargetsForced || colorTargetsPreference,
+        hideLiveStats: $('#hideLiveStatsToggle').checked,
+        disableComboTracker: $('#disableComboTrackerToggle').checked,
         itemCount: itemCount,
         blades: cloneBlades(bladeSettings)
     };
@@ -541,6 +548,8 @@ function startGame() {
         targetLifetime: cfg.targetLifetime,
         spawnArea: cfg.spawnArea,
         colorTargets: cfg.colorTargets ? 1 : 0,
+        hideLiveStats: cfg.hideLiveStats ? 1 : 0,
+        disableComboTracker: cfg.disableComboTracker ? 1 : 0,
         itemCount: cfg.itemCount,
         aimBladeSettings: bladesToSend
     });
