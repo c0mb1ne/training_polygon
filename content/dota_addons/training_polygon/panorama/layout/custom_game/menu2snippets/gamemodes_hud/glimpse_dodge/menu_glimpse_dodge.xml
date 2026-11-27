@@ -1,0 +1,37 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/glimpse_dodge/menu_glimpse_dodge.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/hero_picker.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/hero_picker.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/glimpse_dodge/menu_glimpse_dodge.js" />
+    </scripts>
+    <Panel class="glimpse_dodge_Main">
+        <Panel class="Col width100">
+            <Label class="menu_button_label" text="#glimpse_dodge"/>
+            <Label text="template gamemode for easy creation of file structures for future modes"/>
+            
+            <Panel class="RowNoFill">
+                <Panel class="ColNoFill padding5">
+                    <Panel id="soundSettingsContainer" />
+                </Panel>
+                
+            </Panel>
+
+            
+
+            <Panel class="RowNoFill">
+                <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
+                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                </Button>
+                <Label id="errorMsg"></Label>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

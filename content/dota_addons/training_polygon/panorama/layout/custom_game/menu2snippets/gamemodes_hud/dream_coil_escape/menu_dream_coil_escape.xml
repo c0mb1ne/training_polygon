@@ -16,7 +16,7 @@
     <Panel class="dream_coil_escape_Main">
         <Panel class="Col width100">
             <Label class="menu_button_label" text="#dream_coil_escape"/>
-            <Label text="just chill and break dream coils"/>
+            <Label text="#dream_coil_escape_desc"/>
             <Panel id="coil_escape_Types" class="RowNoFill"/>
             <Panel class="RowNoFill">
                 <Panel id="heroPickerContainer" class="ColNoFill padding5">

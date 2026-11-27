@@ -277,5 +277,6 @@
 		"oof_pack"		"oof_pack"
 		"aaah_pack"		"aaah_pack"
 		"wipPlaceHolder" "Work in progress, support if you like it. To play old version, please pick template_map under play button in arcade"
+		"dream_coil_escape_desc" "just get out of dreamcoils"
 	}
 }

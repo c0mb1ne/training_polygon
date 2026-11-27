@@ -6,9 +6,9 @@
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/template_mode/menu_template_mode.js" />
         <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
         <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/template_mode/menu_template_mode.js" />
     </scripts>
     <Panel class="template_mode_Main">
         <Panel class="Col width100">
