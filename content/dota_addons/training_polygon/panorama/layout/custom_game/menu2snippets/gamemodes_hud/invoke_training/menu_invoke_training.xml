@@ -1,0 +1,87 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/gamemodes_hud/invoke_training/menu_invoke_training.css" />
+        <include src="file://{resources}/styles/custom_game/menu2snippets/sound_settings.css" />
+        <include src="file://{resources}/styles/custom_game/fonts.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/user_config_client.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/sound_settings.js" />
+        <include src="file://{resources}/scripts/custom_game/menu2snippets/gamemodes_hud/invoke_training/menu_invoke_training.js" />
+    </scripts>
+    <Panel class="InvokeMenu">
+        <Panel class="InvokeMenuHeader">
+            <Panel class="ColNoFill">
+                <Label class="menu_button_label InvokeMenuTitle" text="#invoke_training" />
+                <Label class="InvokeMenuDescription" text="#invoke_training_desc" />
+            </Panel>
+            <Button class="InvokePlayButton" id="menu_play" onactivate="startGame()">
+                <Label text="#main_play" />
+            </Button>
+        </Panel>
+
+        <Panel class="InvokeMenuColumns">
+            <Panel class="InvokeMenuSection InvokeSettingsSection">
+                <Label class="InvokeSectionTitle" text="#invokeSettings" />
+
+                <Panel class="InvokeSettingRow">
+                    <Label class="InvokeSettingLabel" text="#invokeMode" />
+                    <Panel class="radioRow">
+                        <RadioButton group="invokeMode" id="invokeModePractice" class="radioRowButton" checked="true">
+                            <Label text="#invokePractice" />
+                        </RadioButton>
+                        <RadioButton group="invokeMode" id="invokeModeChallenge" class="radioRowButton" checked="false">
+                            <Label text="#invokeChallenge" />
+                        </RadioButton>
+                    </Panel>
+                </Panel>
+                <Label class="InvokeSettingHint" text="#invokeModeHint" />
+
+                <Panel class="InvokeSettingRow">
+                    <Label class="InvokeSettingLabel" text="#invokeTargetCount" />
+                    <Panel class="radioRow">
+                        <RadioButton group="invokeTargetCount" id="invokeTargets1" class="radioRowButton" checked="false"><Label text="1" /></RadioButton>
+                        <RadioButton group="invokeTargetCount" id="invokeTargets2" class="radioRowButton" checked="false"><Label text="2" /></RadioButton>
+                        <RadioButton group="invokeTargetCount" id="invokeTargets3" class="radioRowButton" checked="true"><Label text="3" /></RadioButton>
+                        <RadioButton group="invokeTargetCount" id="invokeTargets4" class="radioRowButton" checked="false"><Label text="4" /></RadioButton>
+                    </Panel>
+                </Panel>
+                <Label class="InvokeSettingHint" text="#invokeTargetHint" />
+
+                <Panel class="InvokeSettingRow">
+                    <Label class="InvokeSettingLabel" text="#invokeQueueDepth" />
+                    <Panel id="invokeQueueDepthSwitcher" />
+                </Panel>
+                <Label class="InvokeSettingHint" text="#invokeQueueHint" />
+
+                <Panel class="InvokeSettingRow">
+                    <ToggleButton checked="false" id="invokeOneSphereToggle" class="customCheckbox" text="#invokeOneSphere" />
+                </Panel>
+                <Label id="invokeOneSphereHint" class="InvokeSettingHint" text="#invokeOneSphereHint" />
+            </Panel>
+
+            <Panel class="InvokeMenuSection InvokeGuideSection">
+                <Label class="InvokeSectionTitle" text="#invokeHowToPlay" />
+                <Label class="InvokeGuideText" text="#invokeGuideGeneral" />
+                <Label class="InvokeGuideText" text="#invokeGuideSingle" />
+                <Label class="InvokeGuideText" text="#invokeGuideArea" />
+                <Label class="InvokeGuideText" text="#invokeGuideChallenge" />
+                <Panel id="invokeToolsSettings" class="InvokeToolsSection">
+                    <Label class="InvokeSectionTitle" text="#invokeToolsSettings" />
+                    <ToggleButton checked="false" id="invokeDebugDrawToggle" class="customCheckbox" text="#invokeDebugDraw" />
+                    <Label class="InvokeSettingHint" text="#invokeDebugDrawHint" />
+                    <Panel class="InvokeSpellPoolHeader">
+                        <Label class="InvokeSpellPoolTitle" text="#invokeSpellPool" />
+                        <Button class="InvokeSpellPoolAll" onactivate="invokeSetAllSpells(true)">
+                            <Label text="#invokeSpellPoolAll" />
+                        </Button>
+                    </Panel>
+                    <Panel id="invokeSpellPoolList" class="InvokeSpellPoolList" />
+                    <Label id="invokeSpellPoolHint" class="InvokeSettingHint" text="#invokeSpellPoolHint" />
+                </Panel>
+                <Panel id="soundSettingsContainer" class="InvokeSoundSettings" />
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

@@ -66,6 +66,7 @@ require('gamemodes/glimpse_dodge/glimpse_dodge')
 require('gamemodes/lasthit_training/lasthit_training')
 require('gamemodes/test_sandbox/test_sandbox')--for testing stuff, not actual gamemode, visivle only in tools
 require('gamemodes/aim_compet/aim_compet')
+require('gamemodes/invoke_training/invoke_training')
 --[[ require('gamemodes/aim_legacy/aim_legacy') ]]
 function GameMode:activateGameMode( args )
   GamemodeManager:SetActiveGamemode(args['gameModeName'])
@@ -7429,9 +7430,6 @@ function GameMode:OnEntityHurt(keys)
               end
             end
           end
---[[          if INV_CHALLENGE==1 then
-            invClearLine(challengeTrash)
-          end--]]
           if victimFound==0 then
             CustomGameEventManager:Send_ServerToAllClients("show_notification",{color='red',text='Bad! Skill was casted on wrong target!',icon='invoker_forge_spirit'})
           end

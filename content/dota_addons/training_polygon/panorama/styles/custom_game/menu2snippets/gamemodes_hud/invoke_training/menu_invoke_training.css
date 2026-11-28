@@ -1,0 +1,201 @@
+.InvokeMenu {
+    width: 100%;
+    height: 100%;
+    padding: 0px 14px;
+    flow-children: down;
+}
+
+.InvokeMenuHeader {
+    width: 100%;
+    min-height: 70px;
+    flow-children: right;
+    margin-bottom: 12px;
+}
+
+.InvokeMenuTitle {
+    width: fit-children;
+    horizontal-align: left;
+    font-size: 27px;
+}
+
+.InvokeMenuDescription {
+    max-width: 690px;
+    margin-top: 5px;
+    color: #8ea6ae;
+    font-size: 15px;
+}
+
+.InvokePlayButton {
+    width: 180px;
+    height: 46px;
+    horizontal-align: right;
+    vertical-align: top;
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#bfe8f1), to(#77b7c8));
+    border: 1px solid #d9f7ff;
+    box-shadow: #5fa5ba33 0px 0px 16px 0px;
+}
+
+.InvokePlayButton:hover {
+    background-color: gradient(linear, 0% 0%, 0% 100%, from(#e7f8fb), to(#9cd8e5));
+    box-shadow: #5fa5ba66 0px 0px 22px 0px;
+}
+
+.InvokePlayButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #102127;
+    font-family: titleFont;
+    font-size: 24px;
+    font-weight: semi-bold;
+    text-transform: uppercase;
+}
+
+.InvokeMenuColumns {
+    width: 100%;
+    flow-children: right;
+}
+
+.InvokeMenuSection {
+    padding: 14px 16px;
+    flow-children: down;
+    background-color: #121518cc;
+    border: 1px solid #293238;
+}
+
+.InvokeSettingsSection {
+    width: 610px;
+}
+
+.InvokeGuideSection {
+    width: fill-parent-flow(1);
+    margin-left: 14px;
+}
+
+.InvokeSectionTitle {
+    margin-bottom: 12px;
+    color: #c7e5ed;
+    font-family: titleFont;
+    font-size: 20px;
+    font-weight: semi-bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.InvokeSettingRow {
+    width: 100%;
+    min-height: 42px;
+    flow-children: right;
+}
+
+.InvokeSettingLabel {
+    width: 190px;
+    vertical-align: center;
+    color: #a9bbc0;
+    font-size: 16px;
+}
+
+.InvokeSettingRow .customCheckbox {
+    vertical-align: center;
+}
+
+.InvokeSettingHint {
+    width: 100%;
+    margin: -3px 0px 8px 0px;
+    color: #708990;
+    font-size: 13px;
+}
+
+.InvokeSettingHintDisabled {
+    opacity: 0.45;
+}
+
+.InvokeGuideText {
+    width: 100%;
+    margin-bottom: 12px;
+    color: #a9bbc0;
+    font-size: 15px;
+}
+
+.InvokeToolsSection {
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid #293238;
+    flow-children: down;
+    visibility: collapse;
+}
+
+.InvokeToolsSection.InvokeToolsVisible {
+    visibility: visible;
+}
+
+.InvokeToolsSection .InvokeSectionTitle {
+    margin-bottom: 8px;
+    font-size: 17px;
+}
+
+.InvokeSpellPoolHeader {
+    width: 100%;
+    margin-top: 8px;
+    flow-children: right;
+}
+
+.InvokeSpellPoolTitle {
+    vertical-align: center;
+    color: #a9bbc0;
+    font-size: 15px;
+}
+
+.InvokeSpellPoolAll {
+    horizontal-align: right;
+    padding: 2px 10px;
+    background-color: #26343a;
+    border: 1px solid #41565e;
+}
+
+.InvokeSpellPoolAll:hover {
+    background-color: #354a53;
+}
+
+.InvokeSpellPoolAll Label {
+    horizontal-align: center;
+    color: #c7e5ed;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.InvokeSpellPoolList {
+    width: 100%;
+    margin-top: 6px;
+    flow-children: right-wrap;
+}
+
+.InvokeSpellToggle {
+    width: 50%;
+    min-height: 34px;
+    flow-children: right;
+}
+
+.InvokeSpellToggle DOTAAbilityImage {
+    width: 25px;
+    height: 25px;
+    margin-left: 25px;
+    margin-right: 7px;
+    vertical-align: center;
+}
+
+.InvokeSpellToggle Label {
+    vertical-align: center;
+    color: #a9bbc0;
+    font-size: 12px;
+}
+
+.InvokeSpellPoolEmpty {
+    color: #ff7777;
+}
+
+.InvokeSoundSettings {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #293238;
+}

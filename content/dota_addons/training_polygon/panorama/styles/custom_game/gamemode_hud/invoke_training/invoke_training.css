@@ -1,0 +1,177 @@
+@define invokeTitleFont: Reaver,Goudy Trajan Medium,FZKai-Z03,TH Sarabun New,YDYGO 540;
+@define invokeDefaultFont: Radiance,FZLanTingHei-R-GBK,TH Sarabun New,YDYGO 540,Gulim,MingLiU;
+
+.InvokeHud {
+    width: 100%;
+    height: 100%;
+    font-family: invokeDefaultFont;
+}
+
+.InvokeHudButton {
+    width: 132px;
+    height: 4%;
+    horizontal-align: left;
+    vertical-align: top;
+    margin-left: 1%;
+    background-color: #101115bb;
+    border: 1px solid #34454d;
+}
+
+.InvokeHudButton:hover {
+    border-color: #add9e6;
+    background-color: #1b292fdd;
+}
+
+.InvokeHudButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #c1e1eb;
+    font-family: invokeTitleFont;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.InvokeExitButton {
+    margin-top: 10%;
+}
+
+.InvokeRetryButton {
+    margin-top: 14.5%;
+}
+
+.InvokePerformanceHud {
+    width: 245px;
+    horizontal-align: left;
+    vertical-align: top;
+    margin-top: 19.5%;
+    margin-left: 1%;
+    padding: 5px 8px 7px 8px;
+    flow-children: down;
+    background-color: #080b0d88;
+    border: 1px solid #26353b55;
+}
+
+.InvokeHideStatsButton,
+.InvokeShowStatsIcon {
+    width: 19px;
+    height: 19px;
+    opacity-mask: url("s2r://panorama/images/control_icons/eye_png.vtex");
+    opacity-mask-scale: 110%;
+    background-color: #82979e;
+}
+
+.InvokeHideStatsButton {
+    horizontal-align: right;
+    margin-bottom: 2px;
+}
+
+.InvokeHideStatsButton:hover,
+.InvokeShowStatsButton:hover .InvokeShowStatsIcon {
+    background-color: #ffffff;
+}
+
+.InvokeShowStatsButton {
+    width: 34px;
+    height: 34px;
+    horizontal-align: left;
+    vertical-align: top;
+    margin-top: 19.5%;
+    margin-left: 1%;
+    background-color: #101115bb;
+    border: 1px solid #34454d;
+}
+
+.InvokeShowStatsIcon {
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.InvokeStatRow {
+    width: 100%;
+    height: 20px;
+    flow-children: right;
+}
+
+.InvokeStatRow Label {
+    width: fill-parent-flow(1);
+    vertical-align: center;
+    color: #b4c6cb;
+    font-size: 13px;
+    text-shadow: 1px 1px 2px #000000;
+}
+
+.InvokeStatRow .InvokeStatValue {
+    width: 72px;
+    horizontal-align: right;
+    color: #edf9fb;
+    font-family: invokeTitleFont;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.InvokeQueuePanel {
+    horizontal-align: right;
+    vertical-align: top;
+    margin-top: 10%;
+    margin-right: 3%;
+    padding: 4px;
+    background-color: #00000055;
+}
+
+#invokeTargetQueue {
+    flow-children: right;
+}
+
+.InvokeTargetColumn {
+    width: 70px;
+    margin: 0px 2px;
+    flow-children: down;
+}
+
+.InvokeTargetSpells {
+    width: 100%;
+    flow-children: down;
+}
+
+.InvokeSpellSlot {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 4px;
+    horizontal-align: center;
+    background-color: #00000066;
+    border: 1px solid #26353b88;
+    opacity: 0.52;
+}
+
+.InvokeSpellSlot DOTAAbilityImage {
+    width: 100%;
+    height: 100%;
+}
+
+.InvokeSpellSlot.InvokeCurrentSpell {
+    border: 1px solid #d7f3fa;
+    box-shadow: #5fa5ba44 0px 0px 8px;
+    opacity: 1;
+}
+
+.InvokeSpellSlot.InvokeFillerSpell {
+    background-color: #00000022;
+    border-color: #ffffff08;
+    box-shadow: none;
+}
+
+.InvokeFillerSpell Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #4c6269;
+    font-size: 24px;
+}
+
+.InvokeTargetPortrait {
+    width: 64px;
+    height: 38px;
+    horizontal-align: center;
+    margin-top: 2px;
+}
