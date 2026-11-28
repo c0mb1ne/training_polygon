@@ -278,5 +278,8 @@
 		"aaah_pack"		"aaah_pack"
 		"wipPlaceHolder" "Work in progress, support if you like it. To play old version, please pick template_map under play button in arcade"
 		"dream_coil_escape_desc" "just get out of dreamcoils"
+		"glimpse_dodge" "glimpse dodge"
+		"glimpse_dodge_desc" "Keep moving and use the selected dodge when the timebar reaches the green zone."
+		"glimpseTravelBoots" "Boots of Travel"
 	}
 }

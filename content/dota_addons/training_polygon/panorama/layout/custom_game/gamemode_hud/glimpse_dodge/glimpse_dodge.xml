@@ -1,5 +1,6 @@
 <root>
     <styles>
+        <include src="file://{resources}/styles/custom_game/mainmenu_v2.css" />
         <include src="file://{resources}/styles/custom_game/gamemode_hud/glimpse_dodge/glimpse_dodge.css" />
         <include src="file://{resources}/styles/custom_game/fonts.css" />
     </styles>

@@ -15,22 +15,23 @@
     <Panel class="glimpse_dodge_Main">
         <Panel class="Col width100">
             <Label class="menu_button_label" text="#glimpse_dodge"/>
-            <Label text="template gamemode for easy creation of file structures for future modes"/>
-            
+            <Label text="#glimpse_dodge_desc"/>
+            <Panel id="glimpseDodgeTypes" class="RowNoFill"/>
+            <Panel class="RowNoFill padding5">
+                <ToggleButton checked="false" id="travelBootsToggle" class="customCheckbox" text="#glimpseTravelBoots"/>
+            </Panel>
             <Panel class="RowNoFill">
-                <Panel class="ColNoFill padding5">
+                <Panel class="ColNoFill padding5 Hidden">
                     <Panel id="soundSettingsContainer" />
                 </Panel>
+                <Panel id="heroPickerContainer" class="ColNoFill padding5"/>
                 
             </Panel>
-
-            
-
             <Panel class="RowNoFill">
                 <Button class="menu_button mode_play" id="menu_play" onactivate="startGame()">
-                    <Label class="mode_play_label" id="menu_play_label" text="Play"/>
+                    <Label class="mode_play_label" id="menu_play_label" text="#main_play"/>
                 </Button>
-                <Label id="errorMsg"></Label>
+                <Label id="errorMsg"/>
             </Panel>
         </Panel>
     </Panel>

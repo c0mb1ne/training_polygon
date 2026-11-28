@@ -289,7 +289,7 @@ end
 
 function dream_coil_escape:ModifierGained(event)
     --[[ DeepPrintTable(event) ]]
-    debugModifier(event)
+    --[[ debugModifier(event) ]]
     local victim=EntIndexToHScript(event.entindex_parent_const)
     --Player got hurt by breaking dream coil
     if event.name_const==self.breakModifier then

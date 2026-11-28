@@ -1,3 +1,4 @@
+--controls content\dota_addons\training_polygon\panorama\layout\custom_game\timebar.xml
 if Timebar == nil then
     Timebar = class({})
 end
